@@ -19,7 +19,7 @@
 			this.name = name;
 		}
 
-		this.name = 'default';
+		//this.name = 'default';
 	}
 
 	User.prototype.show = function(){
@@ -27,8 +27,11 @@
 		alert(this.name);
 	}
 
+	User.prototype.name = 'default';
+
 
 	var user = new User();
+	user.show();
 	//User.show();		//undefined is not a function
 	user.getName();		//"default"
 	user.setName('kaka');
