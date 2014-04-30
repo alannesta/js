@@ -1,0 +1,44 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<script src="script/jquery-1.8.3.js"></script>
+<title>jquery</title>
+</head>
+ 
+<body>
+	
+<script>
+	function User(){
+		this.getName = function(){
+			alert(this.name);
+			return this.name;
+		}
+
+		this.setName = function(name){
+			this.name = name;
+		}
+
+		this.name = 'default';
+	}
+
+	User.prototype.show = function(){
+		console.log(this);
+		alert(this.name);
+	}
+
+
+	var user = new User();
+	//User.show();		//undefined is not a function
+	user.getName();		//"default"
+	user.setName('kaka');
+	user.show();		//"kaka"
+
+	// console.log(user.constructor);
+	// console.log(user.prototype);
+	// user.getName();
+	// user.setName('kaka');
+	// user.show();
+</script>
+</body>
+</html>
