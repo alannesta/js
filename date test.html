@@ -1,0 +1,42 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<script src="script/jquery-1.8.3.js"></script>
+<script src="script/date.js"></script>
+<title>Date Test</title>
+</head>
+<body>
+<script>
+// timezoneJS.timezone.zoneFileBasePath = 'E:/Java Platform/my javascript/Jquery Start/script/tzdata';
+// timezoneJS.timezone.init();
+
+var dateStr='2014-02-28T21:42:26Z';
+
+
+dateStr = dateStr.replace(/Z/g,' ');
+dateStr = dateStr.replace(/T/g,' ');
+dateStr = dateStr+'-0500'
+console.log(dateStr);
+
+//var jsDate = new Date('2014-2-28  21:42:26');
+// var jsDate = new Date(dateStr);
+// console.log(jsDate.toJSON());
+// console.log('date'+jsDate.getUTCDate());
+// console.log('year'+jsDate.getUTCFullYear());
+// console.log('month'+jsDate.getUTCMonth());      //need to add 1, start from 0
+// console.log('hours'+jsDate.getUTCHours());   
+// console.log('seconds'+jsDate.getUTCSeconds());  
+// console.log('minutes'+jsDate.getUTCMinutes());
+
+// //var jsDate2 = new Date(jsDate.getTime());
+// //console.log(jsDate2);
+
+// // var dj = new timezoneJS.Date(jsDate.getUTCFullYear(),jsDate.getUTCMonth()+1, jsDate.getUTCDate(), jsDate.getUTCHours(),jsDate.getUTCMinutes(),jsDate.getUTCSeconds(),'America/Montreal');
+// var dj = new timezoneJS.Date(jsDate.getUTCFullYear(),jsDate.getUTCMonth()+1, jsDate.getUTCDate(), jsDate.getUTCHours(),jsDate.getUTCMinutes(),jsDate.getUTCSeconds());
+
+// console.log(dj.setTimezone('America/Montreal'));
+// console.log(dj);
+</script>
+</body>
+</html>

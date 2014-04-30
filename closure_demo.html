@@ -1,0 +1,69 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<script src="script/jquery-1.8.3.js"></script>
+<title>jquery</title>
+</head>
+ 
+<body>
+	
+<script>
+'use strict';
+
+var test = {
+    name: 'kaka',
+    getName: function(){
+        console.log(this);
+        alert(this.name);
+        //return this.name;
+    },
+    replaceName: function(name){
+        //debugger;
+        //var self = this;
+        // API.generate(name, function(){
+        //     // this.getName();
+        //     self.getName();
+        // })
+        //var self = this;
+        API.generate(name, this, this.getName); //直接使用this, 会去containing context寻找
+    },
+    setName: function(name){
+        console.log(this);
+        this.name = name
+    }
+}
+
+//works like a 3rd party library for example, ParsePlugin
+var API = {
+    //name: 'api',
+    generate: function(nameNew,context, callback){
+        test.setName(nameNew);
+        console.log(this);
+        callback.call(context);     //call(context)
+        // callback();     //unbound function, scope resolve to global
+    }
+}
+
+test.replaceName('fuck');
+
+
+// function anonymous(){
+//     var name1 = 'alan';
+//     (function(){
+//         var name2 = 'eva';
+//         (function (){
+//             debugger;
+//             alert(name1);
+//             alert(name2);
+//         })();
+//     })();
+// }
+
+// anonymous();
+
+
+
+</script>
+</body>
+</html>

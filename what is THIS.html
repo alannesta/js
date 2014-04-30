@@ -1,0 +1,54 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<script src="script/jquery-1.8.3.js"></script>
+<title>fuck jquery</title>
+</head>
+ 
+<body>
+	<div id="test">fuck</div>
+	<span id='lala'>lala</span>
+	<table id ="table">
+		<tr>
+			<td>kaka1</td>
+			<td>kaka2</td>
+			<td>kaka3</td>
+			<td>kaka4</td>
+		</tr>
+		<tr>
+			<td>lala</td>
+			<td>lala2</td>
+			<td>lala3</td>
+			<td>lala4</td>
+		</tr>
+
+	</table>
+	<button>REFRESH</button>
+<script>
+	// var span = $('#lala')
+	// span.on('click',function(){
+	// 	//alert(this.innerHTML);		//lala
+	// 	//alert($(this).html());		//lala
+	// 	alert(typeof this);				//object
+	// 	alert(typeof $(this));			//object
+	// });
+	
+	$('button').on('click',function(){
+		$('tr').remove();
+	});
+	
+	// $('tr').each(function(index){
+	// 	//alert($(this).html()+index);		//correct
+	// 	//alert(this.innerHTML+index);		//correct
+	// 	$(this).find('td').each(function(index2){
+	// 		alert($(this).html()+index);
+	// 	});
+
+	// });
+	
+	//var div = $('#test');
+	//alert(typeof div);
+</script>
+</body>
+</html>

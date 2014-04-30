@@ -1,0 +1,37 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <script src="script/jquery-1.8.3.js"></script>
+    <title>Number Test</title>
+</head>
+
+<body>
+	
+    <script>
+    // console.log((100/3).toFixed(0));
+    // console.assert(100==(100/3).toFixed(0)*3, 'error');
+    // console.log(3/5);
+    (function print(){
+        for (var i = 1; i<101; i++){
+            if (isDividable(i,3)){
+                if (isDividable(i,5)){
+                    console.log("Kevin Bacon");
+                }else{
+                    console.log("Kevin")
+                }
+            }else if (isDividable(i,5)){
+                console.log("Bacon")
+            }else{
+                console.log(i);
+            }
+        }
+    }());
+
+    function isDividable(a,b){
+        if (a%b == 0) return true;
+    }
+
+    </script>
+</body>
+</html>

@@ -1,0 +1,75 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>fuck jquery</title>
+
+</head>
+	
+    
+<body>
+<script>
+	//version 1
+	/*for ( var i = 0; i < 5; i++ ) {
+    setTimeout(function() {
+		//全局变量的改变将被随后反映出来，输出全部是5
+        console.log( "this is:"+i );
+    	}, i * 1200 );
+	}*/
+	//version 2
+	
+	/*for (var i = 0;i<5;i++){
+		setTimeout(log_number(i),i*1000);
+	}
+	
+	function log_number(i){
+		//var temp = i;
+		console.log("this is: "+ i);
+	}*/
+	
+	//version 3
+	/*var createFunction = function( i ) {
+   	 	return function() {
+        	console.log( i );
+   	 	};
+	};
+ 
+	for ( var i = 0; i < 5; i++ ) {
+		//setTimeout--->xxx 毫秒后执行！
+    	setTimeout( createFunction( i ), i*1000 );
+	}*/
+	
+	//another closure example
+	function outer(){
+		var n = 1000;
+		/*function inner(){
+			console.log(++n);
+		}
+		return inner;*/
+		return function(){
+			console.log(++n);
+		}
+	}
+	
+	var closure = outer(); //这里写成var closure = outer;是错误的!!
+	closure();	//1001
+	closure();	//1002
+	closure();	//1003
+	closure();	//1004
+	
+	
+	//返回函数的函数！形成闭包
+	/*var greet = function( person, greeting ) {
+    var text = greeting + ", " + person;
+    return function() {
+        console.log( text );
+    	};
+	};
+ 
+	var greeting = greet( "Rebecca", "Hello" );	//这一步log并没有输出！
+ 
+	//greeting(); // "Hello, Rebecca"*/
+	
+</script>
+</body>
+</html>

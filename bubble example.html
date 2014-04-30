@@ -1,0 +1,42 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<script src="script/jquery-1.8.3.js"></script>
+	<title>fuck jquery</title>
+</head>
+<script>
+$(document).ready(function(){
+	$("span").click(function(event){
+		//event.stopPropagation();
+		alert("The span element was clicked.");
+	});
+	$("p").click(function(event){
+
+		alert("The p element was clicked.");
+		event.stopPropagation();
+	});
+	$('a').click(function(event){
+		event.stopPropagation();
+
+	});
+	$("div").click(function(){
+		alert("The div element was clicked.");
+		event.stopPropagation();
+	});
+});
+</script>
+</head>
+<body>
+
+	<div style="height:100px;width:500px;padding:10px;border:1px solid blue;background-color:lightblue;">
+		This is a div element.
+		<p style="background-color:pink">This is a p element, in the div element. <br><span style="background-color:orange"><a href="www.google.com">link to google</a>This is a span element in the p and the div element.</span></p></div>
+
+		<p><b>Note:</b> Click on each of the elements above. When clicking on the <b>div</b> element, it will alert that the div element was clicked. When clicking on the <b>p</b> element, it will return both the p and the div element, since the p element is inside the div element. 
+			But when clicking on the <b>span</b> element, it will only return itself, and not the p and the div element (even though its inside these elements).  The event.stopPropagation() stops the click event from bubbling to the parent elements. 
+		</p>
+		<p><b>Tip:</b> Try to remove the event.stopPropagation() line, and click on the span element again (the click event will now bubble up to parent elements).</p>
+
+	</body>
+	</html>
