@@ -3,7 +3,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <script src="script/jquery-1.8.3.js"></script>
-<title>jquery</title>
+<title>Factory OOP</title>
 </head>
  
 <body>
@@ -23,10 +23,11 @@
 		}
 
 		return obj;
-	}
+	}();
 
-	var test = user();
-	test.show();
+	console.log(user);
+	// alert(user.constructor);
+	// alert(user instanceof Object);
 
 </script>
 </body>
