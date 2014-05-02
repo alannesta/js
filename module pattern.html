@@ -1,0 +1,111 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<script src="script/jquery-1.8.3.js"></script>
+<title>jquery</title>
+</head>
+ 
+<body>
+	
+<script>
+	var myModule = (function api(){
+		//private variable
+
+		var privateVariable = 0;
+		
+		//private method
+		function alertVariable(){
+			alert(privateVariable);
+		}
+
+		this.apiName = 'test api';
+
+		//previliged method
+		// this.add = function (){
+		// 	privateVariable++;
+		// }
+		// this.reduce = function(){
+		// 	privateVariable--;
+		// }
+
+		// this.showVariable = function(){
+		// 	return alertVariable();
+		// }
+
+		//previliged method, cannot be inherited, create a new copy for each instance
+		function add(){
+			privateVariable++;
+		}
+		function reduce(){
+			privateVariable--;
+		}
+
+		function showVariable(){
+			return alertVariable();
+		}
+
+		//expose the api!
+		return {
+			add: add,
+			reduce: reduce,
+			showVariable: showVariable
+		}
+	}());
+
+	// myModule.add();
+	// // myModule.add();
+	// // myModule.add();
+	// myModule.showVariable();
+	// myModule.reduce();
+	// myModule.showVariable();
+
+//---------------------------------------------
+
+	var module = (function(){
+		function Timer(date){
+			var secretTime = date;		//only this requires a private/previliged function to access
+			this.currentTime = date;	//it makes no sense to modify this using a function
+			this.defaultTime = '2014-3-1';
+			this.setTime = function(newTime){
+				update(newTime);
+				//this.currentTime = newTime;
+				
+			}
+			function update(newTime){
+				//console.log(currentTime);
+				secretTime = newTime;
+			}
+			this.show = function(){
+				alert(secretTime);
+			}
+		}
+
+
+
+		Timer.prototype.refresh = function(){
+			this.currentTime = new Date();
+		}
+		Timer.prototype.showTime = function(){
+			return this.show();
+		}
+		// Timer.prototype.setTime = function(newTime){
+		// 	//update(newTime);
+		// 	this.currentTime = newTime;
+		// }
+
+		return Timer;		//preferred, can do manual/multiple initialization
+		//return new Timer();		//the module is already initialized
+	}());
+
+	var mod = new module('2014-3-12');
+	//mod.refresh();
+	//alert(mod.secretTime);
+	mod.showTime();
+	mod.setTime('1999-1-9');
+	mod.showTime();
+	//console.log(mod);
+
+</script>
+</body>
+</html>
