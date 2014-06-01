@@ -1,0 +1,33 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<script src="script/jquery-1.8.3.js"></script>
+<title>Timeout Test</title>
+</head>
+<body>
+    <button id='timeout'>set new time out</button>
+
+<script>
+    var timeout, interval;
+    $('#timeout').on('click', function(){
+        clearTimeout(timeout);      //这里不先clear的话，就会出现set多次的timeout! 因为互相之间不会相互覆盖
+        timeout = setTimeout(function(){
+        console.log('timeout')
+        // clearInterval(interval);
+        },3000);
+    })  
+
+    
+    
+
+    // interval = setInterval(function(){
+    //     console.log((new Date()).getSeconds());
+    //     clearTimeout(timeout);
+    // },
+    // 3000);
+
+</script>
+</body>
+
+</html>
