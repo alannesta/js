@@ -1,0 +1,27 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<script src="script/jquery-1.8.3.js"></script>
+<title>Regular Expression</title>
+</head>
+ 
+<body>
+	
+<script>
+    var reg = /(home\.change)\w+/;
+    var reg2 = /^(home\.change)\w*/;
+    var state = 'home.changepin';
+    var state1 = 'home.change'
+    var state2 = 'Iwanttohome.change';
+    console.log(reg.test(state));       //true
+    console.log(reg.test(state2));      //false
+    console.log(reg.test(state1));      //false
+    console.log(reg2.test(state1));     
+
+    var reg3 = /(markelov)/;
+    var sample = 'markelov';
+    alert(reg3.test(sample));
+</script>
+</body>
+</html>
