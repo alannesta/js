@@ -1,0 +1,141 @@
+<!doctype html5>
+<html>
+<head>
+	<title>Line Chart</title>
+	<script src="script/Chart.js"></script>
+	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+</head>
+<body>
+	<div style="width:30%">
+		<div>
+			<canvas id="canvas" height="450" width="500"></canvas>
+		</div>
+		<div>
+			<!-- <span id="byday"><a href="">By Day</a></span> -->
+			<input id='start' type='date'>
+			<input id='end' type='date'>
+			<button id="byday">by day</button>
+			<span id="bymonth">By Month</span>
+		</div>
+	</div>
+
+
+	<script>
+	var randomScalingFactor = function(){ return Math.round(Math.random()*100)};
+	var lineChartData = {
+		labels : ["January","February","March","April","May","June","July","August"],
+		datasets : [
+		{
+			label: "income",
+			fillColor : "rgba(220,220,220,0.2)",
+			strokeColor : "rgba(220,220,220,1)",
+			pointColor : "rgba(220,220,220,1)",
+			pointStrokeColor : "#fff",
+			pointHighlightFill : "#fff",
+			pointHighlightStroke : "rgba(220,220,220,1)",
+			data : [randomScalingFactor(),randomScalingFactor(),randomScalingFactor(),randomScalingFactor(),randomScalingFactor(),randomScalingFactor(),randomScalingFactor(),50]
+		},
+		{
+			label: "upper",
+			fillColor : "rgba(220,220,220,0.2)",
+			strokeColor : "rgba(120,220,120,120)",
+			// pointColor : "rgba(220,220,220,1)",
+			// pointStrokeColor : "#0000bb",
+			datasetFill : "false",
+			// pointHighlightStroke : "rgba(220,220,220,1)",
+			data : [80,80,80,80,80,80,80,80]
+		},
+		{
+			label: "lower",
+			fillColor : "rgba(220,220,220,0.2)",
+			strokeColor : "rgba(20,120,20,120)",
+			// pointColor : "rgba(220,220,220,1)",
+			// pointStrokeColor : "#0000bb",
+			datasetFill : "false",
+			// pointHighlightStroke : "rgba(220,220,220,1)",
+			data : [20,20,20,20,20,20,20,20]
+		}]
+
+	}
+
+	// window.onload = function(){
+	// 	var ctx = document.getElementById("canvas").getContext("2d");
+	// 	window.myLine = new Chart(ctx).Line(lineChartData, {
+	// 		responsive: true
+	// 	});
+	// }
+	var ctx = document.getElementById("canvas").getContext("2d");
+	// console.log(lineChartData.labels);
+	var myLine = new Chart(ctx).Line(lineChartData, {
+		// responsive: true
+		showTooltips: false
+	});
+
+	function updateData(startDate, endDate, timeInterval){
+		// var interval = 'DAY';
+		// console.log(arguments instanceof Array);	//false
+		// console.log(Array.prototype.slice.call(arguments, 3) instanceof Array);	//true
+		lineChartData.datasets[0].data = [];
+		lineChartData.labels = [];
+		myLine = null;
+		console.log(startDate);
+		var xaxisarr = getDates(startDate, endDate);
+
+		for (var i = 0, length= xaxisarr.length; i<length; i++){
+			lineChartData.datasets[0].data.push(randomScalingFactor());
+			lineChartData.labels[i] = xaxisarr[i].toUTCString();
+		}
+		// ctx.clearRect(0,0,500,450);
+		myLine = new Chart(ctx).Line(lineChartData, {
+			// responsive: true
+			showTooltips: false
+		});
+
+	}
+
+	function updateChart(){
+
+	}
+
+	Date.prototype.addDays = function(days) {
+		var dat = new Date(this.valueOf());
+		dat.setDate(dat.getDate() + days);
+		return dat;
+	}
+
+	function getDates(startDate, stopDate, timeInterval) {
+
+		var dateArray = new Array(), currentDate = new Date(startDate), endDate = new Date(stopDate);
+		while (currentDate <= endDate) {
+			dateArray.push(new Date (currentDate))
+			currentDate = currentDate.addDays(1);
+		}
+		return dateArray;
+	}
+
+	// console.log(getDates('2014-1-1', '2014-2-5'));
+
+	$('#byday').on('click', function(){
+		updateData($('#start').val(), $('#end').val())
+	});
+
+	// $('#byday').on('click', function(){
+	// 	ctx.globalCompositeOperation = "darker";
+	// 	ctx.strokeStyle = "#0000bb";
+	// 	ctx.fillStyle = "#0ff";
+	// 	ctx.moveTo(0,120);
+	// 	ctx.lineTo(500,120);
+	// 	ctx.stroke();
+	// 	// ctx.fillRect(50, 25, 150, 100);
+	// 	// for (var x = 0.5; x < 500; x += 10) {
+	// 	// 	ctx.moveTo(x, 0);
+	// 	// 	ctx.lineTo(x, 375);
+	// 	// }
+	// 	// ctx.strokeStyle = "#eee";
+	// 	// ctx.stroke();
+	// })
+	
+
+	</script>
+</body>
+</html>
