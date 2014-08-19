@@ -1,0 +1,57 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<script src="script/jquery-1.8.3.js"></script>
+<title>Star Rating Proof of Concept Prototype</title>
+
+<style type="text/css">
+.widget-container{
+	position: relative;
+}
+.img-bottom{
+
+}
+.img-top{
+	position: absolute;
+	/*position: relative;*/
+	top:0;
+	left: -999px;
+}
+</style>
+</head>
+<body>
+	<div class="widget-container">
+		<div class="img-bottom">
+			<img src="img/apple_store.jpeg">
+		</div>
+		<div class="img-top">
+			<img src="img/google_play.jpeg">
+		</div>
+	</div>	
+</body>
+<script type="text/javascript">
+	// $("#img-top").css()
+	var mouse = {x: 0, y: 0};
+
+	document.addEventListener('mousemove', function(e){ 
+		mouse.x = e.clientX || e.pageX; 
+		mouse.y = e.clientY || e.pageY 
+	}, false);
+
+	$(".widget-container").on('mousemove', function(e){
+		var leftmargin = mouse.x-388<0 ? mouse.x-388: 0;
+		$(".img-top").css("left", leftmargin);
+	}).on('mouseleave', function(e){
+		$(".img-top").css("left", -999);
+		console.log('mouseleft');
+	});
+
+	$(".widget-container").on('mouseenter', function(event){
+		// $(".img-top").css("left", mouse.x-388);
+		console.log('mouseenter');
+	});
+	
+
+</script>
+</html>
