@@ -35,10 +35,17 @@
     // console.log(str2.match(reg2));  //["alan", index: 2, input: "taalannesa"]
     // console.log(str2.match(reg1));  //null--no match
 
-    var reg3 = /(?<!alan)nesta/      //negative look behind;
-    var str3 = "taalannesa";
-    console.log(str3.match(reg3));  //["alan", index: 2, input: "taalannesa"]
+    // var reg3 = /(?<!alan)nesta/      //negative look behind;
+    // var str3 = "taalannesa";
+    // console.log(str3.match(reg3));  //["alan", index: 2, input: "taalannesa"]
 
+    var str = "1\\2\\3"
+    alert(str);
+    // str = str.replace(/\\/, "_NOGLOBAL_");   // 1_NOGLOBAL_2\3
+    // alert(str);
+    str = str.replace(/\\/g, "_GLOBAL_");   // 1_GLOBAL_2_GLOBAL_3
+    alert(str);
+    
 </script>
 </body>
 </html>
