@@ -61,23 +61,58 @@ ul{
 	
 </body>
 <script>
-	$.fn.carousel = function(){
-		// console.log($(this));
-		
-		$(this).find('li').each(function(index){
-			// $(this).find('img').each(function(){
-			// 	$(this).addClass('inactive');
-			// })
-			if(index!==0){
-				$(this).find('img').addClass('inactive');
-			}
+	(function($){
+		$.fn.carousel = function(){
+			// console.log($(this).find('li').length);
+			var $slides = $(this).find('li');
+			var slides_count = $slides.length;
+
+			//init, hide all slides except for the first one
+			$slides.each(function(index){
+				// $(this).find('img').each(function(){
+				// 	$(this).addClass('inactive');
+				// })
+				if(index!==0){
+					$(this).find('img').addClass('inactive');
+				}
+
+			});
+
+			$navi = buildNav(slides_count);
 			
-		});
+		}
 
-		$navi = "<ul><li>1</li><li>2</li><li>3</li></ul>"
+		function lastSlide(current, $slides){
+			$slides[current].addClass('inactive');
+			$slides[current-1].addClass('active');
+		}
 
-		$('.nav-footer').append($navi);
-	}
+		function previousSlide(current, $slides){
+			$slides[current].addClass('inactive');
+			$slides[current+1].addClass('active');
+		}
+
+		function gotoSlide(index, $slides){
+
+		}
+
+		//build navigation bar according to the slides_count
+		function buildNav(count){
+			var nav_footer = '<ul>';
+			for (var i = 0; i<count; i++){
+				nav_footer = nav_footer+'<li>'+(i+1)+'</li>';
+
+			}
+			nav_footer = nav_footer + '</ul>'
+			$('.nav-footer').append(nav_footer);
+		}
+
+		function bindClickEvents(){
+
+		}
+
+	})($)
+
 	$('.carousel-container').carousel();		//how to extend to jquery style??
 
 
