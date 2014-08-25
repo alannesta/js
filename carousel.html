@@ -12,8 +12,10 @@ ul{
 
 .carousel-container {
 	position:relative;
-	height: 443px;
+	height: 460px;
 	width: 500px;
+	padding:0;
+	margin:0;
 }
 .carousel-container li{
 	position: absolute;
@@ -49,6 +51,46 @@ ul{
 	position: static;
 }
 
+.nav-arrow{
+	position: absolute;
+	top:0;
+	left:0;
+	right:0;
+	bottom: 0;
+	
+}
+
+.arrow-right{
+	position: absolute;
+	height:40px;
+	width:40px;
+	top: 210px;
+	right: 0;
+	opacity: 0;
+	/*display: none;*/		/*this would affect the transition animation*/
+	-webkit-transition: opacity 0.8s;
+	transition: opacity 0.8s;
+}
+
+.arrow-left{
+	position: absolute;
+	height:40px;
+	width:40px;
+	top: 210px;
+	left: 0;
+	opacity: 0;
+	/*display: none;*/		/*this would affect the transition animation*/
+	-webkit-transition: opacity 0.8s;
+	transition: opacity 0.8s;
+}
+
+.carousel-container:hover .arrow-left,
+.carousel-container:hover .arrow-right{
+	opacity: 0.2;
+}
+
+
+
 </style>
 </head>
 <body>
@@ -58,6 +100,9 @@ ul{
 		<li><img src="img/slide1.png" alt=""></li>
 		<li><img src="img/slide2.png" alt=""></li>
 		<li><img src="img/slide3.png" alt=""></li>
+		
+		<img class="arrow-right" src="img/rightarrow.jpeg">
+		<img class="arrow-left" src="img/leftarrow.jpeg">
 		<div class="nav-footer"></div>
 	</ul>
 	
