@@ -20,13 +20,14 @@ ul{
 	top:0;
 }
 
-.carousel-container li .active {
+.carousel-container li.active {
 	display: inline-block;
 }
 
-.carousel-container li .inactive{
+.carousel-container li.inactive{
 	display: none;
 }
+
 
 .nav-footer{
 	position: absolute;
@@ -46,12 +47,13 @@ ul{
 	margin: 0 10px;
 	float: left;
 	position: static;
-
 }
 
 </style>
 </head>
 <body>
+	<button id="previous">previous</button>
+	<button id="next">next</button>
 	<ul class="carousel-container">
 		<li><img src="img/slide1.png" alt=""></li>
 		<li><img src="img/slide2.png" alt=""></li>
@@ -66,6 +68,7 @@ ul{
 			// console.log($(this).find('li').length);
 			var $slides = $(this).find('li');
 			var slides_count = $slides.length;
+			var current = 0;
 
 			//init, hide all slides except for the first one
 			$slides.each(function(index){
@@ -73,23 +76,46 @@ ul{
 				// 	$(this).addClass('inactive');
 				// })
 				if(index!==0){
-					$(this).find('img').addClass('inactive');
+					$(this).addClass('inactive');
 				}
 
 			});
 
 			$navi = buildNav(slides_count);
+			$("#previous").on('click', function(){
+				lastSlide();
+			});
+			$("#next").on('click', function(){
+				nextSlide();
+			});
+
+			function lastSlide(){
+				console.log($slides[current]);
+				$($slides[current]).addClass('inactive').removeClass('active');
+				if (current-1>=0){
+					$($slides[current-1]).removeClass('inactive').addClass('active');
+					current = current-1;
+				}else{
+					$($slides[slides_count-1]).removeClass('inactive').addClass('active');
+					current = slides_count-1;
+				}
+				
+			}
+
+			function nextSlide(){
+				$($slides[current]).addClass('inactive').removeClass('active');
+
+				if (current+1<slides_count){
+					$($slides[current+1]).removeClass('inactive').addClass('active');
+					current = current+1;
+				}else{
+					$($slides[0]).removeClass('inactive').addClass('active');
+					current = 0;
+				}
+
+				
+			}
 			
-		}
-
-		function lastSlide(current, $slides){
-			$slides[current].addClass('inactive');
-			$slides[current-1].addClass('active');
-		}
-
-		function previousSlide(current, $slides){
-			$slides[current].addClass('inactive');
-			$slides[current+1].addClass('active');
 		}
 
 		function gotoSlide(index, $slides){
@@ -105,6 +131,8 @@ ul{
 			}
 			nav_footer = nav_footer + '</ul>'
 			$('.nav-footer').append(nav_footer);
+
+
 		}
 
 		function bindClickEvents(){
@@ -114,7 +142,6 @@ ul{
 	})($)
 
 	$('.carousel-container').carousel();		//how to extend to jquery style??
-
 
 
 </script>
