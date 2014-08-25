@@ -94,16 +94,11 @@ ul{
 </style>
 </head>
 <body>
-	<button id="previous">previous</button>
-	<button id="next">next</button>
 	<ul class="carousel-container">
 		<li><img src="img/slide1.png" alt=""></li>
 		<li><img src="img/slide2.png" alt=""></li>
 		<li><img src="img/slide3.png" alt=""></li>
-		
-		<img class="arrow-right" src="img/rightarrow.jpeg">
-		<img class="arrow-left" src="img/leftarrow.jpeg">
-		<div class="nav-footer"></div>
+		<div class="nav-footer"></div>			<!-- navigation insert point -->
 	</ul>
 	
 </body>
@@ -126,11 +121,13 @@ ul{
 
 			});
 
-			$navi = buildNav(slides_count);
-			$("#previous").on('click', function(){
+			buildNavFooter(slides_count);
+			buildNavArrow();
+
+			$(".arrow-left").on('click', function(){
 				lastSlide();
 			});
-			$("#next").on('click', function(){
+			$(".arrow-right").on('click', function(){
 				nextSlide();
 			});
 
@@ -156,19 +153,18 @@ ul{
 				}else{
 					$($slides[0]).removeClass('inactive').addClass('active');
 					current = 0;
-				}
-
-				
+				}	
 			}
 			
+			function gotoSlide(index, $slides){
+				
+			}
 		}
 
-		function gotoSlide(index, $slides){
-
-		}
+		
 
 		//build navigation bar according to the slides_count
-		function buildNav(count){
+		function buildNavFooter(count){
 			var nav_footer = '<ul>';
 			for (var i = 0; i<count; i++){
 				nav_footer = nav_footer+'<li>'+(i+1)+'</li>';
@@ -176,8 +172,11 @@ ul{
 			}
 			nav_footer = nav_footer + '</ul>'
 			$('.nav-footer').append(nav_footer);
+		}
 
-
+		function buildNavArrow(){
+			var arrow = "<img class='arrow-right' src='img/rightarrow.jpeg'><img class='arrow-left' src='img/leftarrow.jpeg'>"
+			$(arrow).insertBefore($('.nav-footer'));	//jquery insertBefore
 		}
 
 		function bindClickEvents(){
