@@ -1,0 +1,69 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <script src="script/jquery-1.8.3.js"></script>
+    <script type="text/javascript" src = "script/moment.js"></script>
+    <title>Moment Js Test</title>
+</head>
+
+<body>
+	
+    <script>
+        // some handy method
+
+        //translate a date obj to a local time string, without timezone information
+        Date.prototype.toNoneUTCString = function() {
+            return this.getFullYear() +
+            '-' + pad( this.getMonth() + 1 ) +
+            '-' + pad( this.getDate() ) +
+            'T' + pad( this.getHours() ) +
+            ':' + pad( this.getMinutes() ) +
+            ':' + pad( this.getSeconds() ) +
+            'Z';
+        };
+
+        //add days to the original date obj
+        Date.prototype.addDays = function(days) {
+            var dat = new Date(this.valueOf());
+            dat.setDate(dat.getDate() + days);
+            return dat;
+        }
+
+        //return an array of dates between certain time
+        function getDates(startDate, stopDate, timeInterval) {
+            var dateArray = new Array(), currentDate = new Date(startDate), endDate = new Date(stopDate);
+            while (currentDate <= endDate) {
+                dateArray.push(new Date (currentDate))
+                currentDate = currentDate.addDays(1);
+            }
+            return dateArray;
+        }
+
+        function pad(number) {
+            if (number < 10) {
+                return '0' + number;
+            }
+            return number;
+        }
+
+
+        // date operation using moment.js
+        // var date = moment().add(-1,'days');
+        var date = moment();
+        console.log(moment.utc(date).format("YYYY-MM-DDTHH:mm:ss")+"Z");    //2014-08-22T19:42:22Z ---> UTC time
+        console.log(moment().format("YYYY-MM-DDTHH:mm:ss")+"Z");            //2014-08-22T15:42:22Z ---> Montreal time
+        // date operation using original Date obj
+        var originalDate = new Date();
+        console.log(originalDate.toISOString());        //2014-08-22T19:42:22.822Z  ---> UTC time
+        console.log(originalDate.toNoneUTCString());    //2014-08-22T15:42:22Z ---> Montreal time
+
+        //console.log(originalDate.toUTCString());        
+        // console.log(originalDate.toLocaleString());
+
+
+        
+
+    </script>
+</body>
+</html>
