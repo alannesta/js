@@ -35,7 +35,7 @@
 	var mouse = {x: 0, y: 0};
 
 	document.addEventListener('mousemove', function(e){ 
-		mouse.x = e.clientX || e.pageX; 
+		mouse.x = e.clientX || e.pageX; 	//browser compatibility
 		mouse.y = e.clientY || e.pageY 
 	}, false);
 
@@ -43,8 +43,8 @@
 		var leftmargin = mouse.x-388<0 ? mouse.x-388: 0;
 		$(".img-top").css("left", leftmargin);
 	}).on('mouseleave', function(e){
-		$(".img-top").css("left", -999);
-		console.log('mouseleft');
+		// $(".img-top").css("left", -999);
+		// console.log('mouseleft');
 	});
 
 	$(".widget-container").on('mouseenter', function(event){
