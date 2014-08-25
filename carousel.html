@@ -46,9 +46,13 @@ ul{
 }
 
 .nav-footer li{
-	margin: 0 10px;
+	padding: 0 10px;
 	float: left;
 	position: static;
+}
+
+.nav-footer li.active{
+	background-color: red;
 }
 
 .nav-arrow{
@@ -112,18 +116,15 @@ ul{
 
 			//init, hide all slides except for the first one
 			$slides.each(function(index){
-				// $(this).find('img').each(function(){
-				// 	$(this).addClass('inactive');
-				// })
 				if(index!==0){
 					$(this).addClass('inactive');
 				}
-
 			});
 
 			buildNavFooter(slides_count);
 			buildNavArrow();
 
+			//bind navigation functionality to arrows and navigation bars
 			$(".arrow-left").on('click', function(){
 				lastSlide();
 			});
@@ -131,8 +132,20 @@ ul{
 				nextSlide();
 			});
 
+			$('.nav-footer').find('li').each(function(index){
+				$(this).on('click', function(){
+					gotoSlide(index);
+				})
+			})
+
+			//listen to custom events
+			$('.carousel-container').on('slideChanged', function(event, lastIndex, newIndex){
+				$($('.nav-footer li')[newIndex]).addClass('active');
+				$($('.nav-footer li')[lastIndex]).removeClass('active');
+			});	
+
 			function lastSlide(){
-				console.log($slides[current]);
+				var previous = current
 				$($slides[current]).addClass('inactive').removeClass('active');
 				if (current-1>=0){
 					$($slides[current-1]).removeClass('inactive').addClass('active');
@@ -141,27 +154,33 @@ ul{
 					$($slides[slides_count-1]).removeClass('inactive').addClass('active');
 					current = slides_count-1;
 				}
-				
-			}
+				$('.carousel-container').trigger('slideChanged', [previous, current]);
+			}	
 
 			function nextSlide(){
 				$($slides[current]).addClass('inactive').removeClass('active');
-
+				var previous = current
 				if (current+1<slides_count){
 					$($slides[current+1]).removeClass('inactive').addClass('active');
 					current = current+1;
 				}else{
 					$($slides[0]).removeClass('inactive').addClass('active');
 					current = 0;
+				}
+				$('.carousel-container').trigger('slideChanged', [previous, current]);
+			}
+
+			function gotoSlide(index){
+				if (index !== current){
+					var previous = current;
+					$($slides[current]).addClass('inactive').removeClass('active');
+					$($slides[index]).addClass('active').removeClass('inactive');
+					current = index;
+					$('.carousel-container').trigger('slideChanged', [previous, current]);
 				}	
 			}
-			
-			function gotoSlide(index, $slides){
-				
-			}
-		}
 
-		
+		}
 
 		//build navigation bar according to the slides_count
 		function buildNavFooter(count){
