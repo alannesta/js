@@ -1,0 +1,111 @@
+<!doctype html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<script src="script/jquery-1.8.3.js"></script>
+<link rel="stylesheet" type="text/css" href="styles/bootstrap.css">
+<title>Drag and Drop</title>
+
+<style type="text/css">
+.draggable{
+	position: absolute;
+	width: 100px;
+	height: 100px;
+	background-color: red;
+}
+
+.draggable.dragging{
+	border: 1px solid black;
+}
+
+.dropzone{
+	position: absolute;
+	width: 100px;
+	height: 100px;
+	top:400px;
+	left:400px;
+	border: 1px dotted red;;
+}
+
+.dropzone.draggedover{
+	width: 120px;
+	height: 120px;
+}
+
+</style>
+
+</head>
+ 
+<body>
+	<div class="draggable" id="draggablediv" draggable = "true"></div>
+	<div id="dropzone" class="dropzone"></div>
+<script> 
+	
+	/* Native Version */
+
+	var draggable = document.getElementById('draggablediv');
+	var dropzone = document.getElementById('dropzone');
+
+	draggable.ondragstart = function(event){
+		event.dataTransfer.effectAllowed = "move";
+		event.dataTransfer.setData("text", "test");
+		$(this).addClass('dragging');
+	}
+
+	draggable.ondragend = function(event){
+		var x = event.clientX;
+		var y = event.clientY;
+		console.log(x);
+		console.log(y);
+		if (x>=360&&x<=440&&y>=460&&y<=540){
+			$(this).css('top', 400);
+			$(this).css('left', 400);
+		}
+			
+		$(this).removeClass('dragging');
+	}
+
+
+	dropzone.ondragover = function(event){
+		event.preventDefault();
+		$(this).addClass('draggedover');
+	}
+
+	dropzone.ondrop = function(event){
+		// event.preventDefault();
+		$(this).removeClass('draggedover');
+		var msg = event.dataTransfer.getData("text");
+		$(this).text(msg);
+		// console.log(msg);
+	}
+
+	dropzone.ondragleave = function(event){
+		$(this).removeClass('draggedover');
+	}
+
+	/* Jquery version, dataTransfer.setData/getData not working */
+
+	// $('.draggable').on('dragstart', function(e){
+	// 	var leftOffset = $(this).offset().left;
+	// 	var topOffset = $(this).offset().top
+		
+	// 	e.originalEvent.dataTransfer.setData("text/plain",
+	// 		(parseInt(leftOffset, 10)- e.originalEvent.clientX) + ',' + (parseInt(topOffset, 10) - e.originalEvent.clientY));
+	// 	$(this).addClass('dragging');
+
+	// });
+
+	// $('.draggable').on('dragend', function(e){
+	// 	var offsets = e.originalEvent.dataTransfer.getData("text/plain").split(',');
+
+	// 	$(this).removeClass('dragging');
+	// 	console.log(offsets);
+	// 	$(this).css('top', (parseInt(offsets[1], 10) + e.originalEvent.clientY));
+	// 	$(this).css('left', (parseInt(offsets[0], 10) + e.originalEvent.clientX));
+	// });
+
+	
+
+</script>
+</body>
+</html>
