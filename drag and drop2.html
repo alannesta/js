@@ -53,15 +53,7 @@
 	}
 
 	draggable.ondragend = function(event){
-		var x = event.clientX;
-		var y = event.clientY;
-		console.log(x);
-		console.log(y);
-		if (x>=400&&x<=500&&y>=480&&y<=620){
-			$(this).css('top', 400);
-			$(this).css('left', 400);
-		}
-			
+		//cannot get mouse position properly here, rather set the position on drop zone;
 		$(this).removeClass('dragging');
 	}
 
@@ -78,12 +70,13 @@
 	dropzone.ondrop = function(event){
 		// event.preventDefault();
 		$(this).removeClass('draggedover');
-		var msg = event.dataTransfer.getData("text");
-		console.log(msg);
+		$(draggable).css('top', 400).css('left', 400);
 		$(this).text('');
 		resetPosition();
-		// $(this).text(msg);
 		
+
+		var msg = event.dataTransfer.getData("text");
+		console.log(msg);			
 	}
 
 	dropzone.ondragleave = function(event){
@@ -148,7 +141,6 @@
 		});
 	}
 	
-
 </script>
 </body>
 </html>
