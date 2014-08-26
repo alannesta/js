@@ -48,7 +48,7 @@
 
 	draggable.ondragstart = function(event){
 		event.dataTransfer.effectAllowed = "move";
-		event.dataTransfer.setData("text", "test");
+		event.dataTransfer.setData("text", "Drop To See Magic!");
 		$(this).addClass('dragging');
 	}
 
@@ -57,7 +57,7 @@
 		var y = event.clientY;
 		console.log(x);
 		console.log(y);
-		if (x>=360&&x<=440&&y>=460&&y<=540){
+		if (x>=400&&x<=500&&y>=480&&y<=620){
 			$(this).css('top', 400);
 			$(this).css('left', 400);
 		}
@@ -65,22 +65,31 @@
 		$(this).removeClass('dragging');
 	}
 
+	dropzone.ondragenter = function(event){
+		enlargeByRatio(dropzone, 1.2);
+	}
 
 	dropzone.ondragover = function(event){
 		event.preventDefault();
 		$(this).addClass('draggedover');
+		$(this).text('drop to see magic!');
 	}
 
 	dropzone.ondrop = function(event){
 		// event.preventDefault();
 		$(this).removeClass('draggedover');
 		var msg = event.dataTransfer.getData("text");
-		$(this).text(msg);
-		// console.log(msg);
+		console.log(msg);
+		$(this).text('');
+		resetPosition();
+		// $(this).text(msg);
+		
 	}
 
 	dropzone.ondragleave = function(event){
 		$(this).removeClass('draggedover');
+		resetPosition();
+		$(this).text('');
 	}
 
 	/* Jquery version, dataTransfer.setData/getData not working */
@@ -103,7 +112,41 @@
 	// 	$(this).css('top', (parseInt(offsets[1], 10) + e.originalEvent.clientY));
 	// 	$(this).css('left', (parseInt(offsets[0], 10) + e.originalEvent.clientX));
 	// });
+	
+	//scale the element which is absolute positioned
+	function enlargeByRatio(element, ratio){
+		if(element instanceof Element && typeof ratio ==='number'){
+			var $element = $(element);
+			var height = $element.height();
+			var width = $element.width();
 
+			var center = {x: 0, y: 0};
+			center.x = $element.offset().left + width/2;
+			center.y = $element.offset().top + height/2;
+			// console.log(center.x+ ',' + center.y);
+
+			var newtop = center.y - height*ratio/2;
+			var newleft = center.x - width*ratio/2;
+			$element.css({
+				'top': newtop,
+				'left': newleft,
+				'height': height*ratio,
+				'width': width*ratio
+			});
+		}else{
+			throw "not an elment error";
+			// return false;
+		}
+	}
+
+	function resetPosition(){
+		$(dropzone).css({
+			'top': 400,
+			'left': 400,
+			'height': 100,
+			'width':100
+		});
+	}
 	
 
 </script>
