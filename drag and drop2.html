@@ -37,25 +37,39 @@
 </head>
  
 <body>
-	<div class="draggable" id="draggablediv" draggable = "true"></div>
+	<div class="draggable" id="draggablediv" draggable="true"></div>
+	<img src="img/apple_store.jpeg" id="draggableimg" draggable="true">
 	<div id="dropzone" class="dropzone"></div>
 <script> 
 	
 	/* Native Version */
 
-	var draggable = document.getElementById('draggablediv');
-	var dropzone = document.getElementById('dropzone');
+	// var draggable = document.getElementById('draggable');
+	// var dropzone = document.getElementById('dropzone');
 
-	draggable.ondragstart = function(event){
-		event.dataTransfer.effectAllowed = "move";
-		event.dataTransfer.setData("text", "Drop To See Magic!");
-		$(this).addClass('dragging');
-	}
+	$("[draggable = 'true']").each(function(){
+		this.ondragstart = function(event){
+			event.dataTransfer.effectAllowed = "move";
+			event.dataTransfer.setData("elementid", $(this).attr('id'));
+			$(this).addClass('dragging');
+		}
+		this.ondragend = function(event){
+			//cannot get mouse position properly here, rather set the position on drop zone;
+			$(this).removeClass('dragging');
+		}
 
-	draggable.ondragend = function(event){
-		//cannot get mouse position properly here, rather set the position on drop zone;
-		$(this).removeClass('dragging');
-	}
+	});
+
+	// draggable.ondragstart = function(event){
+	// 	event.dataTransfer.effectAllowed = "move";
+	// 	event.dataTransfer.setData("text", "Drop To See Magic!");
+	// 	$(this).addClass('dragging');
+	// }
+
+	// draggable.ondragend = function(event){
+	// 	//cannot get mouse position properly here, rather set the position on drop zone;
+	// 	$(this).removeClass('dragging');
+	// }
 
 	dropzone.ondragenter = function(event){
 		enlargeByRatio(dropzone, 1.2);
@@ -69,14 +83,14 @@
 
 	dropzone.ondrop = function(event){
 		// event.preventDefault();
+		var id = event.dataTransfer.getData("elementid");
 		$(this).removeClass('draggedover');
-		$(draggable).css('top', 400).css('left', 400);
+		// $(draggable).css('top', 400).css('left', 400);
+		dropDraggable($("#"+id)[0]);
 		$(this).text('');
 		resetPosition();
 		
-
-		var msg = event.dataTransfer.getData("text");
-		console.log(msg);			
+		console.log(id);		
 	}
 
 	dropzone.ondragleave = function(event){
@@ -85,27 +99,22 @@
 		$(this).text('');
 	}
 
-	/* Jquery version, dataTransfer.setData/getData not working */
+	// utility functions
+	function dropDraggable(element){
+		console.log(element);
+		if(element instanceof Element){
+			if ($(element).css('position') != 'absolute'){
+				$(element).css('position', 'absolute');
+			}
+			$(element).css({
+				'top': 400,
+				'left': 400
+			});
+		}else{	
+			return false;
+		}
+	}
 
-	// $('.draggable').on('dragstart', function(e){
-	// 	var leftOffset = $(this).offset().left;
-	// 	var topOffset = $(this).offset().top
-		
-	// 	e.originalEvent.dataTransfer.setData("text/plain",
-	// 		(parseInt(leftOffset, 10)- e.originalEvent.clientX) + ',' + (parseInt(topOffset, 10) - e.originalEvent.clientY));
-	// 	$(this).addClass('dragging');
-
-	// });
-
-	// $('.draggable').on('dragend', function(e){
-	// 	var offsets = e.originalEvent.dataTransfer.getData("text/plain").split(',');
-
-	// 	$(this).removeClass('dragging');
-	// 	console.log(offsets);
-	// 	$(this).css('top', (parseInt(offsets[1], 10) + e.originalEvent.clientY));
-	// 	$(this).css('left', (parseInt(offsets[0], 10) + e.originalEvent.clientX));
-	// });
-	
 	//scale the element which is absolute positioned
 	function enlargeByRatio(element, ratio){
 		if(element instanceof Element && typeof ratio ==='number'){
@@ -140,7 +149,30 @@
 			'width':100
 		});
 	}
+
+
+	/* Jquery version, dataTransfer.setData/getData not working */
+
+	// $('.draggable').on('dragstart', function(e){
+	// 	var leftOffset = $(this).offset().left;
+	// 	var topOffset = $(this).offset().top
+		
+	// 	e.originalEvent.dataTransfer.setData("text/plain",
+	// 		(parseInt(leftOffset, 10)- e.originalEvent.clientX) + ',' + (parseInt(topOffset, 10) - e.originalEvent.clientY));
+	// 	$(this).addClass('dragging');
+
+	// });
+
+	// $('.draggable').on('dragend', function(e){
+	// 	var offsets = e.originalEvent.dataTransfer.getData("text/plain").split(',');
+
+	// 	$(this).removeClass('dragging');
+	// 	console.log(offsets);
+	// 	$(this).css('top', (parseInt(offsets[1], 10) + e.originalEvent.clientY));
+	// 	$(this).css('left', (parseInt(offsets[0], 10) + e.originalEvent.clientX));
+	// });
 	
+		
 </script>
 </body>
 </html>
