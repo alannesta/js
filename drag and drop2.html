@@ -8,10 +8,13 @@
 
 <style type="text/css">
 .draggable{
-	position: absolute;
 	width: 100px;
 	height: 100px;
 	background-color: red;
+}
+
+.blue{
+	background-color: blue;
 }
 
 .draggable.dragging{
@@ -37,8 +40,8 @@
 </head>
  
 <body>
-	<div class="draggable" id="draggablediv" draggable="true"></div>
-	<img src="img/apple_store.jpeg" id="draggableimg" draggable="true">
+	<div class="draggable" id="draggablered" draggable="true"></div>
+	<div class="draggable blue" id="draggableblue" draggable="true"></div>
 	<div id="dropzone" class="dropzone"></div>
 <script> 
 	
@@ -85,8 +88,7 @@
 		// event.preventDefault();
 		var id = event.dataTransfer.getData("elementid");
 		$(this).removeClass('draggedover');
-		// $(draggable).css('top', 400).css('left', 400);
-		dropDraggable($("#"+id)[0]);
+		dropDraggable($("#"+id)[0]);		//convert jquery object to plain html element
 		$(this).text('');
 		resetPosition();
 		
@@ -101,7 +103,6 @@
 
 	// utility functions
 	function dropDraggable(element){
-		console.log(element);
 		if(element instanceof Element){
 			if ($(element).css('position') != 'absolute'){
 				$(element).css('position', 'absolute');

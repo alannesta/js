@@ -113,6 +113,7 @@ ul{
 			var $slides = $(this).find('li');
 			var slides_count = $slides.length;
 			var current = 0;
+			var autoPlay;
 
 			//init, hide all slides except for the first one
 			$slides.each(function(index){
@@ -123,6 +124,7 @@ ul{
 
 			buildNavFooter(slides_count);
 			buildNavArrow();
+			autoPlay = setInterval(nextSlide, 1000);
 
 			//bind navigation functionality to arrows and navigation bars
 			$(".arrow-left").on('click', function(){
@@ -136,7 +138,19 @@ ul{
 				$(this).on('click', function(){
 					gotoSlide(index);
 				})
-			})
+			});
+
+			//autoplay settings
+			$(this).on('mouseover', function(){
+				clearInterval(autoPlay);
+				// autoPlay = null;
+			});
+
+			$(this).on('mouseleave', function(){
+				console.log('mouseleave');
+				autoPlay = setInterval(nextSlide, 1000);
+			});
+			
 
 			//listen to custom events
 			$('.carousel-container').on('slideChanged', function(event, lastIndex, newIndex){
