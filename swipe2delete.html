@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta charset="utf-8" />
-<title>Carousel Demo</title>
+<title>Swipe to Delete</title>
 <script src="script/jquery-1.8.3.js"></script>
 <script src="script/hammer.js"></script>
 <link rel="stylesheet" href="styles/bootstrap.css">
@@ -54,7 +54,7 @@ li{
 </style>
 </head>
 <body>
-	<ul class="news-list">
+	<ul id="news-list" class="news-list">
 		<li class = "news-container clearfix">
 			<div class="news-img">
 				<img src="img/slide1.png" alt="">
@@ -130,6 +130,23 @@ li{
 </body>
 <script>
 	
+	var list = $('.news-container');
+	var hammeredListItem = [];
+	// console.log($('.news-container'));
+	for (var i = 0; i<list.length; i++){
+		hammeredListItem.push(new Hammer(list[i]));
+		hammeredListItem[i].on('swipeleft', swipeHandler);
+	}
+	console.log(hammeredListItem);
+
+
+	// var listItem = new Hammer()
+
+	function swipeHandler(e){
+		// console.log(e.target);
+		// alert('swiped');
+	}
+
 
 </script>
 </html>
