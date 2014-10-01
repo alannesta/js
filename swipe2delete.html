@@ -13,15 +13,9 @@ ul{
 
 li{
 	width:400px;
-	/*height:60px;*/
-	/*clear: both;*/
 	margin-bottom: 10px;
+	/*overflow: hidden;*/
 }
-
-/*li:before, li:after {
-	clear:both;
-	content: '';
-}*/
 
 .news-container{
 	/*width:40%;*/
@@ -29,6 +23,7 @@ li{
 
 .news-img {
 	float:left;
+	/*display: inline-block;*/
 	width:30%;
 }
 .news-img img{
@@ -40,6 +35,7 @@ li{
 .news-contentcontainer{
 	padding:10px;
 	float:left;
+	/*display: inline-block;*/
 	width: 70%
 }
 
@@ -49,6 +45,10 @@ li{
 
 .news-author blockquote{
 	font-size: 12px;
+}
+
+.operations-hidden{
+	float:right;
 }
 
 </style>
@@ -69,6 +69,7 @@ li{
 				</div>
 			</div>
 		</li>
+		<div class="operations-hidden">Hide</div>
 		<li class = "news-container clearfix">
 			<div class="news-img">
 				<img src="img/slide2.png" alt="">
