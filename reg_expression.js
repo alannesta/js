@@ -1,13 +1,13 @@
-var url1 = "https://help.github.com/articles/set-up-git"
+var url1 = "https://help.github.com/articles/set-up-git.js"
 var url2 = "https://gist.github.com/help"
-var url3 = "http://gist.github.com/discover.png"
+var url3 = "http://gist.github.com/discover.jpg"
 var url4 = "http://www.github.com/moneycloud.png"
 
 var reg = /(?:https|http):\/\/.*github\.com.*[^.png | .jpg | .js | .css | ']/
 var reg2 = /(?:https|http):\/\/.*github\.com.*[^.](?!\.png)/
 
-var reg3 = /(?:https|http):\/\/.*github\.com.*[^(\.png)]$/  //not ending with . or p or n or g....
-var reg4 = /^(?!.*\.png$).*github.com.*$/		//not ending with png
+var reg3 = /(?:https|http):\/\/.*github\.com.*[^\.png]$/  //not ending with . or p or n or g....
+var reg4 = /^(?!.*\.png$|.*\.jpg$|.*\.js$).*github.com.*$/		//not ending with png, jpg, js
 
 
 
