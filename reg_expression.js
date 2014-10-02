@@ -44,7 +44,7 @@ var regSecond = /\.jpg|\.png|\.js|\.css/	// do another round of test...
 
 /**---------------test cases-------------------*/
 
-// global vs unglobal
+/**------------global vs unglobal---------------*/
 
 // var re = /\w+\s/g;		//['fee ', 'fi ', 'fo ', 'fum ']---> search throughout the string, return all matches
 // var re2 = /\w+\s/		// only returns the first match
@@ -52,7 +52,7 @@ var regSecond = /\.jpg|\.png|\.js|\.css/	// do another round of test...
 // var myArray = str.match(re);
 // console.log(myArray);
 
-//greedy vs lazy
+/**------------greedy vs lazy---------------*/
 
 // var url4 = "http://www.github.com/moneycloud.png"
 // var reg3 = /.*moneycloud(?!.png)/	//null
@@ -60,11 +60,21 @@ var regSecond = /\.jpg|\.png|\.js|\.css/	// do another round of test...
 // var reg3 = /.*?moneycloud(?!.png)/	//null ---> !!! ungreedy mode, match as few as possible
 // console.log(url4.match(reg3));
 
-// [] character set test
-var str = "taipingyangdefeng"
-var re = /[ipv|feng]/g 		//you cannot possibly group a word in a [], all matched by character...
-var re1 = /[(ip)|(fe)]/g
-console.log(str.match(re1));
+/**------------[xyz]---------------*/
+// var str = "taipingyangdefeng"
+// var re = /[ipv|feng]/g 		//you cannot possibly group a word in a [], all matched by character...
+// var re1 = /[(ip)|(fe)]/g
+// console.log(str.match(re1));
+
+/**------------[^xyz]---------------*/
+// var str1 = "<input type='password' max-length = 10>"
+// var str2 = "<input type='username'><textarea type='password' max-length=10>"
+// var re = /<input[^>]*password.*>/g 	 	//!!pay attention to the * after [^>] 
+
+// console.log(str1.match(re));		//matched!
+// console.log(str2.match(re));		//null
+
+
 
 
 
