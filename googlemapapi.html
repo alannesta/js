@@ -1,0 +1,68 @@
+<!doctype html>
+<html>
+<head>
+	<title>GoOgle Map</title>
+	<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBaydTxzKE8DOJ9DxpypVw5mpcwmuCmWr4"></script>
+</head>
+<body>
+	<div id="map-canvas" style = "width: 100%; height:800px"></div>
+</body>
+	<script type="text/javascript">
+	function initialize() {
+		var myLatlng = new google.maps.LatLng(45.363882,285.044922);
+		var mapOptions = {
+			zoom: 8,
+			center: myLatlng
+		}
+		var map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
+
+		var marker = new google.maps.Marker({
+			position: myLatlng,
+			map: map,
+			title: 'RIA',
+			animation: google.maps.Animation.DROP
+		});
+
+  		var pinIcon = new google.maps.MarkerImage(
+  			"http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=%E2%80%A2",
+  			null,
+  			null,
+  			null,
+  			new google.maps.Size(42, 68));
+  		marker.setIcon(pinIcon);
+
+		// var contentString = '<div id="content">'+
+		// '<div id="siteNotice">'+
+		// '</div>'+
+		// '<h1 id="firstHeading" class="firstHeading">Uluru</h1>'+
+		// '<div id="bodyContent">'+
+		// '<p><b>Uluru</b>, also referred to as <b>Ayers Rock</b>, is a large ' +
+		// 'sandstone rock formation in the southern part of the '+
+		// 'Northern Territory, central Australia. It lies 335&#160;km (208&#160;mi) '+
+		// 'south west of the nearest large town, Alice Springs; 450&#160;km '+
+		// '(280&#160;mi) by road. Kata Tjuta and Uluru are the two major '+
+		// 'features of the Uluru - Kata Tjuta National Park. Uluru is '+
+		// 'sacred to the Pitjantjatjara and Yankunytjatjara, the '+
+		// 'Aboriginal people of the area. It has many springs, waterholes, '+
+		// 'rock caves and ancient paintings. Uluru is listed as a World '+
+		// 'Heritage Site.</p>'+
+		// '<p>Attribution: Uluru, <a href="http://en.wikipedia.org/w/index.php?title=Uluru&oldid=297882194">'+
+		// 'http://en.wikipedia.org/w/index.php?title=Uluru</a> '+
+		// '(last visited June 22, 2009).</p>'+
+		// '</div>'+
+		// '</div>';
+		var contentString = '<div style="font-size: 30px">RIA</div>' + '<div style="float: left; width:50%"><img src="http://maps.googleapis.com/maps/api/streetview?size=350x350&location=40.720032,-73.988354&fov=100&heading=235&pitch=10"/ style="height:100px; width:150px"></div>' + '<div style="font-size: 20px;float:left; width:50%">10340 Cote-de-Saint Luc, H2K 3V5</div>' + '<div style="font-size: 20px; clear:left"> Tel: 514-540-3221</div>'
+
+		var infowindow = new google.maps.InfoWindow({
+			content: contentString,
+			maxWidth: 700
+		});
+
+		google.maps.event.addListener(marker, 'click', function() {
+    		infowindow.open(map,marker);
+  		});
+	}
+
+	google.maps.event.addDomListener(window, 'load', initialize);
+	</script>
+</html>
