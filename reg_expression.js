@@ -68,13 +68,18 @@ var regSecond = /\.jpg|\.png|\.js|\.css/	// do another round of test...
 
 /**------------[^xyz]---------------*/
 // var str1 = "<input type='password' max-length = 10>"
+// var str3 = "<input type='username' max-length = 10>"
 // var str2 = "<input type='username'><textarea type='password' max-length=10>"
-// var re = /<input[^>]*password.*>/g 	 	//!!pay attention to the * after [^>] 
+// var re = /<input[^>]*(password|username).*?>/g 	 	//!!pay attention to the * after [^>] 
 
 // console.log(str1.match(re));		//matched!
 // console.log(str2.match(re));		//null
 
-
-
+/**------------group match with or----------*/
+// var str = '123456789';
+// var re = /1234|567/g   		//[1234,567]
+// var re = /12(3|4)567/g		//null
+// var re = /12(34|4)567/g 	//[1234567]	
+// console.log(str.match(re));
 
 
