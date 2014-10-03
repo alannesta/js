@@ -1,6 +1,6 @@
 'use strict';
 
-/** ------------- arr operations ---------------*/
+/** ------------- arr/str operations ---------------*/
 
 //The map() method creates a new array with the results of calling a provided function on every element in this array.
 // var arr = [1,2,3,4,5];
@@ -34,25 +34,30 @@
 // console.log(arr2);
 
 // slice vs splice
+// var arr = ['hello', 'world', 'nihao', 'shijie'];
+// //slice(start, end)
+// var temp = arr.slice(1,2);		//shallow copy, will not change the arr itself
+// temp[0] = "changed";
+// console.log(temp);		
+// console.log(arr);		//[ 'hello', 'world', 'nihao', 'shijie' ]
+
+// var arr2 = ['hello', 'world', 'nihao', 'shijie'];
+// //slice(startindex, count)
+// console.log(arr2.splice(1,2));	//[ 'hello', 'world' ]  change the original arr
+// console.log(arr2);		//[ 'nihao', 'shijie' ]
+
+
+// The join() method joins all elements of an array into a string.
 var arr = ['hello', 'world', 'nihao', 'shijie'];
-//slice(start, end)
-var temp = arr.slice(1,2);		//shallow copy, will not change the arr itself
-temp[0] = "changed";
-console.log(temp);		
-console.log(arr);		//[ 'hello', 'world', 'nihao', 'shijie' ]
-
-var arr2 = ['hello', 'world', 'nihao', 'shijie'];
-//slice(startindex, count)
-console.log(arr2.splice(1,2));	//[ 'hello', 'world' ]  change the original arr
-console.log(arr2);		//[ 'nihao', 'shijie' ]
+console.log(arr.join(' '));		//the parameter should be the seperator, default is ','
 
 
-
-
-
-
-/**--------------String operations---------------*/
-
+// the opposite of join is split(String.prototype.split)
+//The split() method splits a String object into an array of strings by separating the string into substrings.
+var names = "Harry Trump ;Fred Barney; Helen Rigby ; Bill Abel ;Chris Hand ";
+var re = /\s*;\s*/;
+var nameList = names.split(re);
+console.log(nameList);
 
 
 
