@@ -1,0 +1,20 @@
+<!doctype html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<script src="script/jquery-1.8.3.js"></script>
+<title>before unload</title>
+</head>
+ 
+<body>
+	
+<script>
+	//could be used to persist some information or do some clean up job;
+	window.onbeforeunload = function(){
+		console.log("user close")
+		localStorage.setItem("session", "");
+		return "Are you sure?";		//alert("xxx"), confirm("xxx") will not work
+	}
+</script>
+</body>
+</html>
