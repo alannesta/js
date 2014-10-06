@@ -1,0 +1,107 @@
+<!doctype html>
+<html>
+<head>
+	<title>GoOgle Map</title>
+	<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBaydTxzKE8DOJ9DxpypVw5mpcwmuCmWr4"></script>
+	<script type="text/javascript" src="script/jquery-1.8.3.js"></script>
+</head>
+<body>
+	<div id="map-canvas" style = "width: 100%; height:800px"></div>
+</body>
+	<script type="text/javascript">
+
+	var nearbyMerchant = [];
+	var map = null;
+
+	function getCurrentPosition(){
+		navigator.geolocation.getCurrentPosition(function success(position) {
+			initialize(position.coords.latitude, position.coords.longitude);
+			getCashout();
+		}, function error(err){
+			console.log("get location failed");
+		});
+	}
+
+	function getCashout(){
+		var request = $.ajax({
+			url: "http://newdevapi.moneycloud.me/moneycloud-rest/v1/consumers/merchants/search?pagesize=100&current=0&longitude=-73.55399200000001&latitude=45.508669999999995&name=&categoryid=&favourite=&type=STANDARD&radius=5000",
+			type: "GET",
+			beforeSend: function (xhr) {
+    			xhr.setRequestHeader('session', '23713624-2ccd-4d8e-9a7c-50fd2f33aec4');
+			}
+		});
+		// request.setRequestHeader("session", "23713624-2ccd-4d8e-9a7c-50fd2f33aec4");
+		request.done(function(response){
+			// console.log(response);
+			if(response&&response.result&&response.result.dataset){
+				response.result.dataset.forEach(function(merchantobj, index){
+					// console.log(merchantobj);
+					nearbyMerchant.push({latitude: merchantobj.merchantLatitude, longitude: merchantobj.merchantLongitude});
+				});
+			}
+			// console.log(nearbyMerchant);
+			addMarkers(nearbyMerchant);
+		}).error(function(err){
+			console.log(err);
+		})
+	}
+	
+	function initialize(latitude, longitude) {
+		var myLatlng = new google.maps.LatLng(latitude, longitude);
+		var mapOptions = {
+			zoom: 18,
+			center: myLatlng
+		}
+		map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
+
+		var marker = new google.maps.Marker({
+			position: myLatlng,
+			map: map,
+			title: 'RIA',
+			animation: google.maps.Animation.DROP
+		});
+
+  		var pinIcon = new google.maps.MarkerImage(
+  			"img/bank.png",
+  			null,
+  			null,
+  			null,
+  			new google.maps.Size(42, 42));
+  		marker.setIcon(pinIcon);
+
+		
+		var contentString = '<div style="font-size: 30px">RIA</div>' + '<div style="float: left; width:50%"><img src="http://maps.googleapis.com/maps/api/streetview?size=350x350&location=40.720032,-73.988354&fov=100&heading=235&pitch=10"/ style="height:100px; width:150px"></div>' + '<div style="font-size: 20px;float:left; width:50%">10340 Cote-de-Saint Luc, H2K 3V5</div>' + '<div style="font-size: 20px; clear:left"> Tel: 514-540-3221</div>'
+
+		var infowindow = new google.maps.InfoWindow({
+			content: contentString,
+			maxWidth: 700
+		});
+
+		google.maps.event.addListener(marker, 'click', function() {
+    		infowindow.open(map,marker);
+  		});
+	}
+
+	function addMarkers(arr){
+		var markers= [];
+		arr.forEach(function(coord, index){
+			var position = new google.maps.LatLng(coord.latitude, coord.longitude);
+			var marker = new google.maps.Marker({
+				position: position,
+				map: map,
+				title: 'RIA',
+				animation: google.maps.Animation.DROP
+			});
+			var pinIcon = new google.maps.MarkerImage(
+				"img/bank.png",
+				null,
+				null,
+				null,
+				new google.maps.Size(42, 42));
+			marker.setIcon(pinIcon);
+		})
+	}
+
+	google.maps.event.addDomListener(window, 'load', getCurrentPosition);
+	</script>
+</html>
