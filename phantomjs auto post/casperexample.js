@@ -1,18 +1,24 @@
 var links = [];
 var casper = require('casper').create();
+var loginUrl = "http://www.sinoquebec.com/bbs/index.php";
+var replyPostUrl = "http://www.sinoquebec.com/bbs/newreply.php?p=3439304&noquote=1";
+var postlistUrl = "http://www.sinoquebec.com/bbs/showthread.php?t=1039103"
 
-casper.start('http://www.sinoquebec.com/bbs/index.php', function() {
+var msg = casper.cli.args.slice(0,1)[0];
+
+//login
+casper.start(loginUrl, function() {
 	console.log('step1 finish');
     // search for 'casperjs' from google form
     this.fill('#navbar_loginform', {
-    	vb_login_username: "alannesta",
+    	vb_login_username: "niaoyuetuzi",
     	vb_login_password: "112233"
     }, true);
 });
 
-
-casper.thenOpen("http://www.sinoquebec.com/bbs/newreply.php?p=3435485&noquote=1", function(){
-	console.log('step2 finish');
+//reply to the post
+casper.thenOpen(replyPostUrl, function(){
+	
 	var token = casper.evaluate(function(){
 		return document.querySelector("input[name='securitytoken']").getAttribute("value");
 	});
@@ -20,23 +26,25 @@ casper.thenOpen("http://www.sinoquebec.com/bbs/newreply.php?p=3435485&noquote=1"
 		console.log("login failed, please try again");
 	}else{
 		casper.fill("form[name='vbform']", {
-			title: "我问下朋友呢",
-			message: "我问下朋友呢"
+			title: msg,
+			message: msg
 		}, true)
 	}
-	
+	console.log('step2 finish');
 })
 
-casper.thenOpen("http://www.sinoquebec.com/bbs/showthread.php?t=1037992", function(){
-	console.log('step3 finish');
+//verify if posting succeeds by checking the last post time
+casper.thenOpen(postlistUrl, function(){
+	
 	var timestamp = casper.evaluate(function(){
 		// return document.querySelector("ol#posts:first-child span.time").outerHTML;
 		var nodes = document.querySelectorAll("li[id^='post'] span.time");
 		// return nodes[nodes.length-1].getAttribute("id");
-		return nodes[nodes.length-1].outerHTML;
+		return nodes[nodes.length-1].outerHTML+"---- "+nodes[0].outerHTML;;
 
 	});
 	console.log(timestamp);
+	console.log('step3 finish');
 })
 
 
