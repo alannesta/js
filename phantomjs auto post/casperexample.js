@@ -14,7 +14,7 @@ var iaskVerifyUrl = "";
 var msg = casper.cli.args.slice(0,1)[0];
 casper.start();
 
-login
+//login
 casper.start(loginUrl, function() {
     this.fill('#navbar_loginform', {
     	vb_login_username: "niaoyuetuzi",
@@ -23,7 +23,7 @@ casper.start(loginUrl, function() {
     console.log('login finish');
 });
 
-wait for the redirect and setcookies
+//wait for the redirect and setcookies
 casper.wait(1000, function() {
     this.echo("Wait for the login process to finish...");
 });
