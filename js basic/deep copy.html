@@ -18,11 +18,12 @@
     }
     
     var arr = [1,2,3,4,5];
-    delete arr[4];
+    delete arr[2];
+    console.log(arr[2]);    //will be set to undefined, will not totally remove the element from arr
 
-    $.extend(source, arr);
+    $.extend(source, dest);
     delete dest['lastname'];
-    //console.log(dest);      //no lastname
+    console.log(dest);      //no lastname
     console.log(source);    //has lastname
 
 </script>
