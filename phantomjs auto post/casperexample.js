@@ -1,3 +1,6 @@
+/**
+	a working example  of auto reply by using casper
+*/
 var links = [];
 var casper = require('casper').create();
 
