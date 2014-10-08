@@ -1,0 +1,30 @@
+<!doctype = html>
+<html>
+<head>
+	<script type="text/javascript" src="script/jquery-1.8.3.js"></script>
+</head>
+<body>
+	<!-- Problem: Write jQuery code to alert a message box when you click on a paragraph with the content of paragraph.-->
+	<div>
+		<p>sdasdqw</p>
+		<p>wdqd</p>
+		<p>wqdqwd</p>
+		<p>dqdqwdqw</p>
+	</div>
+
+<script type="text/javascript">
+	// $('div').on('click', function(e){
+	// 	// alert(e.target.innerHTML);
+	// 	alert($(e.target).html());
+	// 	// e.stopPropagation();
+	// });
+
+	$('div').find('p').each(function(){
+		$(this).on('click', function(){
+			alert($(this).html());
+		})
+	})
+</script>
+</body>
+</html>
+
