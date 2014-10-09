@@ -28,6 +28,30 @@ function findMax(arr){
 console.log(findMax([1,2,333,4,52]));
 
 /*
+	Currying function Example
+*/
+Function.prototype.curry = function(){
+	var self = this;
+	params = [].slice.call(arguments);
+	return function(args){
+
+		self.apply(self, params.concat(args))
+	}
+}
+
+function converter(factor, symbol, input){
+  console.log(input * factor + symbol);
+  return input * factor + symbol;
+}
+
+var milesToKm = converter.curry(1.62, 'km');
+milesToKm(3); //result here
+
+var kgToLb = converter.curry(2.2, 'lb');
+kgToLb(3); //result here 
+
+
+/*
 	shim: how bind works
 */
 
