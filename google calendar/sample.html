@@ -1,20 +1,20 @@
 <html>
 <head></head>
 <body>
-	<!--Add a button for the user to click to initiate auth sequence -->
-	<button id="authorize-button" style="visibility: hidden">Authorize</button>
+  <!--Add a button for the user to click to initiate auth sequence -->
+  <button id="authorize-button" style="visibility: hidden">Authorize</button>
   <div id = "content"></div>
-	<script type="text/javascript">
+  <script type="text/javascript">
 
-	var clientId = '1019400455574-lqq6slo5jd224r3r1m1he4urd2k9ast1.apps.googleusercontent.com';
+  var clientId = '1019400455574-lqq6slo5jd224r3r1m1he4urd2k9ast1.apps.googleusercontent.com';
 
-	var apiKey = 'AIzaSyBaydTxzKE8DOJ9DxpypVw5mpcwmuCmWr4';
+  var apiKey = 'AIzaSyBaydTxzKE8DOJ9DxpypVw5mpcwmuCmWr4';
 
-	// var scopes = 'https://www.googleapis.com/auth/plus.me';
+  // var scopes = 'https://www.googleapis.com/auth/plus.me';
   // var scopes = "https://www.google.com/calendar/feeds/";
   var scopes = "https://www.googleapis.com/auth/calendar";
 
-	function handleClientLoad() {
+  function handleClientLoad() {
         // Step 2: Reference the API key
         console.log("1");
         gapi.client.setApiKey(apiKey);
@@ -22,22 +22,22 @@
     }
 
     function checkAuth() {
-    	gapi.auth.authorize({client_id: clientId, scope: scopes, immediate: true}, handleAuthResult);
+      gapi.auth.authorize({client_id: clientId, scope: scopes, immediate: true}, handleAuthResult);
     }
 
     function handleAuthResult(authResult) {
 
-    	var authorizeButton = document.getElementById('authorize-button');
-    	if (authResult && !authResult.error) {
+      var authorizeButton = document.getElementById('authorize-button');
+      if (authResult && !authResult.error) {
         console.log("2-1");
-    		authorizeButton.style.visibility = 'hidden';
-    		makeApiCall();
-    	} else {
+        authorizeButton.style.visibility = 'hidden';
+        makeApiCall();
+      } else {
         console.log("2-2");
         console.log(authResult.error);
-    		authorizeButton.style.visibility = '';
-    		authorizeButton.onclick = handleAuthClick;
-    	}
+        authorizeButton.style.visibility = '';
+        authorizeButton.onclick = handleAuthClick;
+      }
     }
 
     function handleAuthClick(event) {
@@ -48,16 +48,41 @@
 
       // Load the API and make an API call.  Display the results on the screen.
       function makeApiCall() {
-      	console.log("4");
+        console.log("4");
         //load calendar api
-        gapi.client.load('calendar', 'v3', function() { 
-          var request = gapi.client.calendar.events.list({ 
-              'calendarId': 'primary' 
-          }); 
-          request.execute(function(resp) { 
-              console.log (resp);
-          }); 
-        }); 
+        gapi.client.load('calendar', 'v3', function() {
+
+          //get all calendar events
+          // var request = gapi.client.calendar.events.list({ 
+          //     'calendarId': 'primary' 
+          // }); 
+          // request.execute(function(resp) { 
+          //     console.log (resp);
+          // });
+
+          //create a calendar event
+          var resource = {
+            "summary": "Photo Taking Events",
+            "location": "2092 Rue Bercy",
+            "start": {
+              "dateTime": "2014-10-16T10:00:00.000-07:00"
+            },
+            "end": {
+              "dateTime": "2014-10-16T10:25:00.000-07:00"
+            }
+          };
+          var request2 = gapi.client.calendar.events.insert({
+            'calendarId': 'primary',
+            'resource': resource
+          });
+          request2.execute(function(resp) {
+            console.log(resp);
+          });
+
+
+        });
+
+        
 
 
 
@@ -65,22 +90,22 @@
       //   gapi.client.load('plus', 'v1').then(function() {
       //     // Step 5: Assemble the API request
       //     var request = gapi.client.plus.people.get({
-      //     	'userId': 'me'
+      //      'userId': 'me'
       //     });
       //     // Step 6: Execute the API request
 
       //     request.then(function(resp) {
       //       console.log("after auth");
       //       console.log(resp);
-      //     	var heading = document.createElement('h4');
-      //     	var image = document.createElement('img');
-      //     	image.src = resp.result.image.url;
-      //     	heading.appendChild(image);
-      //     	heading.appendChild(document.createTextNode(resp.result.displayName));
+      //      var heading = document.createElement('h4');
+      //      var image = document.createElement('img');
+      //      image.src = resp.result.image.url;
+      //      heading.appendChild(image);
+      //      heading.appendChild(document.createTextNode(resp.result.displayName));
 
-      //     	document.getElementById('content').appendChild(heading);
+      //      document.getElementById('content').appendChild(heading);
       //     }, function(reason) {
-      //     	console.log('Error: ' + reason.result.error.message);
+      //      console.log('Error: ' + reason.result.error.message);
       //     });
       // });
     }
