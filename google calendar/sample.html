@@ -1,0 +1,72 @@
+<html>
+<head></head>
+<body>
+	<!--Add a button for the user to click to initiate auth sequence -->
+	<button id="authorize-button" style="visibility: hidden">Authorize</button>
+	<script type="text/javascript">
+
+	var clientId = '1019400455574-lqq6slo5jd224r3r1m1he4urd2k9ast1.apps.googleusercontent.com';
+
+	var apiKey = 'AIzaSyBaydTxzKE8DOJ9DxpypVw5mpcwmuCmWr4';
+
+	var scopes = 'https://www.googleapis.com/auth/plus.me';
+
+	function handleClientLoad() {
+		console.log("1");
+        // Step 2: Reference the API key
+        gapi.client.setApiKey(apiKey);
+        window.setTimeout(checkAuth,1);
+    }
+
+    function checkAuth() {
+    	console.log("2");
+    	gapi.auth.authorize({client_id: clientId, scope: scopes, immediate: true}, handleAuthResult);
+    }
+
+    function handleAuthResult(authResult) {
+
+    	var authorizeButton = document.getElementById('authorize-button');
+    	if (authResult && !authResult.error) {
+    		console.log("3-1");
+    		authorizeButton.style.visibility = 'hidden';
+    		makeApiCall();
+    	} else {
+    		console.log("3-2");
+    		authorizeButton.style.visibility = '';
+    		authorizeButton.onclick = handleAuthClick;
+    	}
+    }
+
+    function handleAuthClick(event) {
+        // Step 3: get authorization to use private data
+        gapi.auth.authorize({client_id: clientId, scope: scopes, immediate: false}, handleAuthResult);
+        return false;
+    }
+
+      // Load the API and make an API call.  Display the results on the screen.
+      function makeApiCall() {
+      	console.log("4");
+        // Step 4: Load the Google+ API
+        gapi.client.load('plus', 'v1').then(function() {
+          // Step 5: Assemble the API request
+          var request = gapi.client.plus.people.get({
+          	'userId': 'me'
+          });
+          // Step 6: Execute the API request
+          request.then(function(resp) {
+          	var heading = document.createElement('h4');
+          	var image = document.createElement('img');
+          	image.src = resp.image.url;
+          	heading.appendChild(image);
+          	heading.appendChild(document.createTextNode(resp.result.displayName));
+
+          	document.getElementById('content').appendChild(heading);
+          }, function(reason) {
+          	console.log('Error: ' + reason.result.error.message);
+          });
+      });
+    }
+    </script>
+    <script src="https://apis.google.com/js/client.js?onload=handleClientLoad"></script>
+</body>
+</html>

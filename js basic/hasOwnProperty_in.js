@@ -42,3 +42,20 @@ for (var prop in coder) {
     console.log("in: " + prop); // toString or something else
   }
 }
+
+/*
+	Backbone style extend
+*/
+
+var extend = function(child) {
+  var base = this;
+  if(child) {
+    for(var prop in child)  {
+      base[prop] = child[prop];
+    }
+    for(var prop in child)  {
+      base.prototype[prop] = child[prop];
+    }
+  }
+  return base;
+};
