@@ -31,7 +31,7 @@ Coder.prototype = new Person();		//the key to prototype inheritance---> point th
 
 var coder = new Coder("Markelov", 100);
 coder.sayName();	//this is also inherited?
-coder.sayAge();		//how is this inherited?
+coder.sayAge();		//how is this inherited? look up through the prototype chain?
 
 
 for (var prop in coder) {

@@ -52,11 +52,11 @@
         // var date = moment().add(-1,'days');
         var date = moment();
         console.log(moment.utc(date).format("YYYY-MM-DDTHH:mm:ss")+"Z");    //2014-08-22T19:42:22Z ---> UTC time
-        console.log(moment().format("YYYY-MM-DDTHH:mm:ss")+"Z");            //2014-08-22T15:42:22Z ---> Montreal time
+        console.log(moment().format("YYYY-MM-DDTHH:mm:ss"));            //2014-08-22T15:42:22 ---> Montreal time
         // date operation using original Date obj
         var originalDate = new Date();
         console.log(originalDate.toISOString());        //2014-08-22T19:42:22.822Z  ---> UTC time
-        console.log(originalDate.toNoneUTCString());    //2014-08-22T15:42:22Z ---> Montreal time
+        console.log(originalDate.toNoneUTCString());    //2014-08-22T15:42:22Z ---> Montreal time(not standard representation)
 
         //console.log(originalDate.toUTCString());        
         // console.log(originalDate.toLocaleString());
