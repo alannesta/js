@@ -1,0 +1,107 @@
+<!doctype html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<script src="script/jquery-1.8.3.js"></script>
+<script src="script/angular.js"></script>
+<title>Object Copy</title>
+</head>
+ 
+<body>
+
+<script>
+	var obj1 = {
+		name: "alan",
+		phone: "654321",
+		note: {
+			note3: "3rd note",
+			note4: "4th note"
+		}
+	}
+
+	var obj2 = {
+		name: "eva",
+		phone: "123456",
+		note: {
+			note1: "1st note",
+			note2: "2nd note"
+		}
+	}
+
+	var temp = {}
+
+	//backup and restore an object after change
+	function copyObj(src, temp, copyFunction){
+		temp = copyFunction(src);
+		console.log("copy function---->" + copyFunction.name);
+		console.log("temp after backup of src: ")
+		console.log(temp);
+
+		// changeObj(obj1);
+		obj1.name += " - change flag";
+
+		console.log("temp after src change: ")
+		console.log(temp);
+		console.log("src after src change: ")
+		console.log(src);
+
+		src = copyFunction(temp);
+		console.log("src after restore: ")
+		console.log(src);
+	}
+
+	//switch: a = temp, a = b, b = temp
+	function switchObj(obj1, obj2, temp, copyFunction){
+		temp = copyFunction(obj1);
+		console.log("copy function---->" + copyFunction.name);
+		console.log("temp after backup of obj1: ")
+		console.log(temp);
+
+		// changeObj(obj1);
+		obj1 = copyFunction(obj2);
+
+		console.log("obj1 after copy obj2: ")
+		console.log(obj1);
+
+		obj2 = copyFunction(temp);
+		console.log("obj2 after copy temp: ")
+		console.log(obj2);
+	}
+
+
+	function JSONCopy(src){
+		// console.log(JSON.stringify(src))
+		// console.log(JSON.parse(JSON.stringify(src)));
+		return JSON.parse(JSON.stringify(src));
+	}
+
+	function angularCopy(src){
+		return angular.copy(src);
+	}
+
+	// copyObj(obj1, temp, JSONCopy)
+	// copyObj(obj1, temp, angularCopy);
+	// switchObj(obj1, obj2, temp, JSONCopy);
+	switchObj(obj1, obj2, temp, angularCopy);
+
+
+	/*
+		just copy the reference will definitely fail
+	*/
+
+	// temp = obj1;
+	// console.log("temp after backup of obj1: ")
+	// console.log(temp);
+	// obj1.name = "changed alan";
+	// console.log("temp after obj1 change: ")
+	// console.log(temp);
+	// obj1 = temp;
+	// console.log("obj1 after restore: ")
+	// console.log(obj1);
+	// temp = obj2;
+	// console.log("temp after backup of obj2:")
+	// console.log(temp);
+
+</script>
+</body>
+</html>
