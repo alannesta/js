@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<script src="script/jquery-1.8.3.js"></script>
+<link href="http://maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
+<title>Tooltip</title>
+</head>
+<style type="text/css">
+	.tooltip{
+		position: absolute;
+		left: 500px;
+		top: 500px;
+	}
+	.tooltip i{
+		font-size: 50px
+	}
+
+	.tooltip:hover{
+		border: 1px solid red;
+	}
+
+	.triangle{
+		width: 0;
+		height: 0;
+		border-left: 7px solid transparent;
+		border-right: 7px solid transparent;
+		border-bottom: 20px solid red;
+	}
+
+	.content-box{
+		width: 200px;
+		height:100px;
+		background-color: red;
+	}
+
+</style>
+<body>
+	<div class="tooltip i"><i class="fa fa-futbol-o"></i></div>
+<script>
+	$(".tooltip").on('mouseover', function(event){
+		$(this).toolTip(this);
+	})
+
+	$.fn.extend({
+		toolTip: function(context){
+
+			var left = window.getComputedStyle(context).getPropertyValue("left").replace("px", "");
+			var top = $(context).css("top").replace("px", "");
+
+			// console.log("toolTip method called");
+			var posX = context.offsetWidth/2 + parseInt(left, 10);
+			var posY = context.offsetHeight + parseInt(top, 10);
+			console.log("posX: "+ posX + "posY: " + posY);
+			tooltipBox(posX, posY);
+
+
+			function tooltipBox(x, y){
+				var arrow = $("<div class='triangle'></div>");
+				var content = $("<div class='content-box'>Test</div>")
+				arrow.css({
+					"position": "absolute",
+					"left": x - 3,
+					"top": y
+				})
+				content.css({
+					"position": "absolute",
+					"left": x - 100,
+					"top": y + 20
+				})
+
+				$("body").append(arrow);
+				$("body").append(content);
+
+				$(context).on('mouseleave', function(){
+					arrow.remove();
+					content.remove();
+				})
+			}
+
+
+		}	
+	});
+</script>
+</body>
+</html>
