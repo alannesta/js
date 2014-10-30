@@ -20,6 +20,8 @@
 	}
 
 	.triangle{
+		/*position: absolute;
+		left:100px;*/
 		width: 0;
 		height: 0;
 		border-left: 7px solid transparent;
@@ -29,8 +31,12 @@
 
 	.content-box{
 		width: 200px;
-		height:100px;
+		/*height:100px;*/
+		padding: 10px;
 		background-color: red;
+	}
+	.tip-container{
+		position: relative;
 	}
 
 </style>
@@ -43,40 +49,61 @@
 
 	$.fn.extend({
 		toolTip: function(context){
-
+			
+			if ($(context).attr('data-tooltip') == "true"){
+				// console.log("return, do not create new tooltip");
+				return;
+			}
+			var tooltip, tip_hover = false;
 			var left = window.getComputedStyle(context).getPropertyValue("left").replace("px", "");
 			var top = $(context).css("top").replace("px", "");
 
-			// console.log("toolTip method called");
 			var posX = context.offsetWidth/2 + parseInt(left, 10);
 			var posY = context.offsetHeight + parseInt(top, 10);
-			console.log("posX: "+ posX + "posY: " + posY);
-			tooltipBox(posX, posY);
+			_create(posX, posY);
 
-
-			function tooltipBox(x, y){
-				var arrow = $("<div class='triangle'></div>");
-				var content = $("<div class='content-box'>Test</div>")
-				arrow.css({
+			// create and show tooltip
+			function _create(x, y){
+				console.log("create");
+				tooltip = $("<div class='tip-container'><div class='triangle'></div><div class='content-box'>Tool Tips</div></div>");
+				
+				tooltip.css({
 					"position": "absolute",
-					"left": x - 3,
+					"left": x,
 					"top": y
 				})
-				content.css({
-					"position": "absolute",
-					"left": x - 100,
-					"top": y + 20
+
+				tooltip.attr('fade', 500);
+				tooltip.on('mouseover', function(){
+					tip_hover = true;
+				}).on('mouseleave', function(){
+					tip_hover = false;
 				})
 
-				$("body").append(arrow);
-				$("body").append(content);
-
-				$(context).on('mouseleave', function(){
-					arrow.remove();
-					content.remove();
-				})
+				$("body").append(tooltip);
+				$(context).attr('data-tooltip', true);
 			}
 
+			// remove the tooltip
+			function _remove(){
+				var interval;
+
+				//remove the tooltip if the neither the targe element and the tooltip are not hovered over
+				interval = setInterval(function(){
+					if (!tip_hover){
+						tooltip.remove();
+						$(context).attr('data-tooltip', false);
+						clearInterval(interval);
+					}
+					// console.log("interval check");
+				}, 1000)
+			}
+
+			// it is necessary to bind target element events in the plugin, seems not very DRY.
+			// https://github.com/gdakram/JQuery-Tooltip-Plugin/blob/master/javascripts/jquery.tooltip.js did the same
+			$(context).on('mouseleave', function(){
+				_remove();
+			})
 
 		}	
 	});
