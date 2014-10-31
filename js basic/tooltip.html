@@ -8,15 +8,15 @@
 <style type="text/css">
 	.tooltip{
 		position: absolute;
-		left: 500px;
-		top: 500px;
+		left: 50%;
+		top: 50%;
 	}
 	.tooltip i{
 		font-size: 50px
 	}
 
 	.tooltip:hover{
-		border: 1px solid red;
+		/*border: 1px solid red;*/
 	}
 
 	.triangle{
@@ -35,74 +35,63 @@
 		padding: 10px;
 		background-color: red;
 	}
-	.tip-container{
+	/*.tip-container{
 		position: relative;
-	}
+	}*/
 
 </style>
 <body>
-	<div class="tooltip i"><i class="fa fa-futbol-o"></i></div>
+	<div class="tooltip"><i class="fa fa-futbol-o"></i></div>
 <script>
-	$(".tooltip").on('mouseover', function(event){
+	$(".tooltip").on('mouseenter', function(event){
 		$(this).toolTip(this);
 	})
 
 	$.fn.extend({
 		toolTip: function(context){
-			
-			if ($(context).attr('data-tooltip') == "true"){
-				// console.log("return, do not create new tooltip");
+			var tooltip, timeout;
+
+			if ($(context).attr('data-tooltip') == "show"){
+				console.log("return, do not create new tooltip");
+				// clearTimeout(timeout);
 				return;
 			}
-			var tooltip, tip_hover = false;
+			$(context).attr('data-tooltip', "show");
+			
 			var left = window.getComputedStyle(context).getPropertyValue("left").replace("px", "");
 			var top = $(context).css("top").replace("px", "");
 
 			var posX = context.offsetWidth/2 + parseInt(left, 10);
 			var posY = context.offsetHeight + parseInt(top, 10);
-			_create(posX, posY);
+			_create();
 
 			// create and show tooltip
-			function _create(x, y){
-				console.log("create");
+			function _create(){
+				console.log("create new tooltip");
 				tooltip = $("<div class='tip-container'><div class='triangle'></div><div class='content-box'>Tool Tips</div></div>");
 				
-				tooltip.css({
-					"position": "absolute",
-					"left": x,
-					"top": y
-				})
+				// tooltip.css({
+				// 	"position": "relative",	
+				// 	"left": context.offsetWidth/2
+				// })
 
-				tooltip.attr('fade', 500);
-				tooltip.on('mouseover', function(){
-					tip_hover = true;
-				}).on('mouseleave', function(){
-					tip_hover = false;
-				})
 
-				$("body").append(tooltip);
-				$(context).attr('data-tooltip', true);
+				$(context).append(tooltip);
 			}
 
 			// remove the tooltip
 			function _remove(){
-				var interval;
-
-				//remove the tooltip if the neither the targe element and the tooltip are not hovered over
-				interval = setInterval(function(){
-					if (!tip_hover){
-						tooltip.remove();
-						$(context).attr('data-tooltip', false);
-						clearInterval(interval);
-					}
-					// console.log("interval check");
-				}, 1000)
+				timeout = setTimeout(function(){
+					tooltip.remove();
+					$(context).attr('data-tooltip', "hide");
+				},1000);
 			}
 
 			// it is necessary to bind target element events in the plugin, seems not very DRY.
 			// https://github.com/gdakram/JQuery-Tooltip-Plugin/blob/master/javascripts/jquery.tooltip.js did the same
 			$(context).on('mouseleave', function(){
 				_remove();
+				$(context).unbind('mouseleave');	// !important. if forget to unbind, will cause data-tooltip attribute to behave unexpectedly because every mouseleave event will trigger  _remove() even when tooltip is not shown
 			})
 
 		}	
