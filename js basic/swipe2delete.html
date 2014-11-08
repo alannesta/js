@@ -63,9 +63,15 @@ div{
 	font-size: 12px;
 }
 
+.block-shown{
+	width: 100%;
+	position: absolute;
+	left: 0;
+}
+
 .block-hidden{
 	position: absolute;
-	left: 420px;
+	left: 400px;
 	width: 100px;
 	/*height:100%;*/
 	height:120px;
@@ -80,18 +86,21 @@ div{
 <body>
 	<ul id="news-list" class="news-list">
 		<li class = "news-container clearfix">
-			<div class="news-img">
-				<img src="img/slide1.png" alt="">
-			</div>
-			<div class="news-contentcontainer">
-				<div class= "news-content">
-					tai ping yang de fenger zui xian chu dao zheli
+			<div class="block-shown">
+				<div class="news-img">
+					<img src="img/slide1.png" alt="">
 				</div>
-				<div class="news-author">
-					<blockquote>By Alan</blockquote>
-					
+				<div class="news-contentcontainer">
+					<div class= "news-content">
+						tai ping yang de fenger zui xian chu dao zheli
+					</div>
+					<div class="news-author">
+						<blockquote>By Alan</blockquote>
+
+					</div>
 				</div>
 			</div>
+			
 			<div class="block-hidden">DELETE</div>
 		</li>
 		
@@ -161,17 +170,28 @@ div{
 	// console.log($('.news-container'));
 	for (var i = 0; i<list.length; i++){
 		hammeredListItem.push(new Hammer(list[i]));
-		hammeredListItem[i].on('swipeleft', swipeHandler);
+		hammeredListItem[i].on('swipeleft', swipeLeftHandler);
+		hammeredListItem[i].on('swiperight', swipeRightHandler);
 	}
-	console.log(hammeredListItem);
+	// console.log(hammeredListItem);
 
 
 	// var listItem = new Hammer()
 
-	function swipeHandler(e){
-		// console.log(e.target);
+	function swipeLeftHandler(e){
+		console.log(e);
 		// alert('swiped');
+		$(".block-shown").css("left", -100);
+		$(".block-hidden").css("left", 300);
 	}
+	
+	function swipeRightHandler(e){
+		console.log(e);
+		// alert('swiped');
+		$(".block-shown").css("left", 0);
+		$(".block-hidden").css("left", 400);
+	}
+
 
 
 </script>
