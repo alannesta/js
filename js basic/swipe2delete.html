@@ -197,6 +197,7 @@ div{
 
 	function getParentLi(dom){
 		while(dom.parentNode.tagName.toUpperCase() != "LI"){
+			if (dom.tagName.toUpperCase() == "BODY") return;
 			dom = dom.parentNode;
 		}
 		return dom.parentNode
