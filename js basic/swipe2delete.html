@@ -181,20 +181,26 @@ div{
 	// var listItem = new Hammer()
 
 	function swipeLeftHandler(e){
-		console.log(e);
+		// console.log(e.target.parentNode.parentNode.tagName);
 		// alert('swiped');
-		$(".block-shown").css("left", -100);
-		$(".block-hidden").css("left", 300);
+		var parent = getParentLi(e.target);
+		$(parent).find(".block-shown").css("left", -100);
+		$(parent).find(".block-hidden").css("left", 300);
 	}
 	
 	function swipeRightHandler(e){
-		console.log(e);
-		// alert('swiped');
-		$(".block-shown").css("left", 0);
-		$(".block-hidden").css("left", 400);
+		// console.log(e.target);
+		var parent = getParentLi(e.target);
+		$(parent).find(".block-shown").css("left", 0);
+		$(parent).find(".block-hidden").css("left", 400);
 	}
 
-
+	function getParentLi(dom){
+		while(dom.parentNode.tagName.toUpperCase() != "LI"){
+			dom = dom.parentNode;
+		}
+		return dom.parentNode
+	}
 
 </script>
 </html>
