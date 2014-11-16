@@ -9,43 +9,67 @@
 <body>
 	
 <script>
+    
+    var deferred = $.Deferred();
+
     var param = {
         merchantName: "sadas2dsa",
         email: "sada1sdsa",
         contactName: "sadasd2sa",
         phone: "sad1asdsa"
-      }
-    if (param.merchantName.length>0&&param.email.length>0&&param.phone.length>0&&param.contactName.length>0){
-      $.ajax({
-        url: "http://newdevapi.moneycloud.me/moneycloud-rest/v1/utils/merchants/info/contact",
-        // beforeSend: function( xhr ) {
-        //   xhr.overrideMimeType( "text/json; charset=x-user-defined" );
+    }
 
-        // },
-        data: JSON.stringify(param),
-        type: "PUT",
-        dataType: 'json',
-        contentType: 'application/json'
+    function request(){
+        
 
+        $.ajax({
+            url: "http://newdevapi.moneycloud.me/moneycloud-rest/v1/utils/merchants/info/contact",
+            data: JSON.stringify(param),
+            type: "PUT",
+            dataType: 'json',
+            contentType: 'application/json'
         })
         .done(function( data ) {
             console.log(data);
-    		successCallback();
+            successCallback();
         }).fail(function(err){
-        	failCallback();
+            failCallback();
         });
-    }else{
-     
+
+        function successCallback(){
+            var div = $("<div>Success</div>");
+            $('body').append(div);
+            deferred.resolve("add this text");
+        }
+        function failCallback(){
+            var div = $("<div>Fail</div>");
+            $('body').append(div);
+            deferred.reject("fetch failed");
+        }
+        return deferred;    // not "deferred.promise" here!
+    }
+    request().then(nextStep).then(finalStep);
+        
+    function nextStep(){
+        var deferred = $.Deferred();    //create another deferred in "then()"
+        var arg = Array.prototype.slice.call(arguments);
+        console.log(arg);
+        // deferred.resolve(arg);
+        setTimeout(function(){
+            var div = $("<div>"+ arg +"</div>");
+            $('body').append(div);
+            deferred.resolve("another div appended");
+        },2000);
+        return deferred;
     }
 
-    function successCallback(){
-    	var div = $("<div>Success</div>");
-    	$('body').append(div);
+    function finalStep(){
+        var arg = Array.prototype.slice.call(arguments);
+        console.log(arg);
+        var div = $("<div>"+ "finalStep, All done" +"</div>");
+        $('body').append(div);
     }
-    function failCallback(){
-    	var div = $("<div>Fail</div>");
-    	$('body').append(div);
-    }
+
 </script>
 </body>
 </html>
