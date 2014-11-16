@@ -48,10 +48,12 @@
         }
         return deferred;    // not "deferred.promise" here!
     }
-    request().then(nextStep).then(finalStep);
+
+    //the second chained "then" will be reolved as soon as the first "then" is resolved (we can return a new promise in the first "then", if not, the second "then" will be resolved at the same time as the first one) 
+    request().then(nextStep).then(finalStep);   
         
     function nextStep(){
-        var deferred = $.Deferred();    //create another deferred in "then()"
+        var deferred = $.Deferred();    //create a new deferred object in "then()"
         var arg = Array.prototype.slice.call(arguments);
         console.log(arg);
         // deferred.resolve(arg);
@@ -61,6 +63,7 @@
             deferred.resolve("another div appended");
         },2000);
         return deferred;
+        // return "test";      // the second "then()" will be resolved immediately
     }
 
     function finalStep(){
