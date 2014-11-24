@@ -1,0 +1,67 @@
+<!doctype html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<script src="script/jquery-1.8.3.js"></script>
+<link rel="stylesheet" type="text/css" href="styles/bootstrap.css">
+<title>Offset/Position</title>
+
+<style type="text/css">
+.div1{
+	height:100px;
+}
+.div2{
+	background: blue;
+	height:200px;
+}
+.inner-div1{
+	background: red;
+	width:100px;
+	height:100px;
+}
+.inner-div2{
+	background: green;
+	width: 100px;
+	height: 100px;
+}
+
+.div3{
+	height:300px;
+}
+
+.inner-ul{
+	list-style: none;
+	
+}
+</style>
+
+</head>
+ 
+<body>
+	<div class="div1">
+		<span>div1</span>
+	</div>
+	<div class="div2">
+		<span>div2</span>
+		<div class="inner-div1">This is inner1</div>
+		<div class="inner-div2">
+			<ul class="inner-ul">
+				<li>1</li>
+				<li>2</li>
+				<li>3</li>
+				<li>4</li>
+			</ul>	
+		</div>
+	</div>
+	<div class="div3">
+		<span>div3</span>
+	</div>
+<script> 
+	console.log($(".inner-div1").offset());
+	console.log($(".inner-div1").position());
+	console.log($(".inner-div2").offset());
+	console.log($(".inner-div2").position());
+
+</script>
+</body>
+</html>
