@@ -11,16 +11,21 @@
 	height:100px;
 }
 .div2{
+	position: relative;
+	left: 150px;
 	background: blue;
 	height:200px;
 }
 .inner-div1{
 	background: red;
+	position: relative;
 	width:100px;
 	height:100px;
 }
 .inner-div2{
+	left: 50px;
 	background: green;
+	/*position: relative;*/
 	width: 100px;
 	height: 100px;
 }
@@ -31,7 +36,8 @@
 
 .inner-ul{
 	list-style: none;
-	
+	position: relative;
+	left:100px;
 }
 </style>
 
@@ -57,11 +63,17 @@
 		<span>div3</span>
 	</div>
 <script> 
-	console.log($(".inner-div1").offset());
-	console.log($(".inner-div1").position());
-	console.log($(".inner-div2").offset());
-	console.log($(".inner-div2").position());
-
+	// console.log($(".inner-div1").offset());
+	// console.log($(".inner-div1").position());
+	// console.log($(".inner-div2").offset());
+	// console.log($(".inner-div2").position());
+	console.log($(".inner-ul").position());		// the offset to the nearest "positioned parent" (positioned parent means the element is not "stactic" positioned)
+	console.log($(".inner-ul").offset());	// {top: 219, left: 250}
+	console.log($(".inner-ul").offsetParent());	// get the nearest "positioned parent"
+	console.log($(".inner-ul").prop('offsetWidth'));	// 100
+	console.log($(".inner-ul")[0].getBoundingClientRect());
+	console.log($(".inner-ul").width());	// 60 --> not including padding
+	console.log($(".inner-ul").innerWidth());	// 100 --> including padding
 </script>
 </body>
 </html>
