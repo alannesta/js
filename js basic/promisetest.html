@@ -1,0 +1,113 @@
+<!doctype html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<script src="script/jquery-1.8.3.js"></script>
+<title>Promise Debug</title>
+</head>
+ 
+<body>
+	
+    <div id="click"><button>get template
+    </button></div>
+    <div id="content"></div>
+
+<script>
+    
+    
+    function popover(){
+        var deferred = $.Deferred();
+
+        var instance = {
+            triggerNode : $('<div>trigger element</div>'),
+            element: $('<div>Empty</div>'),
+            confirm: function(){
+                instance = null;
+            }
+        }
+
+        function destroy(){ 
+            // instance.element.remove();
+            instance = null;
+        }
+
+        // compare with the above: this will not really set the instance to null;
+        /*function destroy(instance){ 
+            instance.element.remove();
+            instance = null;    // change the "reference" to null will not affect the original "instance"
+        }*/
+
+        getTemplate().then(function(template){
+            console.log("template resolved: " + template);
+            instance.element = $(template);
+            instance.cancel = function(){
+                console.log(instance.element);
+            }
+            setTimeout(function(){
+                deferred.resolve(instance);
+            },1000)
+            setTimeout(function(){
+                console.log(instance);
+            },3000)
+        });
+
+        return deferred.then(function(reolvedInstance){
+            console.log('get template resolved and popover resolved');
+            return reolvedInstance;     // feed the data to the next "then" in the chain, otherwise it will get undefined;
+        });
+        // return instance;
+        // return function(){
+        //     return instance;
+        // }
+
+    }
+
+    function getTemplate(){
+        var deferred = $.Deferred();
+        setTimeout(function(){
+            deferred.resolve('<div>Some content</div>');
+        }, 1000);
+        // return deferred.promise();
+        return deferred;
+    }  
+
+    $('#click').on('click', function(){
+        var promise = popover();
+        promise.then(function(instance){
+            console.log("instance resolved: ");
+            console.log(instance);
+            // $('#content').append(instance.element);
+
+            // instance.confirm();     // set the instance to null in popover...
+            instance = null;           // cannot set the instance to null in popover...
+            console.log(instance);
+        });
+
+        // setTimeout(function(){
+        //     console.log(popoverInstance);
+        //     $('#content').append(popoverInstance.element);
+        //     popoverInstance.cancel();
+        //     // popoverInstance.confirm();
+        // },3000);
+        
+    })
+
+    /*$('#click').on('click', function(){
+        var popoverInstance = popover()();
+        $('#content').append(popoverInstance.element);
+        popoverInstance.confirm();
+        // popoverInstance = null;
+        console.log(popoverInstance);
+        setTimeout(function(){
+            console.log(popoverInstance);
+            $('#content').append(popoverInstance.element);
+            popoverInstance.cancel();
+            // popoverInstance.confirm();
+        },3000);
+        
+    })*/
+
+
+</script>
+</body>
+</html>
