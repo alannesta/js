@@ -51,10 +51,13 @@
             },3000)
         });
 
-        return deferred.then(function(reolvedInstance){
-            console.log('get template resolved and popover resolved');
-            return reolvedInstance;     // feed the data to the next "then" in the chain, otherwise it will get undefined;
-        });
+        // return deferred.then(function(reolvedInstance){
+        //     console.log('get template resolved and popover resolved');
+        //     return reolvedInstance;     // feed the data to the next "then" in the chain, otherwise it will get undefined;
+        // });
+    
+        return deferred;
+
         // return instance;
         // return function(){
         //     return instance;
@@ -73,6 +76,7 @@
 
     $('#click').on('click', function(){
         var promise = popover();
+        console.log(promise);
         promise.then(function(instance){
             console.log("instance resolved: ");
             console.log(instance);
