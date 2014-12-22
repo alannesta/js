@@ -1,0 +1,78 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8" />
+	<title>Events that do not bubble</title>
+	<script src="script/jquery-1.8.3.js"></script>
+	<style>
+	</style>
+</head>
+<body>
+	<div style = "height: 600px; background: green" id = "container">
+		<form style = "height: 300px; background: red" id = "form">
+			<input id = "inputbox">
+			<div>Buddy</div>
+		</form>
+		<section style = "height: 300px" id = "content">
+			some content
+		</section>
+	</div>
+</body>
+<script>
+
+	// focus event do not bubble!
+	// $('#container')[0].addEventListener('focus', function(){
+	// 	console.log('container focus event');
+	// });
+
+	// but you can get the focus event in capture mode
+	$('#container')[0].addEventListener('focus', function(){
+		console.log('container focus event caputre mode');
+	}, true);
+
+
+	// // focusin event can bubble up from the input box
+	// $('#container')[0].addEventListener('focusin', function(){
+	// 	console.log('container focusin event');
+	// });
+
+
+	// // https://developer.mozilla.org/en-US/docs/Web/Events/mouseenter
+	// // mouseenter do not bubble, it is triggered differently than mouseover. it is only triggered when mouse is moving from the 'outside'/ the parent node to the element the listener is registered
+	// $('#container')[0].addEventListener('mouseenter', function(){
+	// 	console.log('container mouseenter event');
+	// });
+	
+
+	// The mouseover event is fired when a pointing device is moved onto the element that has the listener attached or onto one of its children.
+	$('#container')[0].addEventListener('mouseover', function(){
+		console.log('container mouseover event bubble mode');
+	});
+
+	// capture mode! 
+	$('#container')[0].addEventListener('mouseover', function(){
+		console.log('container mouseover event capture mode');
+	}, true);
+
+
+	// $('#inputbox')[0].addEventListener('focus', function(){
+	// 	console.log('inputbox focus event');
+	// });
+
+	// $('#inputbox')[0].addEventListener('focusout', function(){
+	// 	console.log('inputbox focusout event');
+	// });
+
+	// $('#inputbox')[0].addEventListener('mouseenter', function(){
+	// 	console.log('inputbox mouseenter event');
+	// });
+
+	// $('#inputbox')[0].addEventListener('mouseover', function(){
+	// 	console.log('inputbox mouseover event');
+	// });
+	$('#form')[0].addEventListener('mouseover', function(){
+		console.log('form mouseover event');
+	});
+
+</script>
+</html>
