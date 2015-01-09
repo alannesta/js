@@ -1,0 +1,12 @@
+{
+  "name": "File Operation",
+  "version": "0.0.1",
+  "author":"Alan Cao",
+  "private": true,
+  "scripts": {
+    "start": "node app.js"
+  },
+  "dependencies": {
+
+  }
+}

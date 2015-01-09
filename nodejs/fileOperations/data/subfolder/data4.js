@@ -1,0 +1,1 @@
+var path = "src://jquery4.js";
