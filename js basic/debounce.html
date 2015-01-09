@@ -11,23 +11,56 @@
 	var service = (function(){
 		var queue = [];
 		var oldlength = 0, newlength;
-		var interval;
 
-		function checkQueue(){
-			return setInterval(function(){
-				if ((newlength = queue.length) !== oldlength){
-					queue.pop()();
-					queue = [];
-					clearInterval(interval);
-					interval = null;
-				}
-			}, 500);
+		var interval;
+		var timeout;
+
+		var now = Date.now || function(){
+			return new Date().getTime();
+		}
+		var timestamp = now();
+		var debounce_delay = 500;
+
+
+		// function checkQueue(){
+		// 	return setInterval(function(){
+		// 		if ((newlength = queue.length) !== oldlength){
+		// 			queue.pop()();
+		// 			queue = [];
+		// 			clearInterval(interval);
+		// 			interval = null;
+		// 		}
+		// 	}, debounce_delay);
+		// }
+
+		// interval = checkQueue();	// kickstart
+
+		function checkQueue_v3(callback){
+			var diff = now() - timestamp;
+			if (diff > debounce_delay){
+				callback();
+				clearInterval(interval);
+				interval = null;
+			}
 		}
 
-		interval = checkQueue();
-		console.log(interval);
+		function checkQueue_v2(callback){
+			
+			var diff = now() - timestamp;
+			if (diff > debounce_delay){
+				callback();	
+			}else{
+				clearTimeout(timeout);
+				// setTimeout syntax: https://developer.mozilla.org/en-US/docs/Web/API/WindowTimers.setTimeout
+				timeout = setTimeout(checkQueue_v2, debounce_delay, callback);	// check after a preset threshold
+			}	
+		}
+
+		
 		return {
 			debounce: function(callback){
+
+				// using setInterval(), push callback into job queue, less efficient
 				return function(){
 					if (interval){
 						// console.log('setInterval already runnung');
@@ -39,12 +72,36 @@
 					console.log('debounce!!!!')
 					queue.push(callback);
 				}
+			},
+
+			// setInterval timediff solution
+			debounce_v3: function(callback){
+				return function(){
+					console.log('debounce_v3');
+					timestamp = now();
+					if (!interval){
+						interval = setInterval(checkQueue_v3, debounce_delay, callback)
+					}
+				}
+			},
+
+			// using setTimeout()
+			debounce_v2: function(callback){
+				return function(){
+					console.log('debounce_v2');
+					timestamp = now();
+					checkQueue_v2(callback);
+				}
 			}
 		}
 
 	})();
 
-	var debounce = service.debounce(function(){
+	// var debounce = service.debounce(function(){
+	// 	console.log('resize');
+	// });
+	
+	var debounce = service.debounce_v3(function(){
 		console.log('resize');
 	});
 
@@ -54,31 +111,29 @@
 	
 	// underscore implementation
 
-	_.debounce = function(func) {
-	  var timeout, args, context, timestamp, result;
+	// _.debounce = function(func) {
+	//   var timeout, args, context, timestamp, result;
 
-	  var later = function() {
-	    var last = _.now() - timestamp;
+	//   var later = function() {
+	//     var last = _.now() - timestamp;
 
-	    if (last >= 0) {
-	      timeout = setTimeout(later, last);
-	    } else {
-	      	timeout = null;
-	        result = func.apply(context, args);
-	        if (!timeout) context = args = null;
-	      }
-	    }
-	  };
+	//     if (last >= 0) {
+	//       timeout = setTimeout(later, last);
+	//     } else {
+	//       	timeout = null;
+	//         result = func.apply(context, args);
+	//         if (!timeout) context = args = null;
+	//       }
+	//     }
+	//   };
 
-	  return function() {
-	    context = this;
-	    args = arguments;
-	    timestamp = _.now();
-	    if (!timeout) timeout = setTimeout(later, 0);
-	  };
-	};
-
-
+	//   return function() {
+	//     context = this;
+	//     args = arguments;
+	//     timestamp = _.now();
+	//     if (!timeout) timeout = setTimeout(later, 0);
+	//   };
+	// };
 
   </script>
 </body>
