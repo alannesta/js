@@ -1,0 +1,188 @@
+<!DOCTYPE tbodyHtml>
+<tbodyHtml>
+<head>
+    <title></title>
+    <script src="script/jquery-1.8.3.js"></script>
+    <script src="script/moment.js"></script>
+</head>
+<body>
+    <div style= "margin:20px">
+        <button onclick="previousMonth()">Previous</button>
+        
+        <button onclick="nextMonth()">Next</button>
+
+        <!-- <span id ="selected"></span> -->
+    </div>
+    
+    <div id="calendar"></div>
+    
+
+    <script>    
+
+    function Calendar(date){
+        var dayMap = {
+            0: 'SUN',
+            1: 'MON',
+            2: 'TUE',
+            3: 'WED',
+            4: 'THU',
+            5: 'FRI',
+            6: 'SAT'
+        };
+        
+        this.currentSelection = null;
+        this.date = date;
+
+        this.view = null;
+
+        this.updateView = function (){
+            this.view = $(generateHTML(this.date));
+            this.bindHandlers();
+        }
+
+        this.bindHandlers = function(){
+            var self = this;
+            self.view.find('tbody').on('click', function(e){
+                var target = e.target;
+                if (target.style.color !== 'grey'){
+                    self.currentSelection = new Date(self.date.getFullYear(), self.date.getMonth(), target.innerText);
+                    target.style.color = 'red';
+                }   
+            });  
+        }
+
+        this.updateView();
+        this.bindHandlers();
+
+        function generateHTML (date){
+            // console.log(date.getDay()); // 0-6, Sunday is 0
+            var headerHtml = '<div>'+ moment(date).format('YYYY-MM') +'</div>'
+            var tableHtml = headerHtml + '<table><thead><tr>';
+            for (var i = 0; i < 7; i++){
+                tableHtml += '<td>'+ dayMap[i]+'</td>';
+            }
+            tableHtml += '</tr></thead>';
+
+            var tbodyHtml = '<tbody><tr>';
+            var current = 1;
+            // var startDay = date.getDay();
+            var currentMonth = date.getMonth();
+            var currentYear = date.getFullYear();
+            var previousMonth = currentMonth === 0? 11:currentMonth-1;
+            var previousYear = previousMonth === 11? currentYear-1 : currentYear;
+            var previousMonthDays = _daysInMonth(previousMonth, previousYear);
+            var currentMonthDays = _daysInMonth(currentMonth, currentYear);
+
+            var startDay = date.getDay();
+            var endDay = moment(date).endOf('month').toDate().getDay();
+            var nextStartDay = moment(date).add(1, 'months').toDate().getDay();
+            
+            var rowCount = _countRows(7 - startDay, currentMonthDays);
+            // console.log(rowCount);
+
+            // render the first row
+            var previous = previousMonthDays - startDay + 1;
+            for (var k = 0; k < startDay; k++){
+                tbodyHtml += '<td style="color: grey">'+ (previous++) +'</td>';
+            }
+            for (var j = startDay; j < 7; j++){
+                tbodyHtml += '<td>'+ (current++) +'</td>';
+            }
+            tbodyHtml += '</tr>';
+
+            // render the rows in the middle
+            for (var row = 1; row < rowCount-1; row++){
+                tbodyHtml += '<tr>';
+                for (var column = 0; column < 7; column++){
+                    tbodyHtml += _createCell(current++);
+                }
+                tbodyHtml += '</tr><tr>';
+            }
+            
+            // render the last row
+            for (; current < currentMonthDays+1; current++){
+                tbodyHtml += '<td>'+ current +'</td>';
+            }
+
+            // need to fill in the blanks with days in next month
+            if (endDay !== 6){
+                for (var m = nextStartDay, temp = 1; m < 7; m++, temp++){
+                    tbodyHtml += '<td style="color: grey">'+ temp +'</td>';
+                }
+            }
+            
+            // close tags
+            tbodyHtml += '</tr></tbody>';
+            tableHtml += tbodyHtml+'</table>';
+
+            return tableHtml;
+        }
+
+        function _createCell(innerText){
+            return '<td>'+ innerText +'</td>';
+        }
+
+        function _countRows(firstRow, total){
+            return total - 28 > firstRow? 6: 5;
+        }
+
+        function _daysInMonth(month,year) {
+            return new Date(year, month + 1, 0).getDate();
+        }
+    }
+
+    Calendar.prototype.setDate = function(date){
+        this.date = date;
+    }
+
+    Calendar.prototype.getDate = function(date){
+        return this.date;
+    }
+
+    Calendar.prototype.next = function(){
+        var nextMonth = moment(this.date).add(1, 'months').toDate();
+        this.navigateTo(nextMonth);
+    }
+
+    Calendar.prototype.previous = function(){
+        var previousMonth = moment(this.date).subtract(1, 'months').toDate();
+        this.navigateTo(previousMonth);
+    }
+
+    Calendar.prototype.navigateTo = function(date){
+        this.setDate(date);
+        this.updateView();
+    }
+
+    Calendar.prototype.getView = function(){
+        return this.view;
+    }
+
+    Calendar.prototype.getCurrentSelection = function(){
+        return this.currentSelection;
+    }
+
+
+    var date = moment('2015-1-1').toDate();
+    var calendar = new Calendar(date);
+
+    function nextMonth(){
+        calendar.next();
+        $('#calendar').empty();
+        $('#calendar').append(calendar.getView());
+        // $('#selected').text(moment(calendar.getCurrentSelection()).format('DD/MMM/YYYY'));
+    }
+
+    function previousMonth(){
+        calendar.previous();
+        // $('#calendar').replaceWith($(calendar.getView()));
+        $('#calendar').empty();
+        $('#calendar').append(calendar.getView());
+        // $('#selected').text(moment(calendar.getCurrentSelection()).format('DD/MMM/YYYY'));
+    }
+
+    $('#calendar').append(calendar.getView());
+
+    </script>
+</body>
+</tbodyHtml>
