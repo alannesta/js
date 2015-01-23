@@ -12,6 +12,7 @@
             .disabled {
                 color: grey;
                 cursor: not-allowed;
+                /*visibility: hidden;*/
             }
 
             .hover{
@@ -132,18 +133,19 @@
             var defaults = {
                 date: momentNow.startOf('month').toDate(),
                 currentSelection: momentNow.toDate(),
-                parentEl: $(document.body)
+                parentEl: $(document.body),
+                selectionMode: 0
             }
 
             var calendarSettings = _normalizeOptions(options);
 
-            this.selectionMode = 0;     // 0: single, 1: date-range
+            this.selectionMode = calendarSettings.selectionMode;     // 0: single, 1: date-range
             this.date = calendarSettings.date;
             this.currentSelection = (this.date.getMonth() === calendarSettings.currentSelection.getMonth() ? calendarSettings.currentSelection : null);
             this.currentRangeSelection = [];
             this.view = null;
             this.parentEl = calendarSettings.parentEl;
-            this.uid = parseInt(Math.random() * 10000, 10);
+            this.uid = parseInt(Math.random() * 10000, 10);     //TODO: use uuid generator
 
 
             this.render = function() {
@@ -161,17 +163,17 @@
             }
 
             this.bindHandlers = function() {
-                self.view.find('tbody td').on('click', function _handleClick(e) {
+                self.view.find('tbody td').on('click', function handleClick(e) {
                     var target = e.target;
-                    if (!$(target).hasClass('disabled')) {
-                        self.currentSelection = new Date(self.date.getFullYear(), self.date.getMonth(), target.innerText);
-                        self.trigger(self.uid + '_selectdate', {currentSelection: self.currentSelection});
+                    if (!_isDisabled(target)) {
+                        self.currentSelection = _getDateFromCellText(target.innerText);
+                        self.trigger(self.uid + '_selectSingleDate', {currentSelection: self.currentSelection});
                     }
                 });
 
-                self.view.find('tbody td').on('hover', function _handleClick(e) {
+                self.view.find('tbody td').on('hover', function handleHover(e) {
                     var target = e.target;
-                    if (!$(target).hasClass('disabled')) {
+                    if (!_isDisabled(target)) {
                        $(target).toggleClass('hover');
                     }
                 });
@@ -186,11 +188,15 @@
                 /*
                     @param: selection: {cell: HTMLElement}
                 */
-                self.on(self.uid + '_selectdate', function(e, selection) {
+                self.on(self.uid + '_selectSingleDate', function(e, selection) {
                     _updateSingleSelection(selection);
                     _cacheSingleSelection(self.currentSelection);
                 });
-            }
+            }  
+
+            /*
+                Initialization
+            */
 
             function init() {
                 self.render();
@@ -198,6 +204,13 @@
                 self.bindListeners();
             }
 
+            function _normalizeOptions(options) {
+                return $.extend(defaults, options);
+            }
+
+            /*
+                HTML generation
+            */
             function generateHTML(date) {
                 // console.log(date.getDay()); // 0-6, Sunday is 0
                 var headerHtml = '<div>' + moment(date).format('YYYY-MM') + '</div>'
@@ -274,13 +287,18 @@
                 return new Date(year, month + 1, 0).getDate();
             }
 
-            function _normalizeOptions(options) {
-                return $.extend(defaults, options);
+            function _isDisabled(htmlElement) {
+                return $(htmlElement).hasClass('disabled');
             }
 
             /*
-                update the view when new item is selected
+                Selection Management
             */
+
+            function _getDateFromCellText(cellText){
+                return new Date(self.date.getFullYear(), self.date.getMonth(), cellText);
+            }
+
             function _updateSingleSelection(selection) {
                 var dateNum;
                 if (selection.currentSelection){
@@ -294,12 +312,17 @@
                 
                 self.view.find('.selected').removeClass('selected');
                 self.view.find('tbody td').each(function(index,item){
-                    if (item.innerText == dateNum && !$(item).hasClass('disabled')){
+                    if (item.innerText == dateNum && !_isDisabled(item)){
                         $(item).addClass('selected');
                         // break;
                     }
                 })
             }
+
+
+            /*
+                Data caching
+            */
 
             // cache data on parentEl node
             function _cacheSingleSelection(date){
