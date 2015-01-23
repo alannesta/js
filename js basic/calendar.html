@@ -4,21 +4,54 @@
         <title></title>
         <script src="script/jquery-1.8.3.js"></script>
         <script src="script/moment.js"></script>
+        <style type="text/css">
+            .selected {
+                background-color: red;
+            }
+
+            .disabled {
+                color: grey;
+                cursor: not-allowed;
+            }
+
+            .hover{
+                background-color: grey;
+
+            }
+
+            .selected.hover{
+                background-color: green;
+            }
+
+            td{
+                cursor: pointer;
+            }
+
+            table{
+                -webkit-touch-callout: none;
+                -webkit-user-select: none;
+                -khtml-user-select: none;
+                -moz-user-select: none;
+                -ms-user-select: none;
+                user-select: none;
+            }
+
+        </style>
     </head>
     <body>
-        <div style= "margin:20px">
-            <button onclick="previousMonth()">Previous</button>
+    <div style="margin:20px">
+        <button onclick="previousMonth()">Previous</button>
 
-            <button onclick="nextMonth()">Next</button>
+        <button onclick="nextMonth()">Next</button>
 
-            <!-- <span id ="selected"></span> -->
-        </div>
+        <!-- <span id ="selected"></span> -->
+    </div>
 
-        <div id="calendar"></div>
-        <div id="calendar2"></div>
+    <div id="calendar"></div>
+    <div id="calendar2"></div>
 
 
-        <script>    
+    <script>
 
         // (function($) {
 
@@ -37,53 +70,53 @@
         //     };
 
         // }(jQuery));
-        
-        Calendar.prototype.setDate = function(date){
+
+        Calendar.prototype.setDate = function(date) {
             this.date = date;
-            this.trigger(this.uid+ '_setdate');
+            this.trigger(this.uid + '_setdate');
         }
 
-        Calendar.prototype.getDate = function(date){
+        Calendar.prototype.getDate = function(date) {
             return this.date;
         }
 
-        Calendar.prototype.next = function(){
+        Calendar.prototype.next = function() {
             var nextMonth = moment(this.date).add(1, 'months').toDate();
             this.navigateTo(nextMonth);
         }
 
-        Calendar.prototype.previous = function(){
+        Calendar.prototype.previous = function() {
             var previousMonth = moment(this.date).subtract(1, 'months').toDate();
             this.navigateTo(previousMonth);
         }
 
-        Calendar.prototype.navigateTo = function(date){
+        Calendar.prototype.navigateTo = function(date) {
             this.setDate(date);
         }
 
-        Calendar.prototype.getView = function(){
+        Calendar.prototype.getView = function() {
             return this.view;
         }
 
-        Calendar.prototype.getCurrentSelection = function(){
+        Calendar.prototype.getCurrentSelection = function() {
             return this.currentSelection;
         }
 
         // pub/sub
         Calendar.prototype.events = $({});
 
-        Calendar.prototype.trigger = function(eventName){
+        Calendar.prototype.trigger = function(eventName) {
             // $.publish(eventName);
             this.events.trigger.apply(this.events, arguments);
         }
 
-        Calendar.prototype.on = function(eventName, callback){ 
+        Calendar.prototype.on = function(eventName, callback) {
             // $.subscribe(eventName, callback);
             this.events.on.apply(this.events, arguments);
         }
 
 
-        function Calendar(options){
+        function Calendar(options) {
             var self = this;
             var momentNow = moment();
             var dayMap = {
@@ -102,154 +135,197 @@
                 parentEl: $(document.body)
             }
 
-            var calendarSettings  = _normalizeOptions(options);
+            var calendarSettings = _normalizeOptions(options);
 
+            this.selectionMode = 0;     // 0: single, 1: date-range
             this.date = calendarSettings.date;
-            this.currentSelection = (this.date.getMonth() === calendarSettings.currentSelection.getMonth()? calendarSettings.currentSelection: null);
+            this.currentSelection = (this.date.getMonth() === calendarSettings.currentSelection.getMonth() ? calendarSettings.currentSelection : null);
+            this.currentRangeSelection = [];
             this.view = null;
             this.parentEl = calendarSettings.parentEl;
-            this.uid = parseInt(Math.random()*10000, 10);
+            this.uid = parseInt(Math.random() * 10000, 10);
 
-        // initiate the calendar
-        // this.init = function(){ 
-        //     this.render();
-        //     this.bindHandlers();
-        // }
-        
 
-        this.render = function(){
-            this.view = $(generateHTML(this.date));
-            this.parentEl.append(this.view);
-            this.bindHandlers();
-        }
+            this.render = function() {
+                this.view = $(generateHTML(this.date));
+                this.currentSelection = _getSingleSelection();
+                _updateSingleSelection({currentSelection: this.currentSelection});
+                this.parentEl.append(this.view);
 
-        this.updateView = function (){
-            this.parentEl.empty();
-            this.render();
-            this.trigger(this.uid+'_update');
-        }
-
-        this.bindHandlers = function(){
-            var self = this;
-            self.view.find('tbody').on('click', function(e){
-                var target = e.target;
-                if (target.style.color !== 'grey'){
-                    self.currentSelection = new Date(self.date.getFullYear(), self.date.getMonth(), target.innerText);
-                    target.style.color = 'red';
-                }   
-            });  
-        }
-
-        this.bindListeners = function(){
-            self.on(self.uid+'_setdate', function(){
-                self.updateView();
-            });
-        }
-
-        function init(){
-            self.render();
-            self.bindHandlers();
-            self.bindListeners();
-        }
-
-        function generateHTML (date){
-            // console.log(date.getDay()); // 0-6, Sunday is 0
-            var headerHtml = '<div>'+ moment(date).format('YYYY-MM') +'</div>'
-            var tableHtml = headerHtml + '<table><thead><tr>';
-            for (var i = 0; i < 7; i++){
-                tableHtml += '<td>'+ dayMap[i]+'</td>';
             }
-            tableHtml += '</tr></thead>';
 
-            var tbodyHtml = '<tbody><tr>';
-            var current = 1;
-            // var startDay = date.getDay();
-            var currentMonth = date.getMonth();
-            var currentYear = date.getFullYear();
-            var previousMonth = currentMonth === 0? 11:currentMonth-1;
-            var previousYear = previousMonth === 11? currentYear-1 : currentYear;
-            var previousMonthDays = _daysInMonth(previousMonth, previousYear);
-            var currentMonthDays = _daysInMonth(currentMonth, currentYear);
-
-            var startDay = date.getDay();
-            var endDay = moment(date).endOf('month').toDate().getDay();
-            var nextStartDay = moment(date).add(1, 'months').toDate().getDay();
-            
-            var rowCount = _countRows(7 - startDay, currentMonthDays);
-            // console.log(rowCount);
-
-            // render the first row
-            var previous = previousMonthDays - startDay + 1;
-            for (var k = 0; k < startDay; k++){
-                tbodyHtml += '<td style="color: grey">'+ (previous++) +'</td>';
+            this.reRender = function() {
+                this.parentEl.empty();
+                this.render();
+                this.trigger(this.uid + '_update');
             }
-            for (var j = startDay; j < 7; j++){
-                tbodyHtml += '<td>'+ (current++) +'</td>';
-            }
-            tbodyHtml += '</tr>';
 
-            // render the rows in the middle
-            for (var row = 1; row < rowCount-1; row++){
-                tbodyHtml += '<tr>';
-                for (var column = 0; column < 7; column++){
-                    tbodyHtml += _createCell(current++);
+            this.bindHandlers = function() {
+                self.view.find('tbody td').on('click', function _handleClick(e) {
+                    var target = e.target;
+                    if (!$(target).hasClass('disabled')) {
+                        self.currentSelection = new Date(self.date.getFullYear(), self.date.getMonth(), target.innerText);
+                        self.trigger(self.uid + '_selectdate', {currentSelection: self.currentSelection});
+                    }
+                });
+
+                self.view.find('tbody td').on('hover', function _handleClick(e) {
+                    var target = e.target;
+                    if (!$(target).hasClass('disabled')) {
+                       $(target).toggleClass('hover');
+                    }
+                });
+            }
+
+            this.bindListeners = function() {
+                self.on(self.uid + '_setdate', function() {
+                    self.reRender();
+                    self.bindHandlers();
+                });
+
+                /*
+                    @param: selection: {cell: HTMLElement}
+                */
+                self.on(self.uid + '_selectdate', function(e, selection) {
+                    _updateSingleSelection(selection);
+                    _cacheSingleSelection(self.currentSelection);
+                });
+            }
+
+            function init() {
+                self.render();
+                self.bindHandlers();
+                self.bindListeners();
+            }
+
+            function generateHTML(date) {
+                // console.log(date.getDay()); // 0-6, Sunday is 0
+                var headerHtml = '<div>' + moment(date).format('YYYY-MM') + '</div>'
+                var tableHtml = headerHtml + '<table><thead><tr>';
+                for (var i = 0; i < 7; i++) {
+                    tableHtml += '<td>' + dayMap[i] + '</td>';
                 }
-                tbodyHtml += '</tr><tr>';
-            }
-            
-            // render the last row
-            for (; current < currentMonthDays+1; current++){
-                tbodyHtml += '<td>'+ current +'</td>';
-            }
+                tableHtml += '</tr></thead>';
 
-            // need to fill in the blanks with days in next month
-            if (endDay !== 6){
-                for (var m = nextStartDay, temp = 1; m < 7; m++, temp++){
-                    tbodyHtml += '<td style="color: grey">'+ temp +'</td>';
+                var tbodyHtml = '<tbody><tr>';
+                var current = 1;
+                // var startDay = date.getDay();
+                var currentMonth = date.getMonth();
+                var currentYear = date.getFullYear();
+                var previousMonth = currentMonth === 0 ? 11 : currentMonth - 1;
+                var previousYear = previousMonth === 11 ? currentYear - 1 : currentYear;
+                var previousMonthDays = _daysInMonth(previousMonth, previousYear);
+                var currentMonthDays = _daysInMonth(currentMonth, currentYear);
+
+                var startDay = date.getDay();
+                var endDay = moment(date).endOf('month').toDate().getDay();
+                var nextStartDay = moment(date).add(1, 'months').toDate().getDay();
+
+                var rowCount = _countRows(7 - startDay, currentMonthDays);
+                // console.log(rowCount);
+
+                // render the first row
+                var previous = previousMonthDays - startDay + 1;
+                for (var k = 0; k < startDay; k++) {
+                    tbodyHtml += '<td class="disabled">' + (previous++) + '</td>';
                 }
+                for (var j = startDay; j < 7; j++) {
+                    tbodyHtml += '<td>' + (current++) + '</td>';
+                }
+                tbodyHtml += '</tr>';
+
+                // render the rows in the middle
+                for (var row = 1; row < rowCount - 1; row++) {
+                    tbodyHtml += '<tr>';
+                    for (var column = 0; column < 7; column++) {
+                        tbodyHtml += _createCell(current++);
+                    }
+                    tbodyHtml += '</tr><tr>';
+                }
+
+                // render the last row
+                for (; current < currentMonthDays + 1; current++) {
+                    tbodyHtml += '<td>' + current + '</td>';
+                }
+
+                // need to fill in the blanks with days in next month
+                if (endDay !== 6) {
+                    for (var m = nextStartDay, temp = 1; m < 7; m++, temp++) {
+                        tbodyHtml += '<td class="disabled">' + temp + '</td>';
+                    }
+                }
+
+                // close tags
+                tbodyHtml += '</tr></tbody>';
+                tableHtml += tbodyHtml + '</table>';
+
+                return tableHtml;
             }
-            
-            // close tags
-            tbodyHtml += '</tr></tbody>';
-            tableHtml += tbodyHtml+'</table>';
 
-            return tableHtml;
+            function _createCell(innerText) {
+                return '<td>' + innerText + '</td>';
+            }
+
+            function _countRows(firstRow, total) {
+                return total - 28 > firstRow ? 6 : 5;
+            }
+
+            function _daysInMonth(month, year) {
+                return new Date(year, month + 1, 0).getDate();
+            }
+
+            function _normalizeOptions(options) {
+                return $.extend(defaults, options);
+            }
+
+            /*
+                update the view when new item is selected
+            */
+            function _updateSingleSelection(selection) {
+                var dateNum;
+                if (selection.currentSelection){
+                    // check if the same month and year as the calendar
+                    if(selection.currentSelection.getMonth() === self.date.getMonth()&&selection.currentSelection.getFullYear() === self.date.getFullYear()){
+                        dateNum = selection.currentSelection.getDate(); 
+                    }
+                }else{
+                    return;
+                }
+                
+                self.view.find('.selected').removeClass('selected');
+                self.view.find('tbody td').each(function(index,item){
+                    if (item.innerText == dateNum && !$(item).hasClass('disabled')){
+                        $(item).addClass('selected');
+                        // break;
+                    }
+                })
+            }
+
+            // cache data on parentEl node
+            function _cacheSingleSelection(date){
+                $.data(self.parentEl, self.uid+'_singleDateSelection', date);
+            }
+
+            function _getSingleSelection(){
+                return $.data(self.parentEl, self.uid+'_singleDateSelection');
+            }
+
+            init();
         }
 
-        function _createCell(innerText){
-            return '<td>'+ innerText +'</td>';
+        var date = moment('2014-12-1').toDate();
+        var calendar = new Calendar({date: date, parentEl: $('#calendar')});
+        var calendar2 = new Calendar({parentEl: $('#calendar2')});
+        function nextMonth() {
+            calendar2.next();
+            // calendar2.previous();
         }
 
-        function _countRows(firstRow, total){
-            return total - 28 > firstRow? 6: 5;
+        function previousMonth() {
+            calendar2.previous();
+            // calendar2.next();
         }
-
-        function _daysInMonth(month,year) {
-            return new Date(year, month + 1, 0).getDate();
-        }
-
-        function _normalizeOptions(options){
-            return $.extend(defaults, options);
-        }
-
-        init();
-    }
-
-
-
-    var date = moment('2014-12-1').toDate();
-    var calendar = new Calendar({date: date, parentEl: $('#calendar')});
-    var calendar2 = new Calendar({parentEl: $('#calendar2')});
-    function nextMonth(){
-        calendar2.next();
-        // calendar2.previous();
-    }
-
-    function previousMonth(){
-        calendar2.previous();
-        // calendar2.next();
-    }
 
     </script>
-</body>
+    </body>
 </tbodyHtml>
