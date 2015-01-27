@@ -4,6 +4,7 @@
     <title></title>
     <script src="script/jquery-1.8.3.js"></script>
     <script src="script/moment.js"></script>
+    <script src="eventBus.js"></script>
     <script src="calendar.js"></script>
     <style type="text/css">
         .selected {
@@ -83,20 +84,20 @@
 
     }
 
+    DateRangePicker.prototype = new EventBus();
+
+
     var picker = new DateRangePicker();
-//    var date1 = moment('2014-12-01').toDate();
-//    var date2 = moment('2015-01-01').toDate();
-//    var calendar = new Calendar({date: date1, parentEl: $('#calendar'), selectionMode: 1});
-//    var calendar2 = new Calendar({date: date2, parentEl: $('#calendar2'), selectionMode: 1});
-//    function nextMonth() {
-//        calendar.next();
-//        calendar2.next();
-//    }
-//
-//    function previousMonth() {
-//        calendar.previous();
-//        calendar2.previous();
-//    }
+    
+    function nextMonth() {
+        picker.calendar1.next();
+        picker.calendar2.next();
+    }
+
+    function previousMonth() {
+        picker.calendar1.previous();
+        picker.calendar2.previous();
+    }
 
 </script>
 </body>

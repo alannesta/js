@@ -398,6 +398,8 @@ function Calendar(options) {
     init();
 }
 
+// inherit pub/sub from EventBus.js
+Calendar.prototype = new EventBus();
 
 Calendar.prototype.setDate = function(date) {
     this.date = date;
@@ -431,14 +433,14 @@ Calendar.prototype.getCurrentSelection = function() {
 }
 
 // pub/sub
-Calendar.prototype.events = $({});
+//Calendar.prototype.events = $({});
 
-Calendar.prototype.trigger = function(eventName) {
-    // $.publish(eventName);
-    this.events.trigger.apply(this.events, arguments);
-}
-
-Calendar.prototype.on = function(eventName, callback) {
-    // $.subscribe(eventName, callback);
-    this.events.on.apply(this.events, arguments);
-}
+//Calendar.prototype.trigger = function(eventName) {
+//    // $.publish(eventName);
+//    this.events.trigger.apply(this.events, arguments);
+//}
+//
+//Calendar.prototype.on = function(eventName, callback) {
+//    // $.subscribe(eventName, callback);
+//    this.events.on.apply(this.events, arguments);
+//}
