@@ -111,7 +111,7 @@
                 this.view = $(generateHTML(this.date));
                 _restoreSelection();
                 // this.currentSelection = _getSingleSelection();
-                // _updateSingleSelectionView({currentSelection: this.currentSelection});
+                // _updateSingleSelection({currentSelection: this.currentSelection});
                 this.parentEl.append(this.view);
             }
 
@@ -123,20 +123,21 @@
 
             this.bindHandlers = function() {
 
+                // drag to select date (range)
                 self.view.find('tbody').on('mousedown mouseup mousemove', _handleDrag);
 
+                // click to select date (single/range)
                 self.view.find('tbody td').on('click', function handleClick(e) {
                     var target = e.target;
 
                     if (!_isDisabled(target)) {
                         if (self.selectionMode === 0) {
                             self.currentSelection = _getDateFromCellText(target.innerText);
-                            _cacheSingleSelection(self.currentSelection);   // date cache
                             self.trigger(self.uid + '_selectSingleDate', {currentSelection: self.currentSelection});
                         } else if (self.selectionMode === 1) {
                             var stage = _checkSelectionStage();
                             var selectedDate = _getDateFromCellText(target.innerText);
-                            _updateRangeSelection(stage, selectedDate);
+                            _updateRangeSelectionValue(stage, selectedDate);
                             self.trigger(self.uid + '_selectDateRange', {
                                 rangeSelection: self.rangeSelection,
                                 stage: stage
@@ -144,7 +145,8 @@
                         }
                     }
                 });
-
+                
+                // hover effect
                 self.view.find('tbody td').on('hover', function handleHover(e) {
                     var target = e.target;
                     if (!_isDisabled(target)) {
@@ -164,12 +166,17 @@
                  @param: selection: {cell: HTMLElement}
                  */
                 self.on(self.uid + '_selectSingleDate', function(e, selection) {
-                    _updateSingleSelectionView(selection);
+                    _updateSingleSelection(selection);
                 });
 
                 self.on(self.uid + '_selectDateRange', function(e, rangeSelection) {
-                    _updateRangeSelectionView(rangeSelection);
+                    _updateRangeSelection(rangeSelection);
                 });
+
+                self.on(self.uid + '_dragSelectEnd', function(e, rangeSelection) {
+                    _cacheRangeSelection({rangeSelection: {start: rangeSelection.start, end: rangeSelection.end}});
+                });
+
             }
 
             /*
@@ -296,7 +303,7 @@
                 return new Date(self.date.getFullYear(), self.date.getMonth(), cellText);
             }
 
-            function _updateSingleSelectionView(options) {
+            function _updateSingleSelection(options) {
                 var dateNum;
 
                 if (options.currentSelection) {
@@ -314,9 +321,10 @@
                         // break;
                     }
                 });
+                _cacheSingleSelection(options.currentSelection);   // date cache
             }
 
-            function _updateRangeSelectionView(options) {
+            function _updateRangeSelection(options) {
                 var startDate = options.rangeSelection.start;
                 var endDate = options.rangeSelection.end;
                 var stage = options.stage;
@@ -334,7 +342,7 @@
                     //status 2: start date selection complete
                     if (stage === 'start') {
                         self.rangeSelection.end = null; // set the end date to null;
-                        _updateSingleSelectionView({currentSelection: self.rangeSelection.start});
+                        _updateSingleSelection({currentSelection: self.rangeSelection.start});
                     }
 
                     // while dragging, do not cache the result
@@ -363,12 +371,12 @@
             }
 
 
-            // call the _updateRangeSelectionView() to render the view when dragging
+            // call the _updateRangeSelection() to render the view when dragging
             function _renderDragCells(start, current) {
                 // debugger;
                 var startDate = _getDateFromCellText(start.innerText);
                 var currentDate = _getDateFromCellText(current.innerText);
-                _updateRangeSelectionView({
+                _updateRangeSelection({
                     rangeSelection: {
                         start: startDate,
                         end: currentDate
@@ -383,7 +391,7 @@
                 return self.rangeSelection.start ? (self.rangeSelection.end ? 'start' : 'end') : 'start';
             }
 
-            function _updateRangeSelection(stage, date) {
+            function _updateRangeSelectionValue(stage, date) {
                 self.rangeSelection[stage] = date;
             }
 
@@ -413,7 +421,9 @@
                             endDate = _getDateFromCellText(endCell.innerText);
                             startDate = _getDateFromCellText(startCell.innerText);
 
-                            _cacheRangeSelection({rangeSelection: {start: startDate, end: endDate}});
+                            self.trigger(self.uid + '_dragSelectEnd', {start: startDate, end: endDate});
+
+//                            _cacheRangeSelection({rangeSelection: {start: startDate, end: endDate}});
 
                             dragging = false;
                             startCell = null;
@@ -433,13 +443,13 @@
                     cached = _getSingleSelection();
                     if (cached) {
                         self.currentSelection = cached;
-                        _updateSingleSelectionView({currentSelection: self.currentSelection});
+                        _updateSingleSelection({currentSelection: self.currentSelection});
                     }
                 } else if (self.selectionMode === 1) {
                     cached = _getRangeSelection();
                     if (cached) {
                         self.rangeSelection = cached;
-                        _updateRangeSelectionView({rangeSelection: self.rangeSelection, stage: 'end'});
+                        _updateRangeSelection({rangeSelection: self.rangeSelection, stage: 'end'});
                     }
                 }
 
