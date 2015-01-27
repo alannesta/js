@@ -1,5 +1,5 @@
-<!DOCTYPE tbodyHtml>
-<tbodyHtml>
+<!DOCTYPE html>
+<html>
     <head>
         <title></title>
         <script src="script/jquery-1.8.3.js"></script>
@@ -35,6 +35,14 @@
                 -moz-user-select: none;
                 -ms-user-select: none;
                 user-select: none;
+            }
+
+            #calendar{
+                float: left;
+            }
+
+            #calendar2{
+                float: left;
             }
 
         </style>
@@ -422,9 +430,6 @@
                             startDate = _getDateFromCellText(startCell.innerText);
 
                             self.trigger(self.uid + '_dragSelectEnd', {start: startDate, end: endDate});
-
-//                            _cacheRangeSelection({rangeSelection: {start: startDate, end: endDate}});
-
                             dragging = false;
                             startCell = null;
                             endCell = null;
@@ -521,17 +526,18 @@
         }
 
 
-        var date = moment('2014-12-1').toDate();
-        var calendar = new Calendar({date: date, parentEl: $('#calendar'), selectionMode: 1});
-        var calendar2 = new Calendar({parentEl: $('#calendar2')});
+        var date1 = moment('2014-12-01').toDate();
+        var date2 = moment('2015-01-01').toDate();
+        var calendar = new Calendar({date: date1, parentEl: $('#calendar'), selectionMode: 1});
+        var calendar2 = new Calendar({date: date2, parentEl: $('#calendar2'), selectionMode: 1});
         function nextMonth() {
             calendar.next();
-            // calendar2.previous();
+            calendar2.next();
         }
 
         function previousMonth() {
             calendar.previous();
-            // calendar2.next();
+            calendar2.previous();
         }
 
 
@@ -576,4 +582,4 @@
         // } 
     </script>
     </body>
-</tbodyHtml>
+</html>

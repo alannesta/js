@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+    <script src="script/jquery-1.8.3.js"></script>
+    <script src="script/moment.js"></script>
+    <script src="calendar.js"></script>
+    <style type="text/css">
+        .selected {
+            background-color: red;
+        }
+
+        .disabled {
+            color: grey;
+            cursor: not-allowed;
+            /*visibility: hidden;*/
+        }
+
+        .hover {
+            background-color: grey;
+
+        }
+
+        .selected.hover {
+            background-color: green;
+        }
+
+        td {
+            cursor: pointer;
+        }
+
+        table {
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            -khtml-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+
+        #calendar1 {
+            float: left;
+        }
+
+        #calendar2 {
+            float: left;
+        }
+
+    </style>
+</head>
+<body>
+<div style="margin:20px">
+    <button onclick="previousMonth()">Previous</button>
+    <button onclick="nextMonth()">Next</button>
+
+    <!-- <span id ="selected"></span> -->
+</div>
+
+<div id="drpicker">
+    <div id="calendar1"></div>
+    <div id="calendar2"></div>
+</div>
+
+<script>
+
+    function DateRangePicker(options){
+        var self = this;
+        var momentNow = moment();
+        self.settings = {
+            parentEl: $('#drpicker'),
+            cal1startDate:  momentNow.startOf('month').toDate(),
+            cal2startDate:  momentNow.add(1, 'months').startOf('month').toDate(),
+            cal1Container: $('#calendar1'),
+            cal2Container: $('#calendar2')
+        };
+
+        self.view = $('#drpicker');
+
+        self.calendar1 = new Calendar({date: self.settings.cal1startDate, parentEl: self.settings.cal1Container, selectionMode: 1});
+        self.calendar2 = new Calendar({date: self.settings.cal2startDate, parentEl: self.settings.cal2Container, selectionMode: 1});
+
+
+
+    }
+
+    var picker = new DateRangePicker();
+//    var date1 = moment('2014-12-01').toDate();
+//    var date2 = moment('2015-01-01').toDate();
+//    var calendar = new Calendar({date: date1, parentEl: $('#calendar'), selectionMode: 1});
+//    var calendar2 = new Calendar({date: date2, parentEl: $('#calendar2'), selectionMode: 1});
+//    function nextMonth() {
+//        calendar.next();
+//        calendar2.next();
+//    }
+//
+//    function previousMonth() {
+//        calendar.previous();
+//        calendar2.previous();
+//    }
+
+</script>
+</body>
+</html>
