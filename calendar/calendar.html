@@ -72,54 +72,10 @@
 
         // }(jQuery));
 
-        Calendar.prototype.setDate = function(date) {
-            this.date = date;
-            this.trigger(this.uid + '_setdate');
-        }
-
-        Calendar.prototype.getDate = function(date) {
-            return this.date;
-        }
-
-        Calendar.prototype.next = function() {
-            var nextMonth = moment(this.date).add(1, 'months').toDate();
-            this.navigateTo(nextMonth);
-        }
-
-        Calendar.prototype.previous = function() {
-            var previousMonth = moment(this.date).subtract(1, 'months').toDate();
-            this.navigateTo(previousMonth);
-        }
-
-        Calendar.prototype.navigateTo = function(date) {
-            this.setDate(date);
-        }
-
-        Calendar.prototype.getView = function() {
-            return this.view;
-        }
-
-        Calendar.prototype.getCurrentSelection = function() {
-            return this.currentSelection;
-        }
-
-        // pub/sub
-        Calendar.prototype.events = $({});
-
-        Calendar.prototype.trigger = function(eventName) {
-            // $.publish(eventName);
-            this.events.trigger.apply(this.events, arguments);
-        }
-
-        Calendar.prototype.on = function(eventName, callback) {
-            // $.subscribe(eventName, callback);
-            this.events.on.apply(this.events, arguments);
-        }
-
-
         function Calendar(options) {
             var self = this;
             var momentNow = moment();
+            var startCell = null, endCell = null, dragging = false;   // drag and drop local variables
             var dayMap = {
                 0: 'SUN',
                 1: 'MON',
@@ -166,8 +122,12 @@
             }
 
             this.bindHandlers = function() {
-                self.view.find('tbody').on('click', function handleClick(e) {
+
+                self.view.find('tbody').on('mousedown mouseup mousemove', _handleDrag);
+
+                self.view.find('tbody td').on('click', function handleClick(e) {
                     var target = e.target;
+
                     if (!_isDisabled(target)) {
                         if (self.selectionMode === 0) {
                             self.currentSelection = _getDateFromCellText(target.innerText);
@@ -361,7 +321,6 @@
                 var endDate = options.rangeSelection.end;
                 var stage = options.stage;
                 var allDates = [];
-
                 // check if the same month and year as the current calendar date
                 if ((startDate.getMonth() === self.date.getMonth() && startDate.getFullYear() === self.date.getFullYear()) || (endDate.getMonth() === self.date.getMonth() && endDate.getFullYear() === self.date.getFullYear())) {
 
@@ -376,6 +335,12 @@
                     if (stage === 'start') {
                         self.rangeSelection.end = null; // set the end date to null;
                         _updateSingleSelectionView({currentSelection: self.rangeSelection.start});
+                    }
+
+                    // while dragging, do not cache the result
+                    if (stage === 'drag') {
+                        allDates = _getDatesArray(startDate, endDate);
+                        _renderMultipleSelectedCells(allDates);
                     }
                 }
             }
@@ -397,6 +362,22 @@
                 });
             }
 
+
+            // call the _updateRangeSelectionView() to render the view when dragging
+            function _renderDragCells(start, current) {
+                // debugger;
+                var startDate = _getDateFromCellText(start.innerText);
+                var currentDate = _getDateFromCellText(current.innerText);
+                _updateRangeSelectionView({
+                    rangeSelection: {
+                        start: startDate,
+                        end: currentDate
+                    },
+                    stage: 'drag'
+                })
+            }
+
+
             function _checkSelectionStage() {
                 // debugger;
                 return self.rangeSelection.start ? (self.rangeSelection.end ? 'start' : 'end') : 'start';
@@ -405,6 +386,43 @@
             function _updateRangeSelection(stage, date) {
                 self.rangeSelection[stage] = date;
             }
+
+            function _handleDrag(e) {
+
+                switch (e.type) {
+                    case 'mousedown':
+                        if (startCell === null) {
+                            startCell = e.target;
+                            dragging = true;
+                        }
+                        break;
+                    case 'mousemove':
+                        // case: no drag is in progress, should do nothing
+                        if (!dragging) {
+                            return;
+                        }
+                        // case: start cell selected, end cell is yet to be decided
+                        if (startCell && endCell === null) {
+                            _renderDragCells(startCell, e.target);
+                        }
+                        break;
+                    case 'mouseup':
+                        if (startCell && endCell === null) {
+
+                            endCell = e.target;
+                            endDate = _getDateFromCellText(endCell.innerText);
+                            startDate = _getDateFromCellText(startCell.innerText);
+
+                            _cacheRangeSelection({rangeSelection: {start: startDate, end: endDate}});
+
+                            dragging = false;
+                            startCell = null;
+                            endCell = null;
+                        }
+                        break;
+                }
+            }
+
 
             /*
              Data caching
@@ -446,6 +464,52 @@
 
             init();
         }
+
+
+        Calendar.prototype.setDate = function(date) {
+            this.date = date;
+            this.trigger(this.uid + '_setdate');
+        }
+
+        Calendar.prototype.getDate = function(date) {
+            return this.date;
+        }
+
+        Calendar.prototype.next = function() {
+            var nextMonth = moment(this.date).add(1, 'months').toDate();
+            this.navigateTo(nextMonth);
+        }
+
+        Calendar.prototype.previous = function() {
+            var previousMonth = moment(this.date).subtract(1, 'months').toDate();
+            this.navigateTo(previousMonth);
+        }
+
+        Calendar.prototype.navigateTo = function(date) {
+            this.setDate(date);
+        }
+
+        Calendar.prototype.getView = function() {
+            return this.view;
+        }
+
+        Calendar.prototype.getCurrentSelection = function() {
+            return this.currentSelection;
+        }
+
+        // pub/sub
+        Calendar.prototype.events = $({});
+
+        Calendar.prototype.trigger = function(eventName) {
+            // $.publish(eventName);
+            this.events.trigger.apply(this.events, arguments);
+        }
+
+        Calendar.prototype.on = function(eventName, callback) {
+            // $.subscribe(eventName, callback);
+            this.events.on.apply(this.events, arguments);
+        }
+
 
         var date = moment('2014-12-1').toDate();
         var calendar = new Calendar({date: date, parentEl: $('#calendar'), selectionMode: 1});
