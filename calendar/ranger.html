@@ -39,11 +39,7 @@
             user-select: none;
         }
 
-        #calendar1 {
-            float: left;
-        }
-
-        #calendar2 {
+        #drpicker div[id*="calendar"]{
             float: left;
         }
 
@@ -53,13 +49,10 @@
 <div style="margin:20px">
     <button onclick="previousMonth()">Previous</button>
     <button onclick="nextMonth()">Next</button>
-
     <!-- <span id ="selected"></span> -->
 </div>
 
 <div id="drpicker">
-    <div id="calendar1"></div>
-    <div id="calendar2"></div>
 </div>
 
 <script>
@@ -69,18 +62,55 @@
         var momentNow = moment();
         self.settings = {
             parentEl: $('#drpicker'),
-            cal1startDate:  momentNow.startOf('month').toDate(),
-            cal2startDate:  momentNow.add(1, 'months').startOf('month').toDate(),
-            cal1Container: $('#calendar1'),
-            cal2Container: $('#calendar2')
+            calCount: 2,    // number of calendars in the drpicker, defaults to 2
+            startDate: momentNow.startOf('month').toDate()  // default start month of the drpicker is the current month
         };
 
         self.view = $('#drpicker');
+        self.calendars = [];
+        self.calContainers = [];
 
-        self.calendar1 = new Calendar({date: self.settings.cal1startDate, parentEl: self.settings.cal1Container, selectionMode: 1});
-        self.calendar2 = new Calendar({date: self.settings.cal2startDate, parentEl: self.settings.cal2Container, selectionMode: 1});
+        self.init = function(){
+            init();
+        }
 
 
+        self.bindListeners = function(){
+
+
+        };
+
+        self.bindHandlers = function(){
+
+
+        };
+
+        function init(){
+//            debugger;
+            // step1: generate all calendars containers
+            _createCalContainers();
+
+            // step2: generate calendars
+            var start = self.settings.startDate;
+            for (var i = 0, length = self.calContainers.length; i< length; i++){
+                var calendar =  new Calendar({date: start, parentEl: self.calContainers[i], selectionMode: 1});
+                self.calendars.push(calendar);
+                start = moment(start).add(1, 'months').toDate();
+            }
+        }
+
+        function _createCalContainers(){
+            var baseId = 'calendar';
+            var htmlFragment;
+
+            for (var i=0; i<self.settings.calCount; i++){
+                htmlFragment = $('<div id="'+ (baseId + i) +'"></div>');
+                self.view.append(htmlFragment);
+                self.calContainers.push($('#' + baseId + i));
+            }
+        }
+
+        self.init();
 
     }
 
@@ -88,15 +118,15 @@
 
 
     var picker = new DateRangePicker();
-    
+
     function nextMonth() {
-        picker.calendar1.next();
-        picker.calendar2.next();
+        picker.calendars[0].next();
+        picker.calendars[1].next();
     }
 
     function previousMonth() {
-        picker.calendar1.previous();
-        picker.calendar2.previous();
+        picker.calendars[0].previous();
+        picker.calendars[1].previous();
     }
 
 </script>
