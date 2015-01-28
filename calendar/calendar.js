@@ -1,7 +1,7 @@
 function Calendar(options) {
     var self = this;
     var momentNow = moment();
-    var startCell = null, endCell = null, dragging = false;   // drag and drop local variables
+    var startCell = null, endCell = null, dragging = false, dragRef;   // drag and drop local variables
     var dayMap = {
         0: 'SUN',
         1: 'MON',
@@ -100,6 +100,10 @@ function Calendar(options) {
         });
 
         self.on(self.uid + '_dragSelectEnd', function(e, rangeSelection) {
+            _cacheRangeSelection({rangeSelection: {start: rangeSelection.rangeSelection.start, end: rangeSelection.rangeSelection.end}});
+        });
+
+        self.on(self.uid + '_setDateRange', function(e, rangeSelection){
             _cacheRangeSelection({rangeSelection: {start: rangeSelection.start, end: rangeSelection.end}});
         });
 
@@ -282,6 +286,8 @@ function Calendar(options) {
     function _renderMultipleSelectedCells(datesArr) {
         var currentMonth = self.date.getMonth();
         var currentYear = self.date.getFullYear();
+
+        // this will filter out selected days in current month
         var filtered = datesArr.filter(function(date) {
             return (date <= new Date(currentYear, currentMonth + 1, 0)) && (date >= new Date(currentYear, currentMonth, 1));
         });
@@ -311,7 +317,7 @@ function Calendar(options) {
         })
     }
 
-
+    // does not consider 'drag' stage
     function _checkSelectionStage() {
         // debugger;
         return self.rangeSelection.start ? (self.rangeSelection.end ? 'start' : 'end') : 'start';
@@ -325,7 +331,9 @@ function Calendar(options) {
 
         switch (e.type) {
             case 'mousedown':
+
                 if (startCell === null) {
+                    dragRef = e.target;
                     startCell = e.target;
                     dragging = true;
                 }
@@ -341,17 +349,18 @@ function Calendar(options) {
                 }
                 break;
             case 'mouseup':
-                if (startCell && endCell === null) {
+                if (startCell && endCell === null && dragRef !== e.target) {
 
                     endCell = e.target;
                     endDate = _getDateFromCellText(endCell.innerText);
                     startDate = _getDateFromCellText(startCell.innerText);
 
-                    self.trigger(self.uid + '_dragSelectEnd', {start: startDate, end: endDate});
-                    dragging = false;
-                    startCell = null;
-                    endCell = null;
+                    self.trigger(self.uid + '_dragSelectEnd', {rangeSelection: {start: startDate, end: endDate}, stage: 'drag'});
                 }
+                startCell = null;
+                endCell = null;
+                dragging = false;
+                
                 break;
         }
     }
@@ -360,6 +369,15 @@ function Calendar(options) {
     /*
      Data caching
      */
+    this.setDateRange = function(dateRange){
+        if (dateRange.start && dateRange.end){
+
+            self.rangeSelection.start = dateRange.start;
+            self.rangeSelection.end = dateRange.end;
+            self.trigger(self.uid + '_setDateRange', {rangeSelection: self.rangeSelection});
+        }
+    }
+
     function _restoreSelection() {
         var cached;
         if (self.selectionMode === 0) {
@@ -430,6 +448,18 @@ Calendar.prototype.getView = function() {
 
 Calendar.prototype.getCurrentSelection = function() {
     return this.currentSelection;
+}
+
+Calendar.prototype.getCurrentRangeSelection = function() {
+    return this.rangeSelection;
+}
+
+Calendar.prototype.getUID = function(){
+    return this.uid;
+}
+
+Calendar.prototype.notify = function(){
+
 }
 
 // pub/sub

@@ -14,7 +14,7 @@
         .disabled {
             color: grey;
             cursor: not-allowed;
-            /*visibility: hidden;*/
+            visibility: hidden;
         }
 
         .hover {
@@ -69,34 +69,56 @@
         self.view = $('#drpicker');
         self.calendars = [];
         self.calContainers = [];
+        self.dateRange = {
+            start: null,
+            end: null
+        };
+
 
         self.init = function(){
             init();
         }
 
-
+        // bind dom event listeners
         self.bindListeners = function(){
-
 
         };
 
+        // bind custom event handlers
         self.bindHandlers = function(){
 
+            for (var i = 0, length = self.calendars.length; i < length; i++){
+                //console.log(key);
+                var uid = self.calendars[i].getUID();
+                // iterate through all possible events, there should be a better way
+                self.on(uid+'_selectDateRange', function(event, data){
+                    console.log(event);
+                    updateRangeSelection(event, data);
+                    setChildCalendarDates();
+                });
 
+                self.on(uid+'_dragSelectEnd', function(event, data){
+                    console.log(event);
+                    updateRangeSelection(event, data);
+                    setChildCalendarDates();
+                });
+            }
         };
 
         function init(){
-//            debugger;
             // step1: generate all calendars containers
             _createCalContainers();
 
-            // step2: generate calendars
+            // step2: generate calendars and get their uids
             var start = self.settings.startDate;
             for (var i = 0, length = self.calContainers.length; i< length; i++){
                 var calendar =  new Calendar({date: start, parentEl: self.calContainers[i], selectionMode: 1});
                 self.calendars.push(calendar);
                 start = moment(start).add(1, 'months').toDate();
             }
+
+            // bind custom event handlers
+            self.bindHandlers();
         }
 
         function _createCalContainers(){
@@ -110,6 +132,47 @@
             }
         }
 
+        function updateRangeSelection(event, data){
+            // var uid = event.split('_')[0];
+            // console.log('calendar: '+ uid + 'changed');
+
+            if (data && data.rangeSelection){
+                var startDate = data.rangeSelection.start;
+                var endDate = data.rangeSelection.end;
+
+                // case: nothing is set yet
+                if (self.dateRange.start === null && self.dateRange.end === null){
+                    self.dateRange.start = startDate;
+                }
+
+                // case: start is there, need a date to close...
+                if (self.dateRange.start && self.dateRange.end === null){
+                    if (self.dateRange.start > startDate){
+                        self.dateRange.end = self.dateRange.start;
+                        self.dateRange.start = startDate;
+                    }else{
+                        self.dateRange.end = endDate;
+                    }
+
+                }
+
+                // case: both are set, need to begin another selection
+                if (self.dateRange.start && self.dateRange.end){
+                    self.dateRange.end = self.dateRange.start = null;
+                    self.dateRange.start = startDate;
+                    self.dateRange.end = endDate;
+                }
+            }
+        }
+
+        // update child calendar range selection
+        function setChildCalendarDates(){
+            console.log('set child');
+            for (var i = 0, length = self.calendars.length; i < length; i++){
+                self.calendars[i].setDateRange(self.dateRange);
+            }
+        }
+
         self.init();
 
     }
@@ -120,13 +183,15 @@
     var picker = new DateRangePicker();
 
     function nextMonth() {
-        picker.calendars[0].next();
-        picker.calendars[1].next();
+        for (var i=0; i<picker.calendars.length; i++){
+            picker.calendars[i].next();
+        }
     }
 
     function previousMonth() {
-        picker.calendars[0].previous();
-        picker.calendars[1].previous();
+        for (var i=0; i<picker.calendars.length; i++){
+            picker.calendars[i].previous();
+        }
     }
 
 </script>
