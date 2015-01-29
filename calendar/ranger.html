@@ -92,15 +92,23 @@
                 var uid = self.calendars[i].getUID();
                 // iterate through all possible events, there should be a better way
                 self.on(uid+'_selectDateRange', function(event, data){
-                    console.log(event);
-                    updateRangeSelection(event, data);
-                    setChildCalendarDates();
+                    var stage = updateRangeSelection(event, data);
+                    if (stage === 'end'){
+                        setChildCalendarDates();
+                    }else if (stage === 'start'){
+                        clearChildCalendarDates();
+                    }
+
                 });
 
                 self.on(uid+'_dragSelectEnd', function(event, data){
                     console.log(event);
-                    updateRangeSelection(event, data);
-                    setChildCalendarDates();
+                    var stage = updateRangeSelection(event, data);
+                    if (stage === 'end'){
+                        setChildCalendarDates();
+                    }else if (stage === 'new'){
+                        clearChildCalendarDates();
+                    }
                 });
             }
         };
@@ -132,6 +140,7 @@
             }
         }
 
+        // return the stage of the current selection
         function updateRangeSelection(event, data){
             // var uid = event.split('_')[0];
             // console.log('calendar: '+ uid + 'changed');
@@ -140,34 +149,41 @@
                 var startDate = data.rangeSelection.start;
                 var endDate = data.rangeSelection.end;
 
-                // case: nothing is set yet
-                if (self.dateRange.start === null && self.dateRange.end === null){
+                if (self.dateRange.start === null && self.dateRange.end === null){ // case: nothing is set yet
                     self.dateRange.start = startDate;
-                }
-
-                // case: start is there, need a date to close...
-                if (self.dateRange.start && self.dateRange.end === null){
+                }else if (self.dateRange.start && self.dateRange.end === null){ //case: start is there, need a date to close...
                     if (self.dateRange.start > startDate){
                         self.dateRange.end = self.dateRange.start;
                         self.dateRange.start = startDate;
                     }else{
-                        self.dateRange.end = endDate;
+                        if(endDate){
+                            self.dateRange.end = endDate;
+                        }else{
+                            self.dateRange.end = startDate;
+                        }
+
                     }
-
-                }
-
-                // case: both are set, need to begin another selection
-                if (self.dateRange.start && self.dateRange.end){
+                    return 'end';
+                }else if (self.dateRange.start && self.dateRange.end){    // case: both are set, need to begin another selection
                     self.dateRange.end = self.dateRange.start = null;
                     self.dateRange.start = startDate;
                     self.dateRange.end = endDate;
+                    return 'new';        // need to refresh the view
                 }
             }
+            return '';
         }
 
         // update child calendar range selection
         function setChildCalendarDates(){
             console.log('set child');
+            for (var i = 0, length = self.calendars.length; i < length; i++){
+                self.calendars[i].setDateRange(self.dateRange);
+            }
+        }
+
+        function clearChildCalendarDates(){
+            console.log('clear child');
             for (var i = 0, length = self.calendars.length; i < length; i++){
                 self.calendars[i].setDateRange(self.dateRange);
             }

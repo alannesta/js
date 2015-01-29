@@ -104,7 +104,10 @@ function Calendar(options) {
         });
 
         self.on(self.uid + '_setDateRange', function(e, rangeSelection){
-            _cacheRangeSelection({rangeSelection: {start: rangeSelection.start, end: rangeSelection.end}});
+            // cache result
+            _cacheRangeSelection({rangeSelection: {start: rangeSelection.rangeSelection.start, end: rangeSelection.rangeSelection.end}});
+            // update the view
+            _updateRangeSelection({rangeSelection: rangeSelection.rangeSelection, stage: 'end'});
         });
 
     }
@@ -225,6 +228,19 @@ function Calendar(options) {
         return results;
     }
 
+    // check if target and range have any intersections
+    //function checkIntersection(target, range){
+    //    if (target.start > range.start && target.start < range.end){
+    //        return true;
+    //    }
+    //
+    //    if (target.end < range.end && target.end > range.start){
+    //        return true;
+    //    }
+    //
+    //    return false;
+    //}
+
     /*
      Selection Management
      */
@@ -260,12 +276,11 @@ function Calendar(options) {
         var stage = options.stage;
         var allDates = [];
         // check if the same month and year as the current calendar date
-        if ((startDate.getMonth() === self.date.getMonth() && startDate.getFullYear() === self.date.getFullYear()) || (endDate.getMonth() === self.date.getMonth() && endDate.getFullYear() === self.date.getFullYear())) {
+        if ((startDate && startDate.getMonth() === self.date.getMonth() && startDate.getFullYear() === self.date.getFullYear()) || (endDate && endDate.getMonth() === self.date.getMonth() && endDate.getFullYear() === self.date.getFullYear())) {
 
             // status 1: range selection complete (both start and end are selected)
             if (stage === 'end' && startDate && endDate) {
                 allDates = _getDatesArray(startDate, endDate);
-                // debugger;
                 _cacheRangeSelection({rangeSelection: options.rangeSelection});   // range date cache
                 _renderMultipleSelectedCells(allDates);
             }
@@ -305,7 +320,6 @@ function Calendar(options) {
 
     // call the _updateRangeSelection() to render the view when dragging
     function _renderDragCells(start, current) {
-        // debugger;
         var startDate = _getDateFromCellText(start.innerText);
         var currentDate = _getDateFromCellText(current.innerText);
         _updateRangeSelection({
@@ -319,7 +333,6 @@ function Calendar(options) {
 
     // does not consider 'drag' stage
     function _checkSelectionStage() {
-        // debugger;
         return self.rangeSelection.start ? (self.rangeSelection.end ? 'start' : 'end') : 'start';
     }
 
@@ -360,7 +373,7 @@ function Calendar(options) {
                 startCell = null;
                 endCell = null;
                 dragging = false;
-                
+
                 break;
         }
     }
@@ -371,7 +384,10 @@ function Calendar(options) {
      */
     this.setDateRange = function(dateRange){
         if (dateRange.start && dateRange.end){
-
+            self.rangeSelection.start = dateRange.start;
+            self.rangeSelection.end = dateRange.end;
+            self.trigger(self.uid + '_setDateRange', {rangeSelection: self.rangeSelection});
+        }else{
             self.rangeSelection.start = dateRange.start;
             self.rangeSelection.end = dateRange.end;
             self.trigger(self.uid + '_setDateRange', {rangeSelection: self.rangeSelection});
@@ -388,7 +404,7 @@ function Calendar(options) {
             }
         } else if (self.selectionMode === 1) {
             cached = _getRangeSelection();
-            if (cached) {
+            if (cached && cached.start && cached.end) {
                 self.rangeSelection = cached;
                 _updateRangeSelection({rangeSelection: self.rangeSelection, stage: 'end'});
             }
