@@ -62,7 +62,7 @@
         var momentNow = moment();
         self.settings = {
             parentEl: $('#drpicker'),
-            calCount: 2,    // number of calendars in the drpicker, defaults to 2
+            calCount: 3,    // number of calendars in the drpicker, defaults to 2
             startDate: momentNow.startOf('month').toDate()  // default start month of the drpicker is the current month
         };
 
@@ -73,7 +73,7 @@
             start: null,
             end: null
         };
-
+        var activeCalendar = null;
 
         self.init = function(){
             init();
@@ -92,24 +92,26 @@
                 var uid = self.calendars[i].getUID();
                 // iterate through all possible events, there should be a better way
                 self.on(uid+'_selectDateRange', function(event, data){
-                    var stage = updateRangeSelection(event, data);
-                    if (stage === 'end'){
-                        setChildCalendarDates();
-                    }else if (stage === 'start'){
-                        clearChildCalendarDates();
-                    }
-
-                });
-
-                self.on(uid+'_dragSelectEnd', function(event, data){
-                    console.log(event);
+                    var uid = event.split('_')[0];
+                    activeCalendar = _getCalByUID(uid);     // get reference of the current calendar which triggers the action
                     var stage = updateRangeSelection(event, data);
                     if (stage === 'end'){
                         setChildCalendarDates();
                     }else if (stage === 'new'){
                         clearChildCalendarDates();
                     }
+
                 });
+
+//                self.on(uid+'_dragSelectEnd', function(event, data){
+//                    console.log(event);
+//                    var stage = updateRangeSelection(event, data);
+//                    if (stage === 'end'){
+//                        setChildCalendarDates();
+//                    }else if (stage === 'new'){
+//                        clearChildCalendarDates();
+//                    }
+//                });
             }
         };
 
@@ -137,6 +139,15 @@
                 htmlFragment = $('<div id="'+ (baseId + i) +'"></div>');
                 self.view.append(htmlFragment);
                 self.calContainers.push($('#' + baseId + i));
+            }
+        }
+
+        function _getCalByUID(uid){
+            for (var i = 0, length = self.calendars.length; i < length; i++){
+                if (self.calendars[i].getUID() == uid){
+
+                    return self.calendars[i];
+                }
             }
         }
 
@@ -176,16 +187,18 @@
 
         // update child calendar range selection
         function setChildCalendarDates(){
-            console.log('set child');
             for (var i = 0, length = self.calendars.length; i < length; i++){
                 self.calendars[i].setDateRange(self.dateRange);
             }
         }
 
+        // when start a new selection phase, clear all other cals expect the current "active" one
         function clearChildCalendarDates(){
-            console.log('clear child');
             for (var i = 0, length = self.calendars.length; i < length; i++){
-                self.calendars[i].setDateRange(self.dateRange);
+
+                if (self.calendars[i] != activeCalendar){
+                    self.calendars[i].clearDateRange();
+                }
             }
         }
 

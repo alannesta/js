@@ -24,7 +24,6 @@ function Calendar(options) {
     this.selectionMode = calendarSettings.selectionMode;     // 0: single, 1: date-range
     this.date = calendarSettings.date;
     this.currentSelection = (this.date.getMonth() === calendarSettings.currentSelection.getMonth() ? calendarSettings.currentSelection : null);
-    this.currentRangeSelection = [];
     this.view = null;
     this.parentEl = calendarSettings.parentEl;
     this.uid = parseInt(Math.random() * 10000, 10);     //TODO: use uuid generator
@@ -109,6 +108,11 @@ function Calendar(options) {
             // update the view
             _updateRangeSelection({rangeSelection: rangeSelection.rangeSelection, stage: 'end'});
         });
+
+        self.on(self.uid+ '_clearDateRange', function(e){
+            var voidRange = [];
+            _renderMultipleSelectedCells(voidRange);    // should call this method through _updateRangeSelection...
+        })
 
     }
 
@@ -228,18 +232,17 @@ function Calendar(options) {
         return results;
     }
 
-    // check if target and range have any intersections
-    //function checkIntersection(target, range){
-    //    if (target.start > range.start && target.start < range.end){
-    //        return true;
-    //    }
-    //
-    //    if (target.end < range.end && target.end > range.start){
-    //        return true;
-    //    }
-    //
-    //    return false;
-    //}
+
+    // check if calendar date is in a specific date range
+    function _inRange(calDate, range){
+        var start = range.start;
+        var end = range.end;
+
+        if ((start && calDate >= moment(start).startOf('month').toDate()) || (end && calDate <= moment(end).startOf('month').toDate())){
+            return true;
+        }
+        return false;
+    }
 
     /*
      Selection Management
@@ -275,9 +278,11 @@ function Calendar(options) {
         var endDate = options.rangeSelection.end;
         var stage = options.stage;
         var allDates = [];
-        // check if the same month and year as the current calendar date
-        if ((startDate && startDate.getMonth() === self.date.getMonth() && startDate.getFullYear() === self.date.getFullYear()) || (endDate && endDate.getMonth() === self.date.getMonth() && endDate.getFullYear() === self.date.getFullYear())) {
+        var inRange = _inRange(self.date, options.rangeSelection);
 
+        // check if the same month and year as the current calendar date
+        //if ((startDate && startDate.getMonth() === self.date.getMonth() && startDate.getFullYear() === self.date.getFullYear()) || (endDate && endDate.getMonth() === self.date.getMonth() && endDate.getFullYear() === self.date.getFullYear())) {
+        if(inRange){
             // status 1: range selection complete (both start and end are selected)
             if (stage === 'end' && startDate && endDate) {
                 allDates = _getDatesArray(startDate, endDate);
@@ -309,12 +314,14 @@ function Calendar(options) {
 
         self.view.find('.selected').removeClass('selected');
 
-        self.view.find('tbody td').each(function(index, item) {
-            if (item.innerText >= filtered[0].getDate() && item.innerText <= filtered[filtered.length - 1].getDate() && !_isDisabled(item)) {
-                $(item).addClass('selected');
-                // break;
-            }
-        });
+        if(filtered.length > 0){
+            self.view.find('tbody td').each(function(index, item) {
+                if (item.innerText >= filtered[0].getDate() && item.innerText <= filtered[filtered.length - 1].getDate() && !_isDisabled(item)) {
+                    $(item).addClass('selected');
+                    // break;
+                }
+            });
+        }
     }
 
 
@@ -387,11 +394,14 @@ function Calendar(options) {
             self.rangeSelection.start = dateRange.start;
             self.rangeSelection.end = dateRange.end;
             self.trigger(self.uid + '_setDateRange', {rangeSelection: self.rangeSelection});
-        }else{
-            self.rangeSelection.start = dateRange.start;
-            self.rangeSelection.end = dateRange.end;
-            self.trigger(self.uid + '_setDateRange', {rangeSelection: self.rangeSelection});
         }
+    }
+
+    this.clearDateRange = function(){
+        self.rangeSelection.start = null;
+        self.rangeSelection.end = null;
+        self.trigger(self.uid + '_clearDateRange');
+
     }
 
     function _restoreSelection() {
