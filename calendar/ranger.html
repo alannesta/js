@@ -74,6 +74,7 @@
             end: null
         };
         var activeCalendar = null;
+        var hoverSwitch = false;
 
         self.init = function(){
             init();
@@ -81,7 +82,11 @@
 
         // bind dom event listeners
         self.bindListeners = function(){
-
+            self.view.on('mouseout', function(e){
+                for (var i = 0, length = self.calendars.length; i < length; i++){
+                    self.calendars[i].toggleHoverSwitch();
+                }
+            });
         };
 
         // bind custom event handlers
@@ -92,13 +97,18 @@
                 var uid = self.calendars[i].getUID();
                 // iterate through all possible events, there should be a better way
                 self.on(uid+'_selectDateRange', function(event, data){
+
                     var uid = event.split('_')[0];
                     activeCalendar = _getCalByUID(uid);     // get reference of the current calendar which triggers the action
+                    self.calendars.forEach(function(cal){
+                        cal.toggleHoverSwitch();
+                    });
+
                     var stage = updateRangeSelection(event, data);
                     if (stage === 'end'){
                         setChildCalendarDates();
                     }else if (stage === 'new'){
-                        clearChildCalendarDates();
+                        resetChildCalendarDates();
                     }
 
                 });
@@ -162,6 +172,7 @@
 
                 if (self.dateRange.start === null && self.dateRange.end === null){ // case: nothing is set yet
                     self.dateRange.start = startDate;
+                    return 'new';
                 }else if (self.dateRange.start && self.dateRange.end === null){ //case: start is there, need a date to close...
                     if (self.dateRange.start > startDate){
                         self.dateRange.end = self.dateRange.start;
@@ -193,12 +204,12 @@
         }
 
         // when start a new selection phase, clear all other cals expect the current "active" one
-        function clearChildCalendarDates(){
+        function resetChildCalendarDates(){
             for (var i = 0, length = self.calendars.length; i < length; i++){
-
-                if (self.calendars[i] != activeCalendar){
-                    self.calendars[i].clearDateRange();
-                }
+                self.calendars[i].setDateRange(self.dateRange);
+//                if (self.calendars[i] != activeCalendar){
+//                    self.calendars[i].setDateRange(self.dateRange);
+//                }
             }
         }
 

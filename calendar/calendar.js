@@ -31,6 +31,7 @@ function Calendar(options) {
         start: null,
         end: null
     };
+    this.hoverSwitch = false;
 
     this.render = function() {
         this.view = $(generateHTML(this.date));
@@ -49,7 +50,41 @@ function Calendar(options) {
     this.bindHandlers = function() {
 
         // drag to select date (range)
-        self.view.find('tbody').on('mousedown mouseup mousemove', _handleDrag);
+        //self.view.find('tbody').on('mousedown mouseup mousemove', _handleDrag);
+
+        //hover switch...
+        if ( self.selectionMode  == 1){
+            self.view.find('tbody').bind('mousemove', function(e){
+                if (self.hoverSwitch){
+                    //debugger;
+                    var startCell = _getCellFromDate(self.rangeSelection.start);
+                    _renderDragCells(startCell, e.target);
+                }
+            });
+
+            self.view.bind('mouseleave', function(e){
+                // console.log('leave');
+                if (self.hoverSwitch) {
+                    //console.log(e.target.innerText);
+                    //debugger;
+                    if (self.rangeSelection.start.getMonth() == self.date.getMonth()) {
+                        var startCell = _getCellFromDate(self.rangeSelection.start);
+                        var cells = self.view.find('tbody td');
+
+                        // need to update render depending on the direction
+                        _renderDragCells(startCell, cells[cells.length - 1]);
+                    }else{
+                        console.log('need a clear');
+                        _renderDragCells(null, null);
+                    }
+                }
+            });
+
+            self.view.bind('mouseenter', function(e){
+                // notify
+                // console.log('enter');
+            });
+        }
 
         // click to select date (single/range)
         self.view.find('tbody td').on('click', function handleClick(e) {
@@ -72,12 +107,12 @@ function Calendar(options) {
         });
 
         // hover effect
-        self.view.find('tbody td').on('hover', function handleHover(e) {
-            var target = e.target;
-            if (!_isDisabled(target)) {
-                $(target).toggleClass('hover');
-            }
-        });
+        //self.view.find('tbody td').on('hover', function handleHover(e) {
+        //    var target = e.target;
+        //    if (!_isDisabled(target)) {
+        //        $(target).toggleClass('hover');
+        //    }
+        //});
     }
 
     // These listners should only handle view updates and bind handlers
@@ -252,6 +287,27 @@ function Calendar(options) {
         return new Date(self.date.getFullYear(), self.date.getMonth(), cellText);
     }
 
+    function _getCellFromDate(date){
+        //debugger;
+        var dateNum = date.getDate();
+        var cells = self.view.find('tbody td');
+
+        // case: earlier months should start from last cell;
+        if (moment(date).startOf('month').toDate()>moment(self.date).startOf('month').toDate()){
+            return  cells[cells.length-1];
+        }else if (moment(date).startOf('month').toDate()<moment(self.date).startOf('month').toDate()){
+            return cells[0];
+        }else{
+
+            for (var i = 0; i< cells.length; i++){
+                if (cells[i].innerText == dateNum && !_isDisabled(cells[i])) {
+                    return cells[i];
+                }
+            }
+        }
+
+    }
+
     function _updateSingleSelection(options) {
         var dateNum;
 
@@ -306,7 +362,6 @@ function Calendar(options) {
     function _renderMultipleSelectedCells(datesArr) {
         var currentMonth = self.date.getMonth();
         var currentYear = self.date.getFullYear();
-
         // this will filter out selected days in current month
         var filtered = datesArr.filter(function(date) {
             return (date <= new Date(currentYear, currentMonth + 1, 0)) && (date >= new Date(currentYear, currentMonth, 1));
@@ -327,6 +382,12 @@ function Calendar(options) {
 
     // call the _updateRangeSelection() to render the view when dragging
     function _renderDragCells(start, current) {
+        if (start === null && current === null){
+            var voidRange = [];
+            _renderMultipleSelectedCells(voidRange);
+            return;
+        }
+
         var startDate = _getDateFromCellText(start.innerText);
         var currentDate = _getDateFromCellText(current.innerText);
         _updateRangeSelection({
@@ -390,11 +451,11 @@ function Calendar(options) {
      Data caching
      */
     this.setDateRange = function(dateRange){
-        if (dateRange.start && dateRange.end){
+        //if (dateRange.start && dateRange.end){
             self.rangeSelection.start = dateRange.start;
             self.rangeSelection.end = dateRange.end;
             self.trigger(self.uid + '_setDateRange', {rangeSelection: self.rangeSelection});
-        }
+        //}
     }
 
     this.clearDateRange = function(){
@@ -484,8 +545,8 @@ Calendar.prototype.getUID = function(){
     return this.uid;
 }
 
-Calendar.prototype.notify = function(){
-
+Calendar.prototype.toggleHoverSwitch = function(){
+    this.hoverSwitch = !this.hoverSwitch;
 }
 
 // pub/sub
