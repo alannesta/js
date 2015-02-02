@@ -56,25 +56,29 @@ function Calendar(options) {
         if ( self.selectionMode  == 1){
             self.view.find('tbody').bind('mousemove', function(e){
                 if (self.hoverSwitch){
-                    //debugger;
                     var startCell = _getCellFromDate(self.rangeSelection.start);
                     _renderDragCells(startCell, e.target);
                 }
             });
 
             self.view.bind('mouseleave', function(e){
-                // console.log('leave');
                 if (self.hoverSwitch) {
-                    //console.log(e.target.innerText);
-                    //debugger;
                     if (self.rangeSelection.start.getMonth() == self.date.getMonth()) {
                         var startCell = _getCellFromDate(self.rangeSelection.start);
-                        var cells = self.view.find('tbody td');
+                        var cells = self.view.find('tbody td').filter(function(){
+                            return !_isDisabled(this);
+                        });
+                        var direction = _getLeaveDirection(e.target);
+                        console.log(direction);
+                        // update render depending on the direction
+                        if (direction === 'left'){
+                            _renderDragCells(cells[0], startCell);
+                        }else if (direction === 'right'){
+                            _renderDragCells(startCell, cells[cells.length-1]);
+                        }
 
-                        // need to update render depending on the direction
-                        _renderDragCells(startCell, cells[cells.length - 1]);
                     }else{
-                        console.log('need a clear');
+                        //console.log('need a clear');
                         _renderDragCells(null, null);
                     }
                 }
@@ -288,9 +292,11 @@ function Calendar(options) {
     }
 
     function _getCellFromDate(date){
-        //debugger;
         var dateNum = date.getDate();
-        var cells = self.view.find('tbody td');
+        // need to filter disabled cells to get the correct date
+        var cells = self.view.find('tbody td').filter(function(){
+            return !_isDisabled(this);
+        });
 
         // case: earlier months should start from last cell;
         if (moment(date).startOf('month').toDate()>moment(self.date).startOf('month').toDate()){
@@ -306,6 +312,22 @@ function Calendar(options) {
             }
         }
 
+    }
+
+    // this way of getting direction depending on the mouseleft event is unstable, the e.target varies sometimes
+    function _getLeaveDirection(cell){
+        var firstRowTds = $(self.view.find('tbody tr')[0]).find('td');
+        var firstEnd = parseInt(firstRowTds[firstRowTds.length-1].innerText, 10)%7;
+
+
+        var dateNum = cell.innerText;
+        if (parseInt(dateNum, 10) % 7 == firstEnd){
+            return 'right';
+        }else if(parseInt(dateNum, 10) % 7 == firstEnd+1){
+            return 'left';
+        }
+
+        return 'unknow direction';
     }
 
     function _updateSingleSelection(options) {
@@ -382,12 +404,11 @@ function Calendar(options) {
 
     // call the _updateRangeSelection() to render the view when dragging
     function _renderDragCells(start, current) {
-        if (start === null && current === null){
+        if (start === null && current === null) {
             var voidRange = [];
             _renderMultipleSelectedCells(voidRange);
             return;
         }
-
         var startDate = _getDateFromCellText(start.innerText);
         var currentDate = _getDateFromCellText(current.innerText);
         _updateRangeSelection({
@@ -458,9 +479,9 @@ function Calendar(options) {
         //}
     }
 
-    this.clearDateRange = function(){
-        self.rangeSelection.start = null;
-        self.rangeSelection.end = null;
+    this.clearDateRange = function(dateRange){
+        self.rangeSelection.start = dateRange.start;
+        self.rangeSelection.end = dateRange.end;
         self.trigger(self.uid + '_clearDateRange');
 
     }

@@ -206,10 +206,11 @@
         // when start a new selection phase, clear all other cals expect the current "active" one
         function resetChildCalendarDates(){
             for (var i = 0, length = self.calendars.length; i < length; i++){
-                self.calendars[i].setDateRange(self.dateRange);
-//                if (self.calendars[i] != activeCalendar){
+//                self.calendars[i].setDateRange(self.dateRange);
+                if (self.calendars[i] != activeCalendar){
 //                    self.calendars[i].setDateRange(self.dateRange);
-//                }
+                    self.calendars[i].clearDateRange(self.dateRange);
+                }
             }
         }
 
