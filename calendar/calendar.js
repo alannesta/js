@@ -78,7 +78,7 @@ function Calendar(options) {
                         }
 
                     }else{
-                        //console.log('need a clear');
+                        //FIXME need to consider the same direction to decide whether to render empty cells or keep current view, need refactor to support this
                         _renderDragCells(null, null);
                     }
                 }
