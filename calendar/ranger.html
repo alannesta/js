@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+    <script src="script/jquery-1.8.3.js"></script>
+    <script src="script/moment.js"></script>
+    <script src="eventBus.js"></script>
+    <script src="calendar.js"></script>
+    <style type="text/css">
+        .selected {
+            background-color: red;
+        }
+
+        .disabled {
+            color: grey;
+            cursor: not-allowed;
+            visibility: hidden;
+        }
+
+        .hover {
+            background-color: grey;
+
+        }
+
+        .selected.hover {
+            background-color: green;
+        }
+
+        td {
+            cursor: pointer;
+        }
+
+        table {
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            -khtml-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+
+        #drpicker div[id*="calendar"]{
+            float: left;
+        }
+
+    </style>
+</head>
+<body>
+<div style="margin:20px">
+    <button onclick="previousMonth()">Previous</button>
+    <button onclick="nextMonth()">Next</button>
+    <!-- <span id ="selected"></span> -->
+</div>
+
+<div id="drpicker">
+</div>
+
+<script>
+
+    function DateRangePicker(options){
+        var self = this;
+        var momentNow = moment();
+        self.settings = {
+            parentEl: $('#drpicker'),
+            calCount: 3,    // number of calendars in the drpicker, defaults to 2
+            startDate: momentNow.startOf('month').toDate()  // default start month of the drpicker is the current month
+        };
+
+        self.view = $('#drpicker');
+        self.calendars = [];
+        self.calContainers = [];
+        self.dateRange = {
+            start: null,
+            end: null
+        };
+        var activeCalendar = null;
+        var hoverSwitch = false;
+
+        self.init = function(){
+            init();
+        }
+
+        // bind dom event listeners
+        self.bindListeners = function(){
+            self.view.on('mouseout', function(e){
+                for (var i = 0, length = self.calendars.length; i < length; i++){
+                    self.calendars[i].toggleHoverSwitch();
+                }
+            });
+        };
+
+        // bind custom event handlers
+        self.bindHandlers = function(){
+
+            for (var i = 0, length = self.calendars.length; i < length; i++){
+                //console.log(key);
+                var uid = self.calendars[i].getUID();
+                // iterate through all possible events, there should be a better way
+                self.on(uid+'_selectDateRange', function(event, data){
+
+                    var uid = event.split('_')[0];
+                    activeCalendar = _getCalByUID(uid);     // get reference of the current calendar which triggers the action
+                    self.calendars.forEach(function(cal){
+                        cal.toggleHoverSwitch();
+                    });
+
+                    var stage = updateRangeSelection(event, data);
+                    if (stage === 'end'){
+                        setChildCalendarDates();
+                    }else if (stage === 'new'){
+                        resetChildCalendarDates();
+                    }
+
+                });
+
+//                self.on(uid+'_dragSelectEnd', function(event, data){
+//                    console.log(event);
+//                    var stage = updateRangeSelection(event, data);
+//                    if (stage === 'end'){
+//                        setChildCalendarDates();
+//                    }else if (stage === 'new'){
+//                        clearChildCalendarDates();
+//                    }
+//                });
+            }
+        };
+
+        function init(){
+            // step1: generate all calendars containers
+            _createCalContainers();
+
+            // step2: generate calendars and get their uids
+            var start = self.settings.startDate;
+            for (var i = 0, length = self.calContainers.length; i< length; i++){
+                var calendar =  new Calendar({date: start, parentEl: self.calContainers[i], selectionMode: 1});
+                self.calendars.push(calendar);
+                start = moment(start).add(1, 'months').toDate();
+            }
+
+            // bind custom event handlers
+            self.bindHandlers();
+        }
+
+        function _createCalContainers(){
+            var baseId = 'calendar';
+            var htmlFragment;
+
+            for (var i=0; i<self.settings.calCount; i++){
+                htmlFragment = $('<div id="'+ (baseId + i) +'"></div>');
+                self.view.append(htmlFragment);
+                self.calContainers.push($('#' + baseId + i));
+            }
+        }
+
+        function _getCalByUID(uid){
+            for (var i = 0, length = self.calendars.length; i < length; i++){
+                if (self.calendars[i].getUID() == uid){
+
+                    return self.calendars[i];
+                }
+            }
+        }
+
+        // return the stage of the current selection
+        function updateRangeSelection(event, data){
+            // var uid = event.split('_')[0];
+            // console.log('calendar: '+ uid + 'changed');
+
+            if (data && data.rangeSelection){
+                var startDate = data.rangeSelection.start;
+                var endDate = data.rangeSelection.end;
+
+                if (self.dateRange.start === null && self.dateRange.end === null){ // case: nothing is set yet
+                    self.dateRange.start = startDate;
+                    return 'new';
+                }else if (self.dateRange.start && self.dateRange.end === null){ //case: start is there, need a date to close...
+                    if (self.dateRange.start > startDate){
+                        self.dateRange.end = self.dateRange.start;
+                        self.dateRange.start = startDate;
+                    }else{
+                        if(endDate){
+                            self.dateRange.end = endDate;
+                        }else{
+                            self.dateRange.end = startDate;
+                        }
+
+                    }
+                    return 'end';
+                }else if (self.dateRange.start && self.dateRange.end){    // case: both are set, need to begin another selection
+                    self.dateRange.end = self.dateRange.start = null;
+                    self.dateRange.start = startDate;
+                    self.dateRange.end = endDate;
+                    return 'new';        // need to refresh the view
+                }
+            }
+            return '';
+        }
+
+        // update child calendar range selection
+        function setChildCalendarDates(){
+            for (var i = 0, length = self.calendars.length; i < length; i++){
+                self.calendars[i].setDateRange(self.dateRange);
+            }
+        }
+
+        // when start a new selection phase, clear all other cals expect the current "active" one
+        function resetChildCalendarDates(){
+            for (var i = 0, length = self.calendars.length; i < length; i++){
+//                self.calendars[i].setDateRange(self.dateRange);
+                if (self.calendars[i] != activeCalendar){
+//                    self.calendars[i].setDateRange(self.dateRange);
+                    self.calendars[i].clearDateRange(self.dateRange);
+                }
+            }
+        }
+
+        self.init();
+
+    }
+
+    DateRangePicker.prototype = new EventBus();
+
+
+    var picker = new DateRangePicker();
+
+    function nextMonth() {
+        for (var i=0; i<picker.calendars.length; i++){
+            picker.calendars[i].next();
+        }
+    }
+
+    function previousMonth() {
+        for (var i=0; i<picker.calendars.length; i++){
+            picker.calendars[i].previous();
+        }
+    }
+
+</script>
+</body>
+</html>
