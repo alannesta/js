@@ -1,0 +1,82 @@
+<!doctype html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<script src="script/jquery-1.8.3.js"></script>
+<script src="script/underscore.js"></script>
+<title>loops</title>
+</head>
+ 
+<body>
+	
+<script>
+	
+var arr = [1,2,3,4,5];
+
+/*
+	modify arr itself in a for loop
+*/
+
+// push
+
+// for (var i = 0; i < arr.length; i++){
+// 	arr.push('x');		// infinite loop
+// }
+
+// splice
+
+// for (var i = 0; i < arr.length; i++){
+// 	arr.splice(i , 1);		// dynamically change the arr, [2, 4]
+// }
+
+
+/*
+	modify arr itself in a forEach loop
+
+	MDN: forEach() executes the provided callback once for each element present in the array in ascending order. It is not invoked for indexes that have been deleted or elided. 
+
+	The range of elements processed by forEach() is set before the first invocation of callback. Elements that are appended to the array after the call to forEach() begins will not be visited by callback. If the values of existing elements of the array are changed, the value passed to callback will be the value at the time forEach() visits them; elements that are deleted before being visited are not visited.
+
+	There is no way to stop or break a forEach() loop.
+*/
+
+// push
+
+arr.forEach(function(item, index){
+	arr.push('x');		// 5 'x' will be pushed into the arr
+})
+
+// splice
+
+arr.forEach(function(item, index){
+	arr.splice(index, 1);		// dynamically change the arr [2, 4]
+})
+
+
+/*
+	modify arr itself in a jquery/underscore each loop (same as Array.prototype.forEach)
+*/
+
+
+// push : same behaviour as forEach
+$.each(arr, function(index, item){
+	arr.push('x');
+});
+
+_.each(arr, function(item, index){
+	arr.push('x');
+})
+
+// splice : same behaviour as forEach
+// $.each(arr, function(index, item){
+// 	arr.splice(index, 1);
+// })
+
+
+
+
+console.log(arr);
+
+</script>
+</body>
+</html>
