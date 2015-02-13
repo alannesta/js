@@ -1,7 +1,7 @@
 var fs = require('fs');
 var util = require('util');
 var folder = 'data';
-var model = {data: []};
+var model = {};
 
 function readFile(path) {
 
@@ -67,7 +67,7 @@ function filterFile(filePath){
 }
 
 
-readDirectory(folder, model);
+readDirectory('../fileOperations', model);
 
 setTimeout(function(){
     console.log(util.inspect(model, false, null));
