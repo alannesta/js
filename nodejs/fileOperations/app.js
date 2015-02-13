@@ -1,6 +1,7 @@
 var fs = require('fs');
+var util = require('util');
 var folder = 'data';
-var model = {'data': []};
+var model = {data: []};
 
 function readFile(path) {
 
@@ -18,31 +19,34 @@ function readFile(path) {
     // }
 }
 
-function readDirectory(folder, depth){
+function readDirectory(folder, sub){
+
     fs.readdir(folder, function (err, files) {
         if (err) throw err;
+
+        var arr = folder.split('/');
+        var current = arr[arr.length-1];
+        if (sub[current] === undefined){
+            Object.defineProperty(sub, current, {value: [], enumerable: true, writable: true});
+            //sub[current] = [];
+        }
         files.forEach(function (item) {
             var filePath = folder + '/' + item;
-            var temp = model;
+
             if (isFile(filePath) && filterFile(filePath)) {
-                
-                for (var i = 0; i<depth.length;i++){
-                    temp = temp[depth[i]];
-                }
-                temp.push(item);
-                // readFile(filePath);
+                sub[current].push(item);
             }else if(isDirectory(filePath)){
-                for (var i = 0; i<depth.length;i++){
-                    temp = temp[depth[i]];
-                }
-                temp.push({item: []});
-                // console.log(filePath);
-                var dep = filePath.split('/');
-                readDirectory(filePath, dep);
+                var newSub = new Object();
+                //newSub[item] = [];
+                Object.defineProperty(newSub, item, {value: [], enumerable: true, writable: true});
+                sub[current].push(newSub);
+                readDirectory(filePath, newSub);
             }
 
         });
+
     });
+
 }
 
 
@@ -60,10 +64,12 @@ function filterFile(filePath){
     var hiddenFileReg =/\.DS/;
     var jshtmlFileReg = /\.js/;
     return jshtmlFileReg.test(filePath) && !hiddenFileReg.test(filePath);
-
 }
 
-readDirectory(folder, [folder]);
+
+readDirectory(folder, model);
+
 setTimeout(function(){
-    console.log(model);
+    console.log(util.inspect(model, false, null));
+    //console.log('model : %j', model);
 },1000);
