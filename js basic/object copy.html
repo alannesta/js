@@ -15,8 +15,12 @@
 		phone: "654321",
 		note: {
 			note3: "3rd note",
-			note4: "4th note"
-		}
+			note4: "4th note",
+			noteobj: {
+				note5: "5th note"
+			}
+		},
+		issues: [1,2,3,4]
 	}
 
 	var obj2 = {
@@ -38,7 +42,8 @@
 		console.log(temp);
 
 		// changeObj(obj1);
-		obj1.name += " - change flag";
+		src.name += " - change flag";
+		src.note.note3 = "changed note!"
 
 		console.log("temp after src change: ")
 		console.log(temp);
@@ -79,10 +84,38 @@
 		return angular.copy(src);
 	}
 
+	function deepCopy(src){
+		var result = result || {};
+		var toString = Object.prototype.toString;
+
+		for (var prop in src){
+			if (src.hasOwnProperty(prop)){
+				if (typeof src[prop] === 'object'){
+					console.log('in');
+					result[prop] = toString.call(src[prop]) === '[object Array]'? []: {}
+					result[prop] = deepCopy(src[prop]);
+				}else{
+					result[prop] = src[prop];
+				}
+			}	
+		}
+		return result;
+
+	}
+
+
+	var test = deepCopy(obj1);
+	console.log('dest', test);
+	obj1.issues.splice(0,1);
+	obj1.note.noteobj.note5 = "changed";
+	console.log('src', obj1);
+	console.log('dest', test);
+
 	// copyObj(obj1, temp, JSONCopy)
 	// copyObj(obj1, temp, angularCopy);
+	// copyObj(obj1, temp, deepCopy);
 	// switchObj(obj1, obj2, temp, JSONCopy);
-	switchObj(obj1, obj2, temp, angularCopy);
+	// switchObj(obj1, obj2, temp, angularCopy);
 
 
 	/*
