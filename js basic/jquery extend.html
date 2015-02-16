@@ -3,28 +3,44 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <script src="script/jquery-1.8.3.js"></script>
+<script src="script/underscore.js"></script>
 <title>jquery</title>
 </head>
  
 <body>
     
 <script>
-    var source = {
+    var dest = {
+
     }
 
-    var dest = {
+    var source = {
         name: 'dest',
-        lastname: 'dest2'
+        lastname: 'dest2',
+        credential: {
+            username: 'abc',
+            password: 112233
+        }
     }
     
-    var arr = [1,2,3,4,5];
-    delete arr[2];
-    console.log(arr[2]);    //will be set to undefined, will not totally remove the element from arr
+    // var arr = [1,2,3,4,5];
+    // delete arr[2];
+    // console.log(arr[2]);    //will be set to undefined, will not totally remove the element from arr
 
-    $.extend(source, dest);
-    delete dest['lastname'];
-    console.log(dest);      //no lastname
-    console.log(source);    //has lastname
+    // jQuery.extend() is by default shallow copy...
+    // $.extend(dest, source);
+    $.extend(true, dest, source);   //  deep copy
+    // delete dest['lastname'];
+    source.lastname = "changed";      // primitive type will not affect those the source...
+    source.credential.password = '112233aa';
+    console.log('dest', dest);      
+    console.log('source', source);    // deep copy will not affect dest.credential.password
+
+    // _.extend(dest, source);
+    // // // delete dest['lastname'];
+    // source.credential.password = '112233aa';
+    // console.log('dest', dest);     
+    // console.log('source',source);    //underscore extend is always a shallow copy, dest.credential.password will be affected by the change of 'source'
 
 </script>
 </body>
