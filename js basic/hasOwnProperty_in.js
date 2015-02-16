@@ -29,17 +29,21 @@ function Coder(name, age){
 	
 Coder.prototype = new Person();		//the key to prototype inheritance---> point the child's prototype to parent's
 
+Coder.prototype.coderGetInfo = function(){
+	console.log(this.name + ' own getInfo method on prototype');
+}
+
 var coder = new Coder("Markelov", 100);
 coder.sayName();	//this is also inherited?
 coder.sayAge();		//how is this inherited? look up through the prototype chain?
 
 
 for (var prop in coder) {
-  if (coder.hasOwnProperty(prop)) {
+  if (coder.hasOwnProperty(prop)) {		// prototype is not checked
     console.log("Has own property: " + prop);
   }
   else {
-    console.log("in: " + prop); // toString or something else
+    console.log("in: " + prop); // everything else on the prototype chain
   }
 }
 
