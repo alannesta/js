@@ -1,0 +1,63 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<script src="script/jquery-1.8.3.js"></script>
+<title>Animation</title>
+<style>
+
+.slide {
+	-webkit-animation-duration: 3s;
+	-webkit-animation-name: slidein;
+	-webkit-transition: margin-left ease-in 0.5s;
+}
+
+@-webkit-keyframes slidein {
+	0% {
+		margin-left: 100px;
+	};
+
+	100% {
+		margin-left: 500px;
+	};
+}
+
+.slide.active {
+	margin-left: 500px;
+}
+
+
+/* test the situation which transition and keyframe co-exist */
+.slide2{
+	margin-left: 100px;
+	-webkit-transition: margin-left ease-in 1s;		
+}
+
+.slide2.active{
+	margin-left: 1500px;
+	-webkit-animation-duration: 5s;		
+	-webkit-animation-name: slidein;		/*animation definition has to be added to the 'toggled' css class*/
+}
+
+
+</style>
+
+</head>
+ 
+<body>
+	<h1 id = "header">Slide in header via add class</h1>
+	<h1 class = "slide2" id= "header2">Original slide in header</h1>
+	<button onclick="activate()">Transition</button>
+<script>
+
+	var header = $('#header');
+	var header2 = $('#header2');
+
+	function activate(){
+		// header.toggleClass('active');
+		header2.toggleClass('active');
+	}
+	
+</script>
+</body>
+</html>
