@@ -11,7 +11,14 @@ var num = 10,
     obj2 = {
      value: "second value"
     },
+
     obj3 = obj2;
+
+    // obj2 = {
+    //     value: 'new value'
+    // }
+    // console.log(obj3);      // {value: second value}; obj2 now points to a totally different object, the link between the two reference are cut off
+
  
 function change(number, name, obj1, obj2) {
     number = number * 10;
@@ -22,10 +29,10 @@ function change(number, name, obj1, obj2) {
     obj2.value = "new value";
 }
  
-change(num, name, obj1, obj2);
+// change(num, name, obj1, obj2);
  
-console.log(num); // 10
-console.log(name);// "Addy Osmani"
-console.log(obj1.value);//"first value"
-console.log(obj2.value);//"new value"
-console.log(obj3.value);//"new value"
+// console.log(num); // 10
+// console.log(name);// "Addy Osmani"
+// console.log(obj1.value);//"first value"
+// console.log(obj2.value);//"new value"
+// console.log(obj3.value);//"new value"
