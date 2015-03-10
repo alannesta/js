@@ -1,0 +1,68 @@
+<!doctype html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<script src="script/jquery-1.8.3.js"></script>
+<title>File Upload</title>
+</head>
+ 
+<body>
+
+	<div id = "dropzone" style = "width: 200px; height: 200px; background-color: grey"></div>
+	<img id="preview" style = "width: 200px; height: 200px; display: none"></img>
+	<input id = "fileChooser" type = "file" accept = "image/*">
+
+<script>
+	var fileList;
+	var dropzone = document.getElementById('dropzone');
+	var preview = document.getElementById('preview');
+	var uploadBtn = document.getElementById('fileChooser');
+
+	dropzone.addEventListener("dragenter", dragenter, false);
+	dropzone.addEventListener("dragover", dragover, false);
+	dropzone.addEventListener("drop", drop, false);
+	uploadBtn.addEventListener("change", handleFiles, false);
+
+
+	function dragenter(e) {
+		e.stopPropagation();
+		e.preventDefault();
+	}
+
+	function dragover(e) {
+		e.stopPropagation();
+		e.preventDefault();
+	}
+
+	function drop(e) {
+		e.stopPropagation();
+		e.preventDefault();
+		var dt = e.dataTransfer;
+		var files = dt.files;
+		// console.log(files);
+		handleFiles(files);
+	}
+
+	
+	function handleFiles() {
+		fileList = isFile(arguments[0][0])? arguments[0] : this.files;
+	  	// console.log(fileList);
+	  	var rd = new FileReader();
+	  	rd.onload = (function(show){
+	  		return function(e){	
+	  			show.style.display = 'block';
+	  			show.src = e.target.result;
+	  		}
+	  	})(preview)
+	  	rd.readAsDataURL(fileList[0]);
+
+	}
+
+	function isFile(file){
+		return file instanceof File;
+	}
+
+
+</script>
+</body>
+</html>
