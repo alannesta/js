@@ -11,17 +11,19 @@
 	<div id = "dropzone" style = "width: 200px; height: 200px; background-color: grey"></div>
 	<img id="preview" style = "width: 200px; height: 200px; display: none"></img>
 	<input id = "fileChooser" type = "file" accept = "image/*">
+	<span id = "progress">0%</span>
 
 <script>
 	var fileList;
 	var dropzone = document.getElementById('dropzone');
 	var preview = document.getElementById('preview');
 	var uploadBtn = document.getElementById('fileChooser');
+	var progress = document.getElementById('progress');
 
 	dropzone.addEventListener("dragenter", dragenter, false);
 	dropzone.addEventListener("dragover", dragover, false);
 	dropzone.addEventListener("drop", drop, false);
-	uploadBtn.addEventListener("change", handleFiles, false);
+	uploadBtn.addEventListener("change", sendFile, false);
 
 
 	function dragenter(e) {
@@ -40,23 +42,95 @@
 		var dt = e.dataTransfer;
 		var files = dt.files;
 		// console.log(files);
-		handleFiles(files);
+		// handleFiles(files);
+		for (var i=0; i<files.length; i++){
+			sendFile(files[i]);
+		}
 	}
 
 	
 	function handleFiles() {
-		fileList = isFile(arguments[0][0])? arguments[0] : this.files;
-	  	// console.log(fileList);
-	  	var rd = new FileReader();
-	  	rd.onload = (function(show){
-	  		return function(e){	
-	  			show.style.display = 'block';
-	  			show.src = e.target.result;
-	  		}
-	  	})(preview)
-	  	rd.readAsDataURL(fileList[0]);
-
+		// fileList = isFile(arguments[0][0])? arguments[0] : this.files;
+	 //  	// console.log(fileList);
+	 //  	var rd = new FileReader();
+	 //  	rd.onload = (function(show){
+	 //  		return function(e){	
+	 //  			show.style.display = 'block';
+	 //  			show.src = e.target.result;
+	 //  		}
+	 //  	})(preview)
+	 //  	rd.readAsDataURL(fileList[0]);
 	}
+
+	// function FileUpload(img, file) {
+	// 	var reader = new FileReader();
+	// 	var xhr = new XMLHttpRequest();
+	// 	this.xhr = xhr;
+
+	// 	var self = this;
+	// 	this.xhr.upload.addEventListener("progress", function(e) {
+	// 		if (e.lengthComputable) {
+	// 			var percentage = Math.round((e.loaded * 100) / e.total);
+	// 			self.ctrl.update(percentage);
+	// 		}
+	// 	}, false);
+
+	// 	xhr.upload.addEventListener("load", function(e){
+	// 		self.ctrl.update(100);
+	// 		var canvas = self.ctrl.ctx.canvas;
+	// 		canvas.parentNode.removeChild(canvas);
+	// 	}, false);
+	// 	xhr.open("POST", "http://demos.hacks.mozilla.org/paul/demos/resources/webservices/devnull.php");
+	// 	xhr.overrideMimeType('text/plain; charset=x-user-defined-binary');
+	// 	reader.onload = function(evt) {
+	// 		xhr.sendAsBinary(evt.target.result);
+	// 	};
+	// 	reader.readAsBinaryString(file);
+	// }
+
+	function sendFile(file) {
+		var fileToSend = isFile(file)? file: this.files[0];
+		console.log(fileToSend);
+
+		var uri = "https://angular-file-upload-cors-srv.appspot.com/upload";
+		var xhr = new XMLHttpRequest();
+		var fd = new FormData();
+
+		xhr.open("POST", uri, true);
+		xhr.onreadystatechange = function() {
+			if (xhr.readyState == 4 && xhr.status == 200) {
+                // Handle response.
+                console.log(xhr.responseText); // handle response.
+            }
+        };
+
+        xhr.upload.addEventListener('progress', function(e){
+        	if (e.lengthComputable) {
+        		var percentage = Math.round((e.loaded * 100) / e.total);
+        		// console.log(percentage);
+        		progress.innerHTML = percentage + ' %';
+        	}
+        }, false);
+
+
+        // show the preview;
+        xhr.upload.addEventListener("load", function(e){
+        	var rd = new FileReader();
+        	rd.onload = (function(show){
+        		return function(e){	
+        			show.style.display = 'block';
+        			show.src = e.target.result;
+        		}
+        	})(preview)
+        	rd.readAsDataURL(fileToSend);
+        }, false);
+
+        fd.append('send', fileToSend);
+        // Initiate a multipart/form-data upload
+        xhr.send(fd);
+    }
+
+
 
 	function isFile(file){
 		return file instanceof File;
