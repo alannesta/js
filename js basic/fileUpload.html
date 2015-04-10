@@ -3,6 +3,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <script src="script/jquery-1.8.3.js"></script>
+<script src="https://cdn.firebase.com/js/client/2.2.2/firebase.js"></script>
 <title>File Upload</title>
 </head>
  
@@ -12,18 +13,26 @@
 	<img id="preview" style = "width: 200px; height: 200px; display: none"></img>
 	<input id = "fileChooser" type = "file" accept = "image/*">
 	<span id = "progress">0%</span>
+	<span id = "firebase"></span>
 
 <script>
+
+	var myFirebaseRef = new Firebase("https://radiant-fire-6566.firebaseio.com/");
 	var fileList;
 	var dropzone = document.getElementById('dropzone');
 	var preview = document.getElementById('preview');
 	var uploadBtn = document.getElementById('fileChooser');
 	var progress = document.getElementById('progress');
+	var firebase = document.getElementById('firebase');
 
 	dropzone.addEventListener("dragenter", dragenter, false);
 	dropzone.addEventListener("dragover", dragover, false);
 	dropzone.addEventListener("drop", drop, false);
 	uploadBtn.addEventListener("change", sendFile, false);
+	myFirebaseRef.on('value', function(snapshot){
+		// firebase.innerHTML = snapshot.val();
+		console.log(snapshot.val());
+	})
 
 
 	function dragenter(e) {
@@ -128,7 +137,11 @@
         fd.append('send', fileToSend);
         // Initiate a multipart/form-data upload
         xhr.send(fd);
+        myFirebaseRef.set({
+        	imageFile: fileToSend
+        });
     }
+
 
 
 
