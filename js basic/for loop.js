@@ -34,15 +34,21 @@ var obj = {name: "2", age: 44}
 
 var arr = [1,2,3,4,5,6,7];
 
-for (var i = 0; i<arr.length; i++){		//here ++i or i++ dose not matter, they all happen at the end of each loop
-	console.log("in loop"+i);
-	if (i == 4){
-		// break;
-		return;
+function breakLoop(){
+	for (var i = 0; i<arr.length; i++){		//here ++i or i++ dose not matter, they all happen at the end of each loop
+		
+		if (i == 4){
+			// break;	// The break statement terminates the current loop and transfers program control to the statement following the terminated statement.
+			return;		// return will end function execution
+		}
+		console.log("line in the loop executed: "+i);
 	}
-	console.log("end of loop"+i);
+	console.log('function line after loop executed');	// case 'return' --> won't execute,  case 'break' --> will execute
 }
-console.log("after break: " + i);	//5
+
+breakLoop();
+
+// console.log("after break: " + i);	//5
 
 
 // var i = 0
