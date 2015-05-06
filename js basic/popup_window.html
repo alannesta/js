@@ -1,0 +1,91 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<script src="script/jquery-1.8.3.js"></script>
+	<script src="script/date.js"></script>
+	<title>Pop up window</title>
+</head>
+<body>
+	<button onclick="createPopup()">Pop</button>
+
+<script type="text/javascript">
+	var innerHTML = '<div style="width:100px; height: 100px; background-color: red">123</div>';
+	var popup;
+
+	var strVar="";
+	strVar += "<html>";
+	strVar += "<body>";
+	strVar += "<div style=\"     font-family:'HelveticaNeue','Helvetica Neue',Helvetica,Arial,sans-serif!important;     font-size:13px!important;     line-height:17px!important;     color:#333339!important;     background-color:#eee!important;     margin-top:0;     margin-right:0;     margin-bottom:0;     margin-left:0\" bgcolor=\"#eee\">";
+	strVar += "<table width=\"100%\" height=\"100%\" cellspacing=\"0\" cellpadding=\"0\" border=\"0\">";
+	strVar += "<tbody>";
+	strVar += "<tr>";
+	strVar += "<td style=\"border-collapse:collapse\">";
+	strVar += "<div style=\"                 width:600px;                 margin-right:auto;                 margin-top:0;                 margin-bottom:0;                 margin-left:auto\">";
+	strVar += "<p align=\"center\" style=\"                 text-align:center;                 font-size:24px;                 color:#88888d;                 margin-top:1em;                 margin-right:0;                 margin-bottom:1em;                 margin-left:0;                 line-height: 150%\">";
+	strVar += "<strong style=\"color:#55555b\">ZLI<\/strong> invites you to join ";
+	strVar += "                          ";
+	strVar += "                          account.";
+	strVar += "                        <br>";
+	strVar += "<br>";
+	strVar += "<\/p>";
+	strVar += "<\/div>";
+	strVar += "<span><a style=\"text-decoration:none;";
+	strVar += "              color:#fff;";
+	strVar += "              font-size:16.25px;";
+	strVar += "              display:block;";
+	strVar += "              text-align:center;";
+	strVar += "              width:200px;";
+	strVar += "              margin-top:50px;";
+	strVar += "              margin-right:auto;";
+	strVar += "              margin-bottom:100px;";
+	strVar += "              margin-left:auto;";
+	strVar += "              padding-top:11px;";
+	strVar += "              padding-right:19px;";
+	strVar += "              padding-bottom:11px;";
+	strVar += "              padding-left:19px;";
+	strVar += "              background-color:#18c\" href=\"new\/ng\/#\/invitation\/\/\">Join the account<\/a><\/span><\/td>";
+	strVar += "<\/tr>";
+	strVar += "<tr style=\"             width:600px;             background-color:#333339;             margin-top:100px;             margin-left:auto;             margin-right:auto;             margin-bottom:0;             height:200px\" bgcolor=\"#2c333b\">";
+	strVar += "<td style=\"border-collapse:collapse\">";
+	strVar += "<div style=\"                 text-align:center;                 color:#99999d;                 font-size:18px\" align=\"center\">";
+	strVar += "<a target=\"_blank\" style=\"text-decoration:none\" href=\"http:\/\/www.acquisio.com\"><img style=\"                     width:200px;                     min-height:auto;                     max-height:60px;                     margin-top:30px;                     margin-right:0;                     margin-bottom:0;                     margin-left:0\" src=\"https:\/\/ci5.googleusercontent.com\/proxy\/hBgOd83lygfYWQb-qct5PQCLniEf4rPMy52iBB5BqRxuBQcG0_s0pwoXoCmh-FcH3iIyMeKTqtvonZQxL0KrwyeuH9CAhkBKv0PcEWyq31k3gpXQ8mqbZNwOxV0Xkajn=s0-d-e1-ft#http:\/\/www.acquisio.com\/sites\/all\/themes\/acquisio\/images\/acquisio-logo.png\" alt=\"acquisio-logo\"><\/a>";
+	strVar += "<p style=\"margin-top:1em;margin-right:0;margin-bottom:1em;margin-left:0\">Performance Media Solutions<\/p>";
+	strVar += "<div style=\"font-size:13px\">&Acirc;&copy; 2015 Acquisio<\/div>";
+	strVar += "<\/div>";
+	strVar += "<\/td>";
+	strVar += "<\/tr>";
+	strVar += "<\/tbody>";
+	strVar += "<\/table>";
+	strVar += "<\/div>";
+	strVar += "<\/body>";
+	strVar += "<\/html>";
+
+
+
+	function createPopup(){
+		popup = open("", "Popup", "width=800,height=600,left=400,top=200");
+		// var div = popup.document.createElement("DIV");
+		popup.document.write(strVar);
+		
+		checkClosed();
+		// div.innerHTML = innerHTML;
+
+		// popup.document.body.appendChild(div);
+
+	}
+
+	function checkClosed(){
+		var interval = setInterval(function(){
+			if(popup.closed){
+				clearInterval(interval);
+				console.log('pop up closed');
+			}
+		},500);
+	}
+
+</script>
+</body>
+</html>
+
+
