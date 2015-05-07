@@ -2,34 +2,81 @@
 <html>
 <head>
 <meta charset="utf-8">
-<title>无标题文档</title>
-<link href="script/jquery.mobile-1.2.0.css" rel="stylesheet" type="text/css">
+<title>Event</title>
 <script src="script/jquery-1.8.3.js"></script>
+<style>
+#parent{
+	width: 200px;
+	height: 200px;
+	background-color: red;
+}
+
+#child{
+	width: 100px;
+	height: 200px;
+	background-color: green;
+}
+
+#grandchild{
+	width: 50px;
+	height: 50px;
+	background-color: blue;
+}
+
+</style>
+
 </head>
 <body>
-	<div>
-    	<ul id = "test">
-        	<li><a href = "#">link1</a></li>
-            <li><a href = "#">link2</a></li>
-            <li><a href = "#">link3</a></li>
-            <li><a href = "#">link4</a></li>
-        </ul>  
-    </div>
+	<div id="parent">
+		parent
+		<div id="child">
+			child
+			<div id="grandchild">
+				grandchild
+			</div>
+		</div>
+
+	</div>
 
 <script>
-	//后面加入的link5无法响应点击事件
-    /*$("#test li").on("click",function(e){
-			console.log($(this).text()+" clicked!");
-		});*/
+	var parent = document.getElementById('parent');
+	var child = document.getElementById('child');
+	var grandchild = document.getElementById('grandchild');
+
+	child.addEventListener('click', function(e){
+		console.log('child bubble');
+	}, false);
+
+	parent.addEventListener('click', function(e){
+		console.log('parent bubble');
+	}, false);
+
+	grandchild.addEventListener('click', function(e){
+		console.log('grandchild bubble');
+		// e.stopPropagation();
+	}, false);
+
+	parent.addEventListener('click', function(e){
+		console.log('parent capture');
+		e.stopPropagation();
+	}, true);
+
+	child.addEventListener('click', function(e){
+		console.log('child capture');
+		// e.stopPropagation();
+	}, true);
+
+	grandchild.addEventListener('click', function(e){
+		console.log('grandchild capture');
+	}, true);
+
 	
-	//event delegation!!
-	$("#test").on("click","li",function(e){
-			console.log($(this).text()+" clicked!");
-			console.log(e);
-		});
-		
-	$("<li><a href = \"#\">link5</a></li>").appendTo($("#test"));
+
+
+
 	
+
+
 </script>
 
 
