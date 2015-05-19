@@ -1,0 +1,13 @@
+{
+  "name": "Async",
+  "version": "0.0.1",
+  "author": "Alan Cao",
+  "private": true,
+  "scripts": {
+    "start": "node app.js"
+  },
+  "dependencies": {
+    "async": "^0.9.2",
+    "fibers": "^1.0.5"
+  }
+}
