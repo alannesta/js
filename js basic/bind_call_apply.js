@@ -55,10 +55,44 @@ kgToLb(3); //result here
 	shim: how bind works
 */
 
-// Function.prototype.bind = Function.prototype.bind || function(context){
+//Function.prototype.bind = Function.prototype.bind || function(context){
 //   var self = this;
 //   return function(){
 //     return self.apply(context, arguments);
 //   };
-// }
+//}
+
+// 山寨版bind...
+Function.prototype.bind = function(context) {
+	var self = this;
+	var args = Array.prototype.slice.call(arguments, 1);
+
+	return function(params){
+		// here the params are the params passed in later when this function is actually called
+		self.apply(context, args.concat(params));
+	}
+};
+
+function callback() {
+	//var args = Array.prototype.slice.call(arguments);
+	//print(args);
+	console.log('callback function')
+}
+
+function iterator() {
+	var args = Array.prototype.slice.call(arguments);
+	args[0].apply(this);
+	console.log(args[1]);
+}
+
+// These three are equivalent
+[1, 2, 3, 4, 5].forEach(iterator.bind(this, callback));
+//[1, 2, 3, 4, 5].forEach(iterator.bind(undefined, callback));
+//[1, 2, 3, 4, 5].forEach(function(item){
+//	console.log(item);
+//	callback();
+//});
+
+
+
   
