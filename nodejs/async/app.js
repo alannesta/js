@@ -34,17 +34,23 @@ var arr = [1, 2, 3, 4, 5, 6];
 async.series({
         one: function (callback) {
             var total = 0;
-            async.each(arr, function(item, cb){
+            async.each(arr, function(item, cb) {
                 setTimeout(function() {
                     total = total + item;
-                    cb(null);
+                    cb(null);   // have to explicitly call the cb
                 }, 1000);
+                //}, callback.bind(undefined, null, total));    // bind would create a new function, the actual 'callback' is not called...
+            }, function(){
+               callback(null, total);
+            });
 
-            }, callback.bind(undefined, null, total));
-            //arr.forEach(function(item) {
-            //   total = total + item;
-            //});
-            //callback(null, total);
+            //forEach is synchronous, no need would ge the correct total
+            /*
+                arr.forEach(function(item) {
+                   total = total + item;
+                });
+                callback(null, total);
+            */
         },
         two: function (callback) {
             setTimeout(function () {
@@ -53,7 +59,7 @@ async.series({
         }
     },
     function (err, results) {
-        // results is now equal to: {one: 1, two: 2}
+        // results is now equal to: {one: 21, two: 2}
         console.log(results);
     });
 
