@@ -39,12 +39,13 @@ coder.sayAge();		//how is this inherited? look up through the prototype chain?
 
 
 for (var prop in coder) {
-  if (coder.hasOwnProperty(prop)) {		// prototype is not checked
-    console.log("Has own property: " + prop);
-  }
-  else {
-    console.log("in: " + prop); // everything else on the prototype chain
-  }
+	console.log(prop+'--->' ,Object.getOwnPropertyDescriptor(coder, prop));
+  //if (coder.hasOwnProperty(prop)) {		// prototype is not checked
+  //  console.log("Has own property: " + prop);
+  //}
+  //else {
+  //  console.log("in: " + prop); // everything else on the prototype chain
+  //}
 }
 
 /*

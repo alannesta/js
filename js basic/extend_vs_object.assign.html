@@ -1,0 +1,89 @@
+<!doctype html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <script src="script/jquery-1.8.3.js"></script>
+    <script src="script/underscore.js"></script>
+    <title>Object.assign vs extend</title>
+</head>
+
+<body>
+
+<script>
+
+    // ES6 Object.assign polyfill
+    if (!Object.assign) {
+        Object.defineProperty(Object, 'assign', {
+            enumerable: false,
+            configurable: true,
+            writable: true,
+            value: function(target) {
+                'use strict';
+                if (target === undefined || target === null) {
+                    throw new TypeError('Cannot convert first argument to object');
+                }
+
+                var to = Object(target);
+                for (var i = 1; i < arguments.length; i++) {
+                    var nextSource = arguments[i];
+                    if (nextSource === undefined || nextSource === null) {
+                        continue;
+                    }
+                    nextSource = Object(nextSource);
+
+                    var keysArray = Object.keys(Object(nextSource));
+                    for (var nextIndex = 0, len = keysArray.length; nextIndex < len; nextIndex++) {
+                        var nextKey = keysArray[nextIndex];
+                        var desc = Object.getOwnPropertyDescriptor(nextSource, nextKey);
+                        if (desc !== undefined && desc.enumerable) {
+                            to[nextKey] = nextSource[nextKey];
+                        }
+                    }
+                }
+                return to;
+            }
+        });
+    }
+
+    function Person(name, age) {
+        this.name = name;
+        this.age = age;
+        this.sayName = function() {
+            console.log(this.name);
+        };
+        this.sayAge = function() {
+            console.log("age: " + this.age);
+        };
+    }
+
+    Person.prototype.getAge = function() {
+        console.log(this.age);
+    };
+    var person = new Person('maxim', 12);
+
+    Object.defineProperty(person, 'hiddenFunction' , {
+           get: function() {
+               return 'hidden';
+           },
+        enumerable: true        // by default false
+    });
+
+    // Object.assign ---> only copy/mixin properties that passes the hasOwnProperty check
+//    var coder = Object.assign({}, person);
+
+    // underscore extend ---> copy/mixin properties that is enumerable (in for...in...) loop
+    var coder = _.extend({}, person);
+
+
+//  coder.getAge();      // _.extend will get this, Object.assign won't have this
+    coder.sayAge();
+    console.log(coder);
+
+//    function Coder(name, age) {
+//        this.name = name;
+//        this.age = age;
+//    }
+
+</script>
+</body>
+</html>
