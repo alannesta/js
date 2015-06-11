@@ -6,6 +6,7 @@
 * */
 
 var _ = require('underscore');
+var chalk = require('chalk');
 
 function Rectangle(width, height) {
     this.width = width;
@@ -46,7 +47,7 @@ var square = Object.create(rectangle);
 //};
 
 function getProperties(obj) {
-    console.log('-------- List property ---------------------');
+    console.log(chalk.blue('-------- List property ---------------------'));
     console.log('Object.keys() ---> ', Object.keys(obj));
     console.log('getOwnPropertyNames() ---> ', Object.getOwnPropertyNames(obj));
 }
@@ -60,14 +61,14 @@ function getProperties(obj) {
  * demonstrate that "for...in..." loop will go up alone the prototype chain
  */
 function forInLoopDescriptorAndProperty(obj) {
-    console.log('---------for in loop -----------');
+    console.log(chalk.blue('---------for in loop -----------'));
     for (var key in obj ) {
         if (obj.hasOwnProperty(key)) {
-            console.log('hasOwnProperty: ---> ' + key);
+            console.log('hasOwnProperty: ---> ' + chalk.red(key));
         }else{
-            console.log('enumerable props from prototype chain ---> ' + key);
+            console.log('enumerable props from prototype chain ---> ' + chalk.red(key));
         }
-        console.log('getOwnPropertyDescriptor ---> ' + key, Object.getOwnPropertyDescriptor(obj, key));
+        console.log('getOwnPropertyDescriptor ---> ' + chalk.red(key), Object.getOwnPropertyDescriptor(obj, key));
     }
 }
 
@@ -75,16 +76,16 @@ function getOwnPropertyNamesDescriptorAndProperty(obj) {
     console.log('--------- get own property names -----------');
     Object.getOwnPropertyNames(obj).forEach(function(key) {
         if (obj.hasOwnProperty(key)) {
-            console.log('hasOwnProperty: ---> ' + key);
+            console.log('hasOwnProperty: ---> ' + chalk.red(key));
         }else{
-            console.log('enumerable props from prototype chain ---> ' + key);
+            console.log('enumerable props from prototype chain ---> ' + chalk.red(key));
         }
-        console.log('getOwnPropertyDescriptor ---> ' + key, Object.getOwnPropertyDescriptor(obj, key));
+        console.log('getOwnPropertyDescriptor ---> ' + chalk.red(key), Object.getOwnPropertyDescriptor(obj, key));
     });
 }
 
 //forInLoopDescriptorAndProperty(rectangle);
 forInLoopDescriptorAndProperty(square);
-//getProperties(rectangle);
+getProperties(rectangle);
 getOwnPropertyNamesDescriptorAndProperty(square);
 
