@@ -1,0 +1,9 @@
+{
+  "name": "js-basic",
+  "version": "0.0.1",
+  "author": "Alan Cao",
+  "dependencies": {
+    "chalk": "^1.0.0",
+    "underscore": "^1.8.3"
+  }
+}

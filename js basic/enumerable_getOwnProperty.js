@@ -21,7 +21,10 @@ Rectangle.prototype.perimeter = function() {
 
 var rectangle = new Rectangle(100, 100);
 
-var square = Object.create(Rectangle.prototype);
+var square = Object.create(rectangle);
+//var square = Object.create(new Rectangle());      // all props on square's prototype
+//var square = Object.create(Rectangle.prototype);  // only 'perimeter' is inherited on square's prototype
+//var square = _.extend({}, rectangle);     // all props become square's 'own' property
 
 
 //var parent = {
@@ -43,9 +46,9 @@ var square = Object.create(Rectangle.prototype);
 //};
 
 function getProperties(obj) {
+    console.log('-------- List property ---------------------');
     console.log('Object.keys() ---> ', Object.keys(obj));
     console.log('getOwnPropertyNames() ---> ', Object.getOwnPropertyNames(obj));
-    console.log('------------------------------------');
 }
 
 
@@ -53,33 +56,35 @@ function getProperties(obj) {
 /**
  *
  * @param {object} obj
+ * @description
+ * demonstrate that "for...in..." loop will go up alone the prototype chain
  */
-function testEnumDescriptorAndProperty(obj) {
+function forInLoopDescriptorAndProperty(obj) {
+    console.log('---------for in loop -----------');
     for (var key in obj ) {
-        console.log('---------own property-----------');
         if (obj.hasOwnProperty(key)) {
             console.log('hasOwnProperty: ---> ' + key);
         }else{
-            console.log('not own propery, should be enumerable props from prototype chain ---> ' + key);
+            console.log('enumerable props from prototype chain ---> ' + key);
         }
-        console.log('---------descriptor-----------');
         console.log('getOwnPropertyDescriptor ---> ' + key, Object.getOwnPropertyDescriptor(obj, key));
     }
 }
 
-function testUnenumDescriptorAndProperty(obj) {
+function getOwnPropertyNamesDescriptorAndProperty(obj) {
+    console.log('--------- get own property names -----------');
     Object.getOwnPropertyNames(obj).forEach(function(key) {
         if (obj.hasOwnProperty(key)) {
             console.log('hasOwnProperty: ---> ' + key);
         }else{
-            console.log('not own propery, should be enumerable props from prototype chain ---> ' + key);
+            console.log('enumerable props from prototype chain ---> ' + key);
         }
-        console.log('---------descriptor-----------');
         console.log('getOwnPropertyDescriptor ---> ' + key, Object.getOwnPropertyDescriptor(obj, key));
     });
 }
 
-//testEnumDescriptorAndProperty(parent);
-getProperties(square);
-testUnenumDescriptorAndProperty(square);
+//forInLoopDescriptorAndProperty(rectangle);
+forInLoopDescriptorAndProperty(square);
+//getProperties(rectangle);
+getOwnPropertyNamesDescriptorAndProperty(square);
 
