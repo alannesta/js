@@ -24,8 +24,12 @@ gulp.task('concat', function() {
 });
 
 
+
 gulp.task('inject', ['build'], function(){
-	return gulp.src('./app/app.html')
-		.pipe(inject(gulp.src('./dist/*.js')), {read:false, relative:false})
+	return gulp.src('./app.html')
+		.pipe(inject(gulp.src('./dist/bundle.js'), {read:false}), {
+			addRootSlash: false,
+			ignorePath: 'dist'
+		})
 		.pipe(gulp.dest('./dist'));
-})
+});
