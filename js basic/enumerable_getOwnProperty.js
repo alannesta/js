@@ -8,6 +8,12 @@
 var _ = require('underscore');
 var chalk = require('chalk');
 
+/*
+*
+* The inheritance way
+* */
+
+// old school inheritance
 function Rectangle(width, height) {
     this.width = width;
     this.height = height;
@@ -20,36 +26,53 @@ Rectangle.prototype.perimeter = function() {
     return (this.width + this.height) * 2;
 };
 
-var rectangle = new Rectangle(100, 100);
+function Square() {
+    var self = this;
+    Rectangle.apply(self, arguments);   // parent constructor
+}
 
-var square = Object.create(rectangle);
+Square.prototype = new Rectangle();
+Square.prototype.isSquare = function() {
+    return this.width === this.height;
+};
+
+
+function UnknownShape() {
+    var self = this;
+    Square.apply(self, arguments);
+}
+UnknownShape.prototype = new Square();
+
+
+var rectangle = new Rectangle(100, 100);
+var square = new Square(100, 100);
+var unknownShape = new UnknownShape(100, 100);
+
+// Object.create()
+//var square = Object.create(rectangle);
 //var square = Object.create(new Rectangle());      // all props on square's prototype
 //var square = Object.create(Rectangle.prototype);  // only 'perimeter' is inherited on square's prototype
+
+/*
+* The 'mixin' way
+*
+* */
+
+// underscore extend
 //var square = _.extend({}, rectangle);     // all props become square's 'own' property
 
 
-//var parent = {
-//    width: 100,
-//    height: 100,
-//    get area() {
-//        return this.width * this.height;
-//    }
-//};
-//
-//Object.defineProperty(parent, 'perimeter', {
-//   get: function() {
-//       return (this.width + this.height) * 2;
-//   }
-//});
+//TODO: Object.assign()
 
-//parent.prototype.getPerimeter = function() {
-//    return (this.width + this.height) * 2;
-//};
 
+/*
+*
+* Test method
+* */
 function getProperties(obj) {
     console.log(chalk.blue('-------- List property ---------------------'));
-    console.log('Object.keys() ---> ', Object.keys(obj));
-    console.log('getOwnPropertyNames() ---> ', Object.getOwnPropertyNames(obj));
+    console.log('Object.keys() ---> ', Object.keys(obj));   // no prototype prop
+    console.log('getOwnPropertyNames() ---> ', Object.getOwnPropertyNames(obj));    // no prototype prop
 }
 
 
@@ -62,6 +85,10 @@ function getProperties(obj) {
  */
 function forInLoopDescriptorAndProperty(obj) {
     console.log(chalk.blue('---------for in loop -----------'));
+
+    /*
+     *   for..in... will traverse properties on the object's prototype (or prototype chain)
+     * */
     for (var key in obj ) {
         if (obj.hasOwnProperty(key)) {
             console.log('hasOwnProperty: ---> ' + chalk.red(key));
@@ -74,6 +101,10 @@ function forInLoopDescriptorAndProperty(obj) {
 
 function getOwnPropertyNamesDescriptorAndProperty(obj) {
     console.log('--------- get own property names -----------');
+
+    /*
+    *   getOwnPropertyNames will NOT get properties on the object's prototype (or prototype chain)
+    * */
     Object.getOwnPropertyNames(obj).forEach(function(key) {
         if (obj.hasOwnProperty(key)) {
             console.log('hasOwnProperty: ---> ' + chalk.red(key));
@@ -85,7 +116,11 @@ function getOwnPropertyNamesDescriptorAndProperty(obj) {
 }
 
 //forInLoopDescriptorAndProperty(rectangle);
-forInLoopDescriptorAndProperty(square);
-getProperties(rectangle);
-getOwnPropertyNamesDescriptorAndProperty(square);
+//forInLoopDescriptorAndProperty(square);
+//forInLoopDescriptorAndProperty(unknownShape);
 
+//getProperties(rectangle);
+//getProperties(unknownShape);
+
+//getOwnPropertyNamesDescriptorAndProperty(square);
+getOwnPropertyNamesDescriptorAndProperty(unknownShape);
