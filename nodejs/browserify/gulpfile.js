@@ -3,8 +3,9 @@ var browserify = require('browserify');
 var inject = require('gulp-inject');
 var source = require('vinyl-source-stream');
 var concat = require('gulp-concat');
+var server = require('./lib/gulp_util');
 
-gulp.task('default', ['inject'], function() {
+gulp.task('default', ['serve'], function() {
 	console.log('all done');
 });
 
@@ -23,7 +24,9 @@ gulp.task('concat', function() {
 		.pipe(gulp.dest('./tmp'))
 });
 
-
+gulp.task('serve', ['inject'], function() {
+	server.create();
+});
 
 gulp.task('inject', ['build'], function(){
 	return gulp.src('./app.html')
