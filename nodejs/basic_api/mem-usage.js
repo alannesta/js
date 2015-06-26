@@ -2,19 +2,20 @@
 
 var util = require('util');
 
-console.log(util.inspect(process.memoryUsage()));
-
+var obj2;
 var hugeObj  = {};
+
+console.log(util.inspect(process.memoryUsage()));
 
 for (var i = 0; i < 1000000; i++) {
     hugeObj['key' + i] = 'value' +i ;
 }
 
-console.log(util.inspect(process.memoryUsage()));
+function destroy_obj_fake(obj) {
+    obj = null;
+}
 
-hugeObj = null;
-
-console.log(util.inspect(process.memoryUsage()));
+destroy_obj_fake(hugeObj);  // this will not destroy the hugeObj, the passed in 'copy' of reference is pointing to null, the object still persist
 
 global.gc();
 
