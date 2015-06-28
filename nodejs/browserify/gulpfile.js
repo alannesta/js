@@ -4,9 +4,24 @@ var inject = require('gulp-inject');
 var source = require('vinyl-source-stream');
 var concat = require('gulp-concat');
 var server = require('./lib/gulp_util');
+var tinylr = require('tiny-lr')();	// the livereload server implementation
+var path = require('path');
+
+var liveReloadPort = 12722;
 
 gulp.task('default', ['serve'], function() {
-	console.log('all done');
+
+	gulp.watch('./dist/*', function(event) {
+		var fileName = path.relative(__dirname, event.path);
+		console.log('file change, livereload ---> ' + fileName);
+		tinylr.changed({
+			body: {
+				files: [fileName]
+			}
+		});
+	});
+
+	console.log('all done, current __dirname: ' + __dirname);
 });
 
 gulp.task('build', ['concat'], function() {
@@ -26,13 +41,14 @@ gulp.task('concat', function() {
 
 gulp.task('serve', ['inject'], function() {
 	server.create();
+	// tinylr will start the actual livereload server.
+	tinylr.listen(liveReloadPort);
 });
 
 gulp.task('inject', ['build'], function(){
 	return gulp.src('./app.html')
 		.pipe(inject(gulp.src('./dist/bundle.js'), {read:false}), {
-			addRootSlash: false,
-			ignorePath: 'dist'
+			addRootSlash: false
 		})
 		.pipe(gulp.dest('./dist'));
 });
