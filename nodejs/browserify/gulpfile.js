@@ -9,19 +9,15 @@ var path = require('path');
 
 var liveReloadPort = 12722;
 
-gulp.task('default', ['serve'], function() {
-
+gulp.task('default', ['watch'], function() {
 	gulp.watch('./dist/*', function(event) {
 		var fileName = path.relative(__dirname, event.path);
-		console.log('file change, livereload ---> ' + fileName);
 		tinylr.changed({
 			body: {
 				files: [fileName]
 			}
 		});
 	});
-
-	console.log('all done, current __dirname: ' + __dirname);
 });
 
 gulp.task('build', ['concat'], function() {
@@ -45,10 +41,14 @@ gulp.task('serve', ['inject'], function() {
 	tinylr.listen(liveReloadPort);
 });
 
+gulp.task('watch', ['serve'],function() {
+	gulp.watch('app/*.js', ['build']);
+	gulp.watch('app.html', ['inject']);
+});
+
 gulp.task('inject', ['build'], function(){
 	return gulp.src('./app.html')
-		.pipe(inject(gulp.src('./dist/bundle.js'), {read:false}), {
-			addRootSlash: false
-		})
+		.pipe(gulp.dest('./dist'))// copy app.html to ./dist
+		.pipe(inject(gulp.src('./dist/bundle.js'), {relative: true}))	// set relative to true!
 		.pipe(gulp.dest('./dist'));
 });
