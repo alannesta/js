@@ -2,9 +2,25 @@
 <html>
 <head lang="en">
     <meta charset="UTF-8">
-    <title></title>
+    <title>Websocket demo</title>
+    <script src="https://cdn.socket.io/socket.io-1.3.5.js"></script>
+    <script src="bower-components/jquery/dist/jquery.js"></script>
 </head>
 <body>
+<input id="message" type="text"/>
+<button id="hellows">Hello Websocket</button>
+<ul id="messages"></ul>
+<script>
+    var socket = io('http://localhost:31203');
+    $('#hellows').click(function () {
+        socket.emit('chat message', $('#message').val());
+        $('#message').val('');
+        return false;
+    });
+    socket.on('chat message', function (msg) {
+        $('#messages').append($('<li>').text(msg));
+    });
 
+</script>
 </body>
 </html>
