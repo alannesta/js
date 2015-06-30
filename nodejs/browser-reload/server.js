@@ -12,6 +12,10 @@ app.get('/', function(req, res){
     res.sendFile(__dirname + '/static/app.html');
 });
 
+app.get('/board', function(req, res){
+    res.sendFile(__dirname + '/static/board.html');
+});
+
 app.get('/reload', function() {
     io.emit('reload allowed');
 });
