@@ -21,6 +21,10 @@ app.get('/reload', function() {
 });
 
 io.on('connection', function(socket){
+
+    /*
+    * live reload feature
+    * */
     //console.log('new connection: ',socket);
     socket.on('chat message', function(msg){
         io.emit('chat message', msg);
@@ -29,6 +33,15 @@ io.on('connection', function(socket){
     socket.on('reload request', function() {
        io.emit('reload allowed');
     });
+
+    /*
+    * collaborate programming feature
+    *
+    * */
+    socket.on('typing', function(msg) {
+        io.emit('update', msg);
+    });
+
 });
 
 http.listen(3000, function(){
