@@ -38,20 +38,37 @@ io.on('connection', function(socket){
 /*
 * namespacing connections
 * */
+//var board = io.of('/board').on('connection', function(socket) {
+//    // assign the unique id value
+//    socket.emit('server:assign', socket.id);    // only emit event to the socket itself
+//    // what is the socket here?
+//    socket.on('client:typing', function(data) {
+//        // what are the differences?
+//        board.emit('server:update', data.msg);        // standard way, to all sockets under '/board'
+//        //socket.broadcast.emit('server:update', data.msg);     // this works
+//        //io.sockets.emit('server:update', data.msg);     // does not work, not properly namespaced
+//        //socket.emit('server:update', data.msg);       // this does not work
+//
+//        console.log(data.clientID + ' is typing ');
+//    })
+//});
+
+/*
+* Using rooms
+*
+* */
 var board = io.of('/board').on('connection', function(socket) {
     // assign the unique id value
     socket.emit('server:assign', socket.id);    // only emit event to the socket itself
+    socket.join('sprint1');      // join a specific room
     // what is the socket here?
     socket.on('client:typing', function(data) {
-        // what are the differences?
-        board.emit('server:update', data.msg);        // standard way, to all sockets under '/board'
-        //socket.broadcast.emit('server:update', data.msg);     // this works
-        //io.sockets.emit('server:update', data.msg);     // does not work, not properly namespaced
-        //socket.emit('server:update', data.msg);       // this does not work
 
+        board.in('sprint1').emit('server:update', data.msg);        // only emit to a specific room
         console.log(data.clientID + ' is typing ');
     })
 });
+
 
 http.listen(3000, function(){
     console.log('listening on *:3000');
