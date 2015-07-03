@@ -33,15 +33,24 @@ io.on('connection', function(socket){
     socket.on('reload request', function() {
        io.emit('reload allowed');
     });
+});
 
-    /*
-    * collaborate programming feature
-    *
-    * */
-    socket.on('typing', function(msg) {
-        io.emit('update', msg);
-    });
+/*
+* namespacing connections
+* */
+var board = io.of('/board').on('connection', function(socket) {
+    // assign the unique id value
+    socket.emit('server:assign', socket.id);    // only emit event to the socket itself
+    // what is the socket here?
+    socket.on('client:typing', function(data) {
+        // what are the differences?
+        board.emit('server:update', data.msg);        // standard way, to all sockets under '/board'
+        //socket.broadcast.emit('server:update', data.msg);     // this works
+        //io.sockets.emit('server:update', data.msg);     // does not work, not properly namespaced
+        //socket.emit('server:update', data.msg);       // this does not work
 
+        console.log(data.clientID + ' is typing ');
+    })
 });
 
 http.listen(3000, function(){
