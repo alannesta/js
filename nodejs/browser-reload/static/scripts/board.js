@@ -11,10 +11,18 @@ $('#dashboard').on('keyup', function () {
     return false;
 });
 
-socket.on('server:update', function (msg) {
-    $('#dashboard').val(msg);
+socket.on('server:update', function (data) {
+    $('#dashboard').val(data.msg);
+    if (data.user !== undefined) {
+        $('#hint').show();
+        $('#hint').text(data.user + ' is typing...');
+    }
 });
 
 socket.on('server:assign', function(id) {
     clientID = id;
 });
+
+setInterval(function() {
+    $('#hint').hide();
+}, 1000);

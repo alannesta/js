@@ -3,18 +3,22 @@
 <head lang="en">
     <meta charset="UTF-8">
     <title>Board</title>
-    <script src="http://localhost:31203/socket.io/socket.io.js"></script>   <!--served by the socket.io server by default-->
+    <script src="http://localhost:31203/socket.io/socket.io.js"></script>
+    <!--served by the socket.io server by default-->
     <script src="bower-components/jquery/dist/jquery.js"></script>
+    <style>
+        section {
+            color: lightgrey;
+        }
+
+    </style>
 </head>
 <body>
-    <canvas>
+<textarea name="dashboard" id="dashboard" cols="30" rows="10">
+</textarea>
+<section id="hint"></section>
 
-    </canvas>
-    <textarea name="dashboard" id="dashboard" cols="30" rows="10">
-
-    </textarea>
-
-    <script src="scripts/board.js"></script>
+<script src="scripts/board.js"></script>
 
 </body>
 </html>
