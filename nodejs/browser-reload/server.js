@@ -2,20 +2,25 @@ var app = require('express')();
 var express = require('express');
 var http = require('http').Server(app);
 var Server = require('socket.io');
+var config = require('./config');
+
 
 var currentMessage = ' ';
 
-var io = new Server(31203);     // create the socket.io(websocket) server on a custom port
+var io = new Server(config.websocketPort);     // create the socket.io(websocket) server on a custom port
 
 app.use(express.static('static'));
-
+app.set('view engine', 'jade');
+app.set('views', './static');
 
 app.get('/', function(req, res){
     res.sendFile(__dirname + '/static/app.html');
 });
 
 app.get('/board', function(req, res){
-    res.sendFile(__dirname + '/static/board.html');
+    res.render('board', {
+        socketioClient: 'http://' + config.localhost + ':' + config.websocketPort + '/socket.io/socket.io.js'
+    });
 });
 
 app.get('/reload', function() {
