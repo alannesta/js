@@ -1,10 +1,17 @@
 <!doctype html>
 <html>
 <head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 	<title>html encode</title>
 </head>
 <body>
 	<h1>It works!</h1>
+	<!-- htmlencode -->
 	&lt;h1&gt;It works&lt;/h1&gt;	<!-- ngBind/ {{}} will produce something like this -->
+	
+	<script type="text/javascript">
+		// browser will interpret the unicode... 
+		document.write('\u003c\u0068\u0031\u003e\u0048\u0041\u0048\u0041\u003c\u002f\u0068\u0031\u003e');	//<h1>HAHA</h1>
+	</script>
 </body>
 </html>
