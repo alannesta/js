@@ -1,0 +1,40 @@
+<!doctype html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<script src="script/jquery-1.8.3.js"></script>
+<title>window.onload</title>	
+</head>
+ 
+<body>
+	<script>
+		window.onload = function() {
+			console.log('window onload');
+		}
+
+		$(document).ready(function() {
+			console.log('jquery document ready');
+		});
+
+		document.onreadystatechange = function() {
+
+			// equivalent of window.onload ---> The Load event in browser
+			if (document.readyState === 'complete') {
+				console.log('document.readystate is complete');
+			}
+
+			// equivalent of jquery ready ---> the DOMCotentLoaded event in browser
+			if (document.readyState === 'interactive') {
+				console.log('document.readystate is interactive');
+			}
+		}
+		
+	</script>
+
+	<div>Some Text</div>
+	<img src="http://caagei.com/wp-content/uploads/2015/01/1.jpg" alt="">	<!-- an image which takes sometime to load -->
+<script>
+	
+</script>
+</body>
+</html>
