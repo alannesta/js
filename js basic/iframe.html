@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>Iframe</title>
+    <style>
+        iframe {
+            width: 200px;
+            height: 200px;
+        }
+
+    </style>
+</head>
+<body>
+<iframe src="https://jira.acquisio.com" frameborder="0"></iframe>
+<span></span>
+<script>
+
+    window.frames[0].onload = function() {
+        console.log(document.getElementsByTagName('span')[0]);
+        document.getElementsByTagName('span')[0].innerHTML = 'iframe ready';
+    }
+
+</script>
+
+</body>
+</html>
