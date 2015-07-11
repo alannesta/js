@@ -3,23 +3,41 @@
 <head lang="en">
     <meta charset="UTF-8">
     <title>Iframe</title>
+    <script src="script/jquery-1.8.3.js"></script>
     <style>
         iframe {
-            width: 200px;
-            height: 200px;
+            width: 500px;
+            height: 500px;
         }
 
     </style>
 </head>
 <body>
-<iframe src="https://jira.acquisio.com" frameborder="0"></iframe>
+<!--<iframe id='frame' src="http://localhost:3000/board" frameborder="0" onload="ready()"></iframe>-->
 <span></span>
 <script>
+//    window.addEventListener('message', function(e) {
+//        console.log('message received');
+//        var span = $('<span>received message: '+ e.data +'</span>');
+//        $('body').append(span);
+//    });
 
-    window.frames[0].onload = function() {
-        console.log(document.getElementsByTagName('span')[0]);
+    var iframe = document.createElement('iframe');
+    iframe.src = 'http://localhost:3000/board';
+    iframe.onload = function() {
+        iframe.contentWindow.postMessage('haha', 'http://localhost:3000');
+//        iframe.contentWindow.postMessage('haha', '*');
         document.getElementsByTagName('span')[0].innerHTML = 'iframe ready';
-    }
+    };
+
+    iframe.addEventListener('message', function() {
+        alert('received');
+    });
+
+    document.body.appendChild(iframe);
+
+    window.postMessage('to iframe', '*');
+
 
 </script>
 
