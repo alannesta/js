@@ -14,6 +14,6 @@ html
       script(src="scripts/board.js")
       script.
          window.addEventListener('message', function(e) {
-            $('#hint').text('received: ', +e.data);
-            console.log('message');
+            $('#hint').text('received: ' + e.data);
+            console.log(e);
          });

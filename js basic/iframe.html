@@ -13,7 +13,7 @@
     </style>
 </head>
 <body>
-<iframe id='frame' src="http://localhost:3000/board" frameborder="0"></iframe>
+<!--<iframe id='frame' src="http://localhost:3000/board" frameborder="0" onload="ready()"></iframe>-->
 <div></div>
 <script>
     window.addEventListener('message', function (e) {
@@ -28,34 +28,45 @@
      * get reference to an existing iframe
      */
 
-    var iframeWindow = document.getElementById('frame').contentWindow;
-
-    iframeWindow.addEventListener('message', function (e) {
-        alert(e.data + ' from ' + e.source);
-    });
-
-    iframeWindow.postMessage('welcome iframe', '*');
-//    window.postMessage('welcome iframe', '*');
+    //    var iframeWindow = document.getElementById('frame').contentWindow;
+    //
+    //    iframeWindow.addEventListener('message', function (e) {
+    //        alert(e.data + ' from ' + e.source);
+    //    });
+    //
+    //    // mustwrap it in onload function
+    //    function ready() {
+    ////        iframeWindow.postMessage('welcome iframe', 'http://localhost:3000');  // only can post to its own origin, would work...
+    //        iframeWindow.postMessage('welcome iframe', '*');    // this would work
+    //    }
+    //    //    window.postMessage('welcome iframe', '*');
+    //    //    iframeWindow.postMessage('welcome iframe', '*');
 
 
     /**
      * Dynamically create and insert IFRAME
      */
 
-    //    var iframe = document.createElement('iframe');
-    //    iframe.src = 'http://localhost:3000/board';
-    //    iframe.onload = function() {
-    //        iframe.contentWindow.parent.postMessage('haha', 'http://localhost:8080');   // iframe.contentWindow.parent is a reference to its containing context
-    //        document.getElementsByTagName('div')[0].innerHTML = 'iframe ready';
-    //    };
-    //
-    //    document.body.insertBefore(iframe, document.getElementsByTagName('div')[0]);
-    //    iframe.contentWindow.addEventListener('message', function(e) {
-    //        alert(e.data);
-    //    });
-    //
-    //    iframe.contentWindow.postMessage('to iframe', 'http://localhost:8080');
+    var iframe = document.createElement('iframe');
+    iframe.src = 'http://localhost:3000/board';
+    iframe.onload = function () {
 
+        // iframe post data to parent
+//            iframe.contentWindow.parent.postMessage('haha', 'http://localhost:8080');   // iframe.contentWindow.parent is a reference to its containing context
+        document.getElementsByTagName('div')[0].innerHTML = 'iframe ready';
+
+        // parent script post to iframe
+
+        // !WRONG add event listener here would cause the 'same origin' violation
+//        iframe.contentWindow.addEventListener('message', function(e) {
+//            alert(e.data);
+//        });
+
+        iframe.contentWindow.postMessage('to iframe', 'http://localhost:3000');
+//        iframe.contentWindow.postMessage('to iframe', '*');
+    };
+
+    document.body.insertBefore(iframe, document.getElementsByTagName('div')[0]);
 
 </script>
 
