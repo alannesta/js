@@ -12,3 +12,8 @@ html
       textarea(name="dashaboard" id="dashboard" cols="30" rows="10")
       section(id="hint")
       script(src="scripts/board.js")
+      script.
+         window.addEventListener('message', function(e) {
+            $('#hint').text('received: ', +e.data);
+            console.log('message');
+         });
