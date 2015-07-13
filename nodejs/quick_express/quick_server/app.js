@@ -33,6 +33,9 @@ app.use(function(req, res, next) {
     next(err);
 });
 
+//console.log('app.get env: ' + app.get('env'));
+//console.log(process.env.NODE_ENV);
+
 // error handlers
 
 // development error handler

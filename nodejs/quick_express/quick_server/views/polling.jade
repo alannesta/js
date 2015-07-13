@@ -2,3 +2,6 @@ extends layout
 block content
     div.
       polling result:
+    button(onclick="polling('http://localhost:3000/polling/long')") poll
+block bodyend
+    script(src="../scripts/polling.js")
