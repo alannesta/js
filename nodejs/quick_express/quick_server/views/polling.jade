@@ -3,5 +3,7 @@ block content
     div.
       polling result:
     button(onclick="polling('http://localhost:3000/polling/long')") poll
+    button(onclick="stream('http://localhost:3000/polling/stream')") stream file
 block bodyend
     script(src="../scripts/polling.js")
+    script(src="../scripts/streaming.js")
