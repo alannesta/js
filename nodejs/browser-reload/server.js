@@ -45,9 +45,9 @@ io.on('connection', function(socket){
     });
 });
 
-/*
-* namespacing connections
-* */
+/**
+ * namespacing connections
+ */
 //var board = io.of('/board').on('connection', function(socket) {
 //    updateClient(socket, {
 //        msg: currentMessage
@@ -71,10 +71,9 @@ io.on('connection', function(socket){
 //    })
 //});
 
-/*
-* Using rooms
-*
-* */
+/**
+ * Using rooms
+ */
 var board = io.of('/board').on('connection', function(socket) {
 
     updateClient(socket, {
