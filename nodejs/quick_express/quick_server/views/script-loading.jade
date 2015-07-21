@@ -1,0 +1,18 @@
+extends layout
+block script-tag
+   script(src="../scripts/polling.js")
+   script.
+      function loadScript() {
+         var script = document.createElement('script');
+         script.type = 'text/javascript';
+         script.src = 'http://alannesta.github.io/test/async-load.js';
+         script.async = 'true';
+         var scripts = document.getElementsByTagName('script');
+         var tag = scripts[0];
+         tag.parentNode.insertBefore(script, tag);
+      }
+      window.onload = loadScript;
+
+block content
+   h1 Welcome Aboard!
+block bodyend
