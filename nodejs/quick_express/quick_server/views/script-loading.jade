@@ -1,6 +1,13 @@
 extends layout
 block script-tag
+   link(rel='stylesheet', href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.css")
+   script(src='http://alannesta.github.io/test/async-load.js')
    script(src="../scripts/polling.js")
+   //script(src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.14/angular.js")
+   script(src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/3.10.0/lodash.js")
+   script(src="https://cdnjs.cloudflare.com/ajax/libs/hammer.js/2.0.4/hammer.js")
+   script(src="https://cdnjs.cloudflare.com/ajax/libs/polymer/0.5.6/polymer.js")
+   script(src="https://fb.me/react-0.13.3.js")
    script.
       function loadScript() {
          var script = document.createElement('script');
@@ -16,3 +23,21 @@ block script-tag
 block content
    h1 Welcome Aboard!
 block bodyend
+   script.
+      var now, xhr = null;
+      function polling(url) {
+         console.log('Variable from async loading script: ', window.alan); // undefined, loading do not start
+         xhr = new XMLHttpRequest();
+         now = Date.now();
+         xhr.onreadystatechange = function () {
+            if (xhr.readyState == 4) {
+               console.log('time elapsed: ' + (Date.now() - now));   // will be more than the server pending time because of async script executing itself
+               console.log('Variable from async loading script: ', window.alan); // 1, async script loaded
+               xhr.onreadystatechange = null;
+               xhr = null;
+            }
+         };
+         xhr.open('GET', url, true);
+         xhr.send();
+      };
+      polling('http://localhost:3000/script-loading/pending');
