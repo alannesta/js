@@ -3,6 +3,7 @@
   "description": "reload the browser via websocket(socket.io)",
   "version": "0.0.1",
   "dependencies": {
+    "async": "^1.4.2",
     "express": "^4.13.0",
     "jade": "^1.11.0",
     "socket.io": "^1.3.5"

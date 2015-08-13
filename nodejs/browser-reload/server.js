@@ -1,6 +1,7 @@
 var app = require('express')();
 var express = require('express');
 var http = require('http').Server(app);
+var async = require('async');
 var Server = require('socket.io');
 var config = require('./config');
 var language_benchmark = require('./lib/benchmark');
@@ -116,13 +117,21 @@ var board = io.of('/board').on('connection', function(socket) {
 
 var benchmark = io.of('/benchmark').on('connection', function(socket) {
     socket.on('client:start', function(data) {
-        // set up the job queue chain
-        language_benchmark.jobQueue().then(function(result) {
-            //console.log(result);
-            socket.emit('server:draw', result);
+        var jobQueue = language_benchmark.asyncTaskChain(function(stdout) {
+            console.log(stdout);
+            socket.emit('server:draw');
         });
-        // get the promise chain trigger and kick start
-        language_benchmark.runBenchmark().resolve('start');
+
+        async.series(jobQueue, function() {
+           console.log('all done');
+        });
+        //// set up the job queue chain
+        //language_benchmark.promiseJobQueue().then(function(result) {
+        //    //console.log(result);
+        //    socket.emit('server:draw', result);
+        //});
+        //// get the promise chain trigger and kick start
+        //language_benchmark.getTrigger().resolve('start');
     });
 });
 

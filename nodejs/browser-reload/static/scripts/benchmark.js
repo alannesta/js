@@ -36,7 +36,7 @@ var barchartOptions = {
 };
 
 socket.on('server:draw', function(data) {
-    console.log(data);
+    console.log('draw');
     //benchmark_graph.Bar(data, barchartOptions);
 });
 

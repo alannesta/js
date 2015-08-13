@@ -1,7 +1,6 @@
 var exec = require('child_process').exec;
 var Q = require('q');
 var path = require('path');
-var jobQueue = [];
 var benchmark_result = {};
 var trigger;
 
@@ -38,15 +37,21 @@ var config = {
 	}
 };
 
-for (var key in config) {
-	jobQueue.push(createTask(config[key]));
-}
-
-
 /**
  * Exposed interfaces
  */
-var kickStart = function() {
+
+
+function asyncTaskChain(serverFn) {
+	var jobQueue = [];
+
+	for (var key in config) {
+		jobQueue.push(createAsyncTask(config[key], serverFn));
+	}
+	return jobQueue;
+}
+
+function promiseJobQueue() {
 	trigger = Q.defer();
 	var task_in_progress  = Q.when(trigger.promise);
 
@@ -55,8 +60,10 @@ var kickStart = function() {
 	});
 
 	return task_in_progress;
-};
+}
 
+
+// return the trigger to kick start the promise chain
 function getTrigger() {
 	return trigger;
 }
@@ -64,6 +71,28 @@ function getTrigger() {
 /**
  * Helper functions
  */
+
+/**
+ * @description create a job in for async.series to consume
+ * @param task
+ * @param serverFn	The function to be executed when the node.exec job is done
+ * @returns {Function}
+ */
+function createAsyncTask(task, serverFn) {
+	return function(callback) {
+		exec(task.command, {
+			cwd: task.cwd
+		}, function(error, stdout) {
+			serverFn(stdout);
+			if(error) {
+				callback(error);
+			}else {
+				callback(null);
+			}
+		});
+	}
+}
+
 function createTask(task) {
 	return function() {
 		var deferred = Q.defer();
@@ -73,6 +102,7 @@ function createTask(task) {
 		return deferred.promise;
 	}
 }
+
 
 function cb(deferred) {
 	return function(error, stdout) {
@@ -102,5 +132,6 @@ function parseLang(stdout) {
 	return language_reg.exec(stdout)[0];
 }
 
-exports.runBenchmark = getTrigger;
-exports.jobQueue = kickStart;
+exports.getTrigger = getTrigger;
+exports.promiseJobQueue = promiseJobQueue;
+exports.asyncTaskChain = asyncTaskChain;
