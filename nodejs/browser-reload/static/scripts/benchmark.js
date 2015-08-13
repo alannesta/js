@@ -1,29 +1,9 @@
 var ctx = $("#result").get(0).getContext("2d");
 var benchmark_graph = new Chart(ctx);
 
-var data = {
-    labels: ["January", "February", "March", "April", "May", "June", "July"],
-    datasets: [
-        {
-            label: "My First dataset",
-            fillColor: "rgba(220,220,220,0.5)",
-            strokeColor: "rgba(220,220,220,0.8)",
-            highlightFill: "rgba(220,220,220,0.75)",
-            highlightStroke: "rgba(220,220,220,1)",
-            data: [65, 59, 80, 81, 56, 55, 40]
-        },
-        {
-            label: "My Second dataset",
-            fillColor: "rgba(151,187,205,0.5)",
-            strokeColor: "rgba(151,187,205,0.8)",
-            highlightFill: "rgba(151,187,205,0.75)",
-            highlightStroke: "rgba(151,187,205,1)",
-            data: [28, 48, 40, 19, 86, 27, 90]
-        }
-    ]
-};
+var socket = io(getSocketUrl() + '/benchmark');
 
-var options = {
+var barchartOptions = {
     //Boolean - Whether the scale should start at zero, or an order of magnitude down from the lowest value
     scaleBeginAtZero : true,
 
@@ -52,8 +32,47 @@ var options = {
     barValueSpacing : 5,
 
     //Number - Spacing between data sets within X values
-    barDatasetSpacing : 1,
+    barDatasetSpacing : 1
 };
 
-benchmark_graph.Bar(data, options);
+socket.on('server:draw', function(data) {
+    console.log('draw stuff');
+    benchmark_graph.Bar(data, barchartOptions);
+});
+
+$('#start').on('click', function() {
+    socket.emit('client:start');
+});
+
+function getSocketUrl() {
+    var url = document.getElementsByTagName('script')[0].src;
+    //console.log(url);
+    return url.slice(0, url.indexOf('/socket'));
+}
+
+//var data = {
+//    labels: ["January", "February", "March", "April", "May", "June", "July"],
+//    datasets: [
+//        {
+//            label: "My First dataset",
+//            fillColor: "rgba(220,220,220,0.5)",
+//            strokeColor: "rgba(220,220,220,0.8)",
+//            highlightFill: "rgba(220,220,220,0.75)",
+//            highlightStroke: "rgba(220,220,220,1)",
+//            data: [65, 59, 80, 81, 56, 55, 40]
+//        },
+//        {
+//            label: "My Second dataset",
+//            fillColor: "rgba(151,187,205,0.5)",
+//            strokeColor: "rgba(151,187,205,0.8)",
+//            highlightFill: "rgba(151,187,205,0.75)",
+//            highlightStroke: "rgba(151,187,205,1)",
+//            data: [28, 48, 40, 19, 86, 27, 90]
+//        }
+//    ]
+//};
+//
+
+
+//benchmark_graph.Bar(data, options);
 
