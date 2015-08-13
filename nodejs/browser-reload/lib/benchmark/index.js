@@ -3,7 +3,7 @@ var Q = require('q');
 var path = require('path');
 var jobQueue = [];
 var benchmark_result = {};
-var trigger = Q.defer();
+var trigger;
 
 var fibonacci = 32;
 
@@ -38,27 +38,29 @@ var config = {
 	}
 };
 
-
+for (var key in config) {
+	jobQueue.push(createTask(config[key]));
+}
 
 var kickStart = function() {
-	return function() {
-		trigger = Q.defer();
-		for (var key in config) {
-			jobQueue.push(createTask(config[key]));
-		}
-		var task_in_progress  = Q.when(trigger.promise);
+	trigger = Q.defer();
+	var task_in_progress  = Q.when(trigger.promise);
 
-		jobQueue.forEach(function(nextTask) {
-			task_in_progress = task_in_progress.then(nextTask);
-		});
+	jobQueue.forEach(function(nextTask) {
+		task_in_progress = task_in_progress.then(nextTask);
+	});
 
-		//task_in_progress.then(function() {
-		//	console.log(benchmark_result);
-		//});
+	//task_in_progress.then(function() {
+	//	console.log(benchmark_result);
+	//});
 
-		return task_in_progress;
-	}
+	return task_in_progress;
 };
+
+function getTrigger() {
+	return trigger;
+}
+
 
 function createTask(task) {
 	return function() {
@@ -98,5 +100,5 @@ function parseLang(stdout) {
 	return language_reg.exec(stdout)[0];
 }
 
-exports.runBenchmark = trigger;
-exports.jobQueue = kickStart();
+exports.runBenchmark = getTrigger;
+exports.jobQueue = kickStart;
