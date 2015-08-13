@@ -117,8 +117,9 @@ var board = io.of('/board').on('connection', function(socket) {
 var benchmark = io.of('/benchmark').on('connection', function(socket) {
     socket.on('client:start', function(data) {
         // set up the job queue chain
-        language_benchmark.jobQueue().then(function() {
-            console.log('job done');
+        language_benchmark.jobQueue().then(function(result) {
+            //console.log(result);
+            socket.emit('server:draw', result);
         });
         // get the promise chain trigger and kick start
         language_benchmark.runBenchmark().resolve('start');

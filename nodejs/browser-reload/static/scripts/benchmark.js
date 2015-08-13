@@ -36,8 +36,8 @@ var barchartOptions = {
 };
 
 socket.on('server:draw', function(data) {
-    console.log('draw stuff');
-    benchmark_graph.Bar(data, barchartOptions);
+    console.log(data);
+    //benchmark_graph.Bar(data, barchartOptions);
 });
 
 $('#start').on('click', function() {

@@ -42,6 +42,10 @@ for (var key in config) {
 	jobQueue.push(createTask(config[key]));
 }
 
+
+/**
+ * Exposed interfaces
+ */
 var kickStart = function() {
 	trigger = Q.defer();
 	var task_in_progress  = Q.when(trigger.promise);
@@ -50,10 +54,6 @@ var kickStart = function() {
 		task_in_progress = task_in_progress.then(nextTask);
 	});
 
-	//task_in_progress.then(function() {
-	//	console.log(benchmark_result);
-	//});
-
 	return task_in_progress;
 };
 
@@ -61,7 +61,9 @@ function getTrigger() {
 	return trigger;
 }
 
-
+/**
+ * Helper functions
+ */
 function createTask(task) {
 	return function() {
 		var deferred = Q.defer();
@@ -86,7 +88,7 @@ function cb(deferred) {
 		if(lang !== undefined && time !== undefined) {
 			benchmark_result[lang] = time;
 		}
-		deferred.resolve();
+		deferred.resolve(benchmark_result);
 	}
 }
 
