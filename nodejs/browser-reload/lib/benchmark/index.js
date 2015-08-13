@@ -3,6 +3,7 @@ var Q = require('q');
 var path = require('path');
 var jobQueue = [];
 var benchmark_result = {};
+var trigger = Q.defer();
 
 var fibonacci = 32;
 
@@ -40,25 +41,23 @@ var config = {
 
 
 var kickStart = function() {
-	for (var key in config) {
-		jobQueue.push(createTask(config[key]));
+	return function() {
+		trigger = Q.defer();
+		for (var key in config) {
+			jobQueue.push(createTask(config[key]));
+		}
+		var task_in_progress  = Q.when(trigger.promise);
+
+		jobQueue.forEach(function(nextTask) {
+			task_in_progress = task_in_progress.then(nextTask);
+		});
+
+		//task_in_progress.then(function() {
+		//	console.log(benchmark_result);
+		//});
+
+		return task_in_progress;
 	}
-//jobQueue[0]().then(jobQueue[1]).then(jobQueue[2]).then(jobQueue[3]).then(jobQueue[4]);
-//jobQueue[4]();
-
-	var start = Q.defer();
-	var task_in_progress  = Q.when(start.promise);
-
-// it would be better to use async for brevity
-	jobQueue.forEach(function(nextTask) {
-		task_in_progress = task_in_progress.then(nextTask);
-	});
-
-	task_in_progress.then(function() {
-		console.log(benchmark_result);
-	});
-
-	start.resolve('gg');
 };
 
 function createTask(task) {
@@ -99,5 +98,5 @@ function parseLang(stdout) {
 	return language_reg.exec(stdout)[0];
 }
 
-module.exports = kickStart;
-
+exports.runBenchmark = trigger;
+exports.jobQueue = kickStart();

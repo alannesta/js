@@ -3,8 +3,7 @@ var express = require('express');
 var http = require('http').Server(app);
 var Server = require('socket.io');
 var config = require('./config');
-var runBenchmark = require('./lib/benchmark');
-
+var language_benchmark = require('./lib/benchmark');
 
 var currentMessage = ' ';
 
@@ -117,8 +116,11 @@ var board = io.of('/board').on('connection', function(socket) {
 
 var benchmark = io.of('/benchmark').on('connection', function(socket) {
     socket.on('client:start', function(data) {
+        language_benchmark.jobQueue().then(function() {
+            console.log('job done');
+        });
         console.log('kick start');
-        runBenchmark();
+        language_benchmark.runBenchmark.resolve('start');
     });
 });
 
