@@ -99,7 +99,5 @@ function parseLang(stdout) {
 	return language_reg.exec(stdout)[0];
 }
 
-kickStart();
-
 module.exports = kickStart;
 

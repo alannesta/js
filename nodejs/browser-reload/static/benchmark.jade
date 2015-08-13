@@ -5,16 +5,15 @@ html
         title Board
         script(src = socketioClient)
         script(src = "bower-components/jquery/dist/jquery.js")
+        script(src = "bower-components/Chart.js/Chart.js")
+
         style(type="text/css").
-            section {
-                color: lightgrey
+            .result-graph {
+                width: 80%;
+                margin: auto;
+                height: 600px;
             }
     body
-        textarea(name="dashaboard" id="dashboard" cols="30" rows="10")
+        canvas(id = "result", class="result-graph")
         section(id="hint")
-        script(src="scripts/board.js")
-        script.
-            window.addEventListener('message', function (e) {
-                $('#hint').text('received: ' + e.data);
-                console.log(e);
-            });
+        script(src="scripts/benchmark.js")
