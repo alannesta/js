@@ -3,6 +3,7 @@ var express = require('express');
 var http = require('http').Server(app);
 var Server = require('socket.io');
 var config = require('./config');
+var benchmark = require('./lib/benchmark');
 
 
 var currentMessage = ' ';
@@ -25,6 +26,16 @@ app.get('/board', function(req, res){
 
 app.get('/reload', function() {
     io.emit('reload allowed');
+});
+
+app.get('/benchmark', function(req, res) {
+    res.render('benchmark', {
+        socketioClient: 'http://' + config.localhost + ':' + config.websocketPort + '/socket.io/socket.io.js'
+    });
+});
+
+app.get('testlib', function() {
+
 });
 
 io.on('connection', function(socket){
