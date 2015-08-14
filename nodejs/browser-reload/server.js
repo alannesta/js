@@ -1,12 +1,12 @@
 var app = require('express')();
 var express = require('express');
 var http = require('http').Server(app);
-var async = require('async');
 var Server = require('socket.io');
 var config = require('./config');
-var language_benchmark = require('./lib/benchmark');
-
-var currentMessage = ' ';
+//var language_benchmark = require('./lib/benchmark');
+//var async = require('async');
+var benchmarkSocketConfig = require('./sockets/benchmark');
+var boardSocketConfig = require('./sockets/board');
 
 var io = new Server(config.websocketPort);     // create the socket.io(websocket) server on a custom port
 
@@ -34,10 +34,6 @@ app.get('/benchmark', function(req, res) {
     });
 });
 
-app.get('testlib', function() {
-
-});
-
 io.on('connection', function(socket){
     /*
     * live reload feature
@@ -56,92 +52,8 @@ io.on('connection', function(socket){
     });
 });
 
-/**
- * namespacing connections
- */
-//var board = io.of('/board').on('connection', function(socket) {
-//    updateClient(socket, {
-//        msg: currentMessage
-//    });
-//    // assign the unique id value
-//    socket.emit('server:assign', socket.id);    // only emit event to the socket itself
-//    // what is the socket here?
-//    socket.on('client:typing', function(data) {
-//        currentMessage = data.msg;
-//        updateClient(board, {
-//            user: data.clientID,
-//            msg: data.msg
-//        });
-//        // what are the differences?
-//        //board.emit('server:update', data.msg);        // standard way, to all sockets under '/board'
-//        //socket.broadcast.emit('server:update', data.msg);     // this works
-//        //io.sockets.emit('server:update', data.msg);     // does not work, not properly namespaced
-//        //socket.emit('server:update', data.msg);       // this does not work
-//
-//        console.log(data.clientID + ' is typing ');
-//    })
-//});
-
-/**
- * Using rooms
- */
-var board = io.of('/board').on('connection', function(socket) {
-
-    updateClient(socket, {
-        msg: currentMessage
-    });
-    // assign the unique id value
-    socket.emit('server:assign', socket.id);    // only emit event to the socket itself
-    socket.join('sprint1');      // join a specific room
-    // what is the socket here?
-    socket.on('client:typing', function(data) {
-        currentMessage = data.msg;
-        //board.emit('server:update', data.msg);        // works, to all in namespace
-        //socket.broadcast.emit('server:update', data.msg);   // works, to all in namespace
-        //board.in('sprint1').emit('server:update', data.msg);        // only emit to a specific room
-        //updateClient(board.in('sprint1'));
-
-        //socket.broadcast.emit('server:update', {
-        //    msg: data.msg,
-        //    user: data.clientID
-        //});
-
-        updateClient(socket.broadcast, {
-            user: data.clientID,
-            msg: data.msg
-        });
-
-    })
-});
-
-
-var benchmark = io.of('/benchmark').on('connection', function(socket) {
-    socket.on('client:start', function() {
-        var jobQueue = language_benchmark.asyncTaskChain(function(data) {
-            console.log(data);
-            socket.emit('server:draw', data);
-        });
-
-        async.series(jobQueue, function() {
-            socket.emit('server:finish');
-        });
-        //// set up the job queue chain
-        //language_benchmark.promiseJobQueue().then(function(result) {
-        //    //console.log(result);
-        //    socket.emit('server:draw', result);
-        //});
-        //// get the promise chain trigger and kick start
-        //language_benchmark.getTrigger().resolve('start');
-    });
-});
-
-/**
- *
- * @param socket.io Namespace object
- */
-function updateClient(sockets, data) {
-    sockets.emit('server:update', data);
-}
+boardSocketConfig(io);
+benchmarkSocketConfig(io);
 
 http.listen(3000, function(){
     console.log('listening on *:3000');
