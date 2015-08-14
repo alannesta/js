@@ -46,27 +46,28 @@ var barchartData = {
         data: [0, 0, 0, 0, 0]
     }]
 };
+var bar = benchmark_graph.Bar(barchartData, barchartOptions);
 
 socket.on('server:draw', function(data) {
-    drawGraph(data);
+    updateGraph(data);
 });
 
 socket.on('server:finish', function() {
-    benchmark_graph.Bar(barchartData, barchartOptions);
+    //benchmark_graph.Bar(barchartData, barchartOptions);
 });
 
 $('#start').on('click', function() {
-    barchartData.datasets[0].data = [0,0,0,0,0];
-    benchmark_graph.Bar(barchartData, barchartOptions);
+    barchartData.datasets[0].data = [0,0,0,0,0];    // reset datasets
+    bar = benchmark_graph.Bar(barchartData, barchartOptions);   // repaint the canvas
     socket.emit('client:start');
 });
 
-function drawGraph(data) {
+function updateGraph(data) {
     for (var key in data ) {
         var index = barchartData.labels.indexOf(key);
-        barchartData.datasets[0].data[index] = data[key];
+        bar.datasets[0].bars[index].value = data[key];      // update graph without repaint the canvas
     }
-    //benchmark_graph.Bar(barchartData, barchartOptions);
+    bar.update();
 }
 
 
