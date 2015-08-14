@@ -43,6 +43,8 @@ var config = {
 
 
 function asyncTaskChain(serverFn) {
+	// reset benchmark_result
+	benchmark_result = {};
 	var jobQueue = [];
 
 	for (var key in config) {
@@ -83,7 +85,13 @@ function createAsyncTask(task, serverFn) {
 		exec(task.command, {
 			cwd: task.cwd
 		}, function(error, stdout) {
-			serverFn(stdout);
+			var lang = parseLang(stdout);
+			var time = Math.floor(parseTime(stdout));
+
+			if(lang !== undefined && time !== undefined) {
+				benchmark_result[lang] = time;
+			}
+			serverFn(benchmark_result);
 			if(error) {
 				callback(error);
 			}else {

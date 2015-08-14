@@ -116,14 +116,14 @@ var board = io.of('/board').on('connection', function(socket) {
 
 
 var benchmark = io.of('/benchmark').on('connection', function(socket) {
-    socket.on('client:start', function(data) {
-        var jobQueue = language_benchmark.asyncTaskChain(function(stdout) {
-            console.log(stdout);
-            socket.emit('server:draw');
+    socket.on('client:start', function() {
+        var jobQueue = language_benchmark.asyncTaskChain(function(data) {
+            console.log(data);
+            socket.emit('server:draw', data);
         });
 
         async.series(jobQueue, function() {
-           console.log('all done');
+            socket.emit('server:finish');
         });
         //// set up the job queue chain
         //language_benchmark.promiseJobQueue().then(function(result) {
