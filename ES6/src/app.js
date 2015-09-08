@@ -1,5 +1,5 @@
 import {Person} from './features/class';
-import showName from './features/function';
+import {showName} from './features/function';
 
 let app = function () {
     var person = new Person('Alan', 'Cao');
