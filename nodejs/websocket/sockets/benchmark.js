@@ -1,17 +1,25 @@
 var async = require('async');
-var language_benchmark = require('../lib/benchmark');
+var language_benchmark = require('fibonacci_benchmark');
+var Q = require('q');
 
-var benchmark = function(io) {
-    io.of('/benchmark').on('connection', function(socket) {
-        socket.on('client:start', function() {
-            var jobQueue = language_benchmark.asyncTaskChain(function(data) {
+var benchmark = function (io) {
+    io.of('/benchmark').on('connection', function (socket) {
+        socket.on('client:start', function () {
+
+            language_benchmark.setFibo(26);
+
+            var promise = language_benchmark.runBenchmark(function (data) {
                 console.log(data);
                 socket.emit('server:draw', data);
             });
 
-            async.series(jobQueue, function() {
+            Q.when(promise).then(function () {
                 socket.emit('server:finish');
             });
+
+            //async.series(jobQueue, function() {
+            //    socket.emit('server:finish');
+            //});
             //// set up the job queue chain
             //language_benchmark.promiseJobQueue().then(function(result) {
             //    //console.log(result);
