@@ -8,7 +8,7 @@ var benchmark = function (io) {
     io.of('/benchmark').on('connection', function (socket) {
         socket.on('client:start', function () {
 
-            language_benchmark.setFibo(26);
+            language_benchmark.setFibo(32);
 
             var promise = language_benchmark.runBenchmark(function (data) {
                 console.log(data);
@@ -25,10 +25,11 @@ var benchmark = function (io) {
 
         socket.on('client:report', function (data) {
             var base64Data = data.replace(/^data:image\/png;base64,/, "");
-            fs.writeFile("./results/report.png", base64Data, 'base64', function(err) {
-                console.log(err);
-                dropbox.upload(fs.readFileSync('./results/report.png'));
-            });
+            //fs.writeFile("./results/report.png", base64Data, 'base64', function(err) {
+            //    console.log(err);
+            //    dropbox.upload(fs.readFileSync('./results/report.png'));
+            //});
+            dropbox.uploadBase64(base64Data);
         });
     });
 };
