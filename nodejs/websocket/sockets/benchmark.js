@@ -1,6 +1,8 @@
 var async = require('async');
 var language_benchmark = require('fibonacci_benchmark');
 var Q = require('q');
+var fs = require('fs');
+var dropbox = require('../modules/dropbox');
 
 var benchmark = function (io) {
     io.of('/benchmark').on('connection', function (socket) {
@@ -14,19 +16,19 @@ var benchmark = function (io) {
             });
 
             Q.when(promise).then(function () {
-                socket.emit('server:finish');
+                // handle chart.js animation delay, or set animation: false
+                setTimeout(function() {
+                    socket.emit('server:report');
+                },3000);
             });
+        });
 
-            //async.series(jobQueue, function() {
-            //    socket.emit('server:finish');
-            //});
-            //// set up the job queue chain
-            //language_benchmark.promiseJobQueue().then(function(result) {
-            //    //console.log(result);
-            //    socket.emit('server:draw', result);
-            //});
-            //// get the promise chain trigger and kick start
-            //language_benchmark.getTrigger().resolve('start');
+        socket.on('client:report', function (data) {
+            var base64Data = data.replace(/^data:image\/png;base64,/, "");
+            fs.writeFile("./results/report.png", base64Data, 'base64', function(err) {
+                console.log(err);
+                dropbox.upload(fs.readFileSync('./results/report.png'));
+            });
         });
     });
 };

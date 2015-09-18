@@ -50,6 +50,11 @@ socket.on('server:finish', function() {
     //benchmark_graph.Bar(barchartData, barchartOptions);
 });
 
+socket.on('server:report', function() {
+    var base64Img = document.getElementById('result').toDataURL();
+    socket.emit('client:report', base64Img);
+});
+
 $('#start').on('click', function() {
     barchartData.datasets[0].data = [0, 0, 0, 0, 0];    // reset datasets
     bar = benchmark_graph.Bar(barchartData, barchartOptions);   // repaint the canvas
