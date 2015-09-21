@@ -1,7 +1,7 @@
 var ctx = $("#result").get(0).getContext("2d");
 var benchmark_graph = new Chart(ctx);
 
-var socket = io(getSocketUrl() + '/benchmark');
+var socket = io(window.location.origin + '/benchmark');
 
 var barchartOptions = {
     //Boolean - Whether the scale should start at zero, or an order of magnitude down from the lowest value
@@ -67,12 +67,5 @@ function updateGraph(data) {
         bar.datasets[0].bars[index].value = data[key];      // update graph without repaint the canvas
     }
     bar.update();
-}
-
-
-function getSocketUrl() {
-    var url = document.getElementsByTagName('script')[0].src;
-    //console.log(url);
-    return url.slice(0, url.indexOf('/socket'));
 }
 

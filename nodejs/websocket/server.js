@@ -1,14 +1,15 @@
-var app = require('express')();
 var express = require('express');
-var http = require('http').Server(app);
-var Server = require('socket.io');
+var app = express();
+var httpServer = require('http').Server(app);
+var Socket = require('socket.io');
+var io = new Socket(httpServer);     // spawn the websocket server using the same port as the http server
+
 var config = require('./config');
 //var language_benchmark = require('./lib/benchmark');
 //var async = require('async');
 var benchmarkSocketConfig = require('./sockets/benchmark');
 var boardSocketConfig = require('./sockets/board');
 
-var io = new Server(config.websocketPort);     // create the socket.io(websocket) server on a custom port
 
 app.use(express.static('static'));
 app.set('view engine', 'jade');
@@ -20,7 +21,8 @@ app.get('/', function(req, res){
 
 app.get('/board', function(req, res){
     res.render('board', {
-        socketioClient: 'http://' + config.localhost + ':' + config.websocketPort + '/socket.io/socket.io.js'
+        //socketioClient: 'http://' + config.localhost + ':' + config.websocketPort + '/socket.io/socket.io.js'
+        socketioClient: 'https://cdn.socket.io/socket.io-1.3.5.js'
     });
 });
 
@@ -30,7 +32,8 @@ app.get('/reload', function() {
 
 app.get('/benchmark', function(req, res) {
     res.render('benchmark', {
-        socketioClient: 'http://' + config.localhost + ':' + config.websocketPort + '/socket.io/socket.io.js'
+        //socketioClient: 'http://' + config.localhost + ':' + config.websocketPort + '/socket.io/socket.io.js'
+        socketioClient: 'https://cdn.socket.io/socket.io-1.3.5.js'
     });
 });
 
@@ -55,6 +58,6 @@ io.on('connection', function(socket){
 boardSocketConfig(io);
 benchmarkSocketConfig(io);
 
-http.listen(3000, function(){
-    console.log('listening on *:3000');
+httpServer.listen(process.env.PORT || 3000, function(){
+    console.log('listening on *:' + (process.env.PORT || 3000));
 });

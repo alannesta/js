@@ -15,7 +15,7 @@ var benchmark = function (io) {
                 socket.emit('server:draw', data);
             });
 
-            Q.when(promise).then(function () {
+            promise.then(function () {
                 // handle chart.js animation delay, or set animation: false
                 setTimeout(function() {
                     socket.emit('server:report');
