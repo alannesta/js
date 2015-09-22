@@ -9,7 +9,7 @@ var config = require('./config');
 //var async = require('async');
 var benchmarkSocketConfig = require('./sockets/benchmark');
 var boardSocketConfig = require('./sockets/board');
-
+console.log('node env...' + process.env.NODE_ENV);
 
 app.use(express.static('static'));
 app.set('view engine', 'jade');
@@ -20,10 +20,14 @@ app.get('/', function(req, res){
 });
 
 app.get('/board', function(req, res){
-    res.render('board', {
-        //socketioClient: 'http://' + config.localhost + ':' + config.websocketPort + '/socket.io/socket.io.js'
-        socketioClient: 'https://cdn.socket.io/socket.io-1.3.5.js'
-    });
+
+    if (process.env.NODE_ENV === 'production') {
+        res.sendFile(__dirname + '/static/board.html');
+    }else {
+        res.render('board', {
+            socketioClient: 'https://cdn.socket.io/socket.io-1.3.5.js'
+        });
+    }
 });
 
 app.get('/reload', function() {
@@ -31,10 +35,13 @@ app.get('/reload', function() {
 });
 
 app.get('/benchmark', function(req, res) {
-    res.render('benchmark', {
-        //socketioClient: 'http://' + config.localhost + ':' + config.websocketPort + '/socket.io/socket.io.js'
-        socketioClient: 'https://cdn.socket.io/socket.io-1.3.5.js'
-    });
+    if (process.env.NODE_ENV === 'production') {
+        res.sendFile(__dirname + '/static/benchmark.html');
+    } else {
+        res.render('benchmark', {
+            socketioClient: 'https://cdn.socket.io/socket.io-1.3.5.js'
+        });
+    }
 });
 
 io.on('connection', function(socket){
