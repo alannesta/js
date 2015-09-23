@@ -11,7 +11,13 @@ var benchmarkSocketConfig = require('./sockets/benchmark');
 var boardSocketConfig = require('./sockets/board');
 console.log('node env...' + process.env.NODE_ENV);
 
-app.use(express.static('static'));
+// on Heroku, process.env.NODE_ENV would be set to 'production' by default
+if (process.env.NODE_ENV === 'production') {
+    app.use('/static', express.static(__dirname + '/static'));
+}else {
+    app.use(express.static('static'));
+}
+
 app.set('view engine', 'jade');
 app.set('views', './static');
 
