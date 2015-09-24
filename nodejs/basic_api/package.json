@@ -1,0 +1,14 @@
+{
+  "name": "basic_api",
+  "version": "1.0.0",
+  "description": "nodejs playground",
+  "main": "buffer.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Alan Cao <alannesta@sina.com>",
+  "license": "ISC",
+  "dependencies": {
+    "glob": "^5.0.14"
+  }
+}
