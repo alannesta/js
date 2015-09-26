@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta name="viewport" content="width=device-width">
+	<title>Mobile Viewports</title>
+	<style type="text/css">
+		div {
+			width:300px;
+			height:300px;
+			background-color: red;
+		}
+
+		/*iphone 6 media queries*/
+
+		/*@media only screen and (max-width:375px) {
+			div {
+				background-color: blue;
+			}
+			div::after {
+				content: '-- max-width: 375px';
+			}
+		}*/
+
+		@media screen and (max-device-width: 375px) {
+			div {
+				background-color: blue;
+			}
+			div::after {
+				content: '-- max-device-width: 375px';
+			}
+		}
+
+		/*@media screen and (-webkit-min-device-pixel-ratio: 2) {
+			div {
+				background-color: blue;
+			}
+			div::after {
+				content: '-- device pixel ratio 2';
+			}
+		}*/
+	</style>
+</head>
+<body>
+	<div id="test">Test</div>
+
+	<script type="text/javascript">
+	document.getElementById('test').innerHTML = 'device width: ' + window.screen.width;
+	</script>
+</body>
+</html>
