@@ -1,3 +1,7 @@
+require('../styles/benchmark.css');
+var $ = require('jquery');
+var Chart = require('chart.js');
+
 var ctx = $("#result").get(0).getContext("2d");
 var benchmark_graph = new Chart(ctx);
 

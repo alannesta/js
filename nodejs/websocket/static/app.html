@@ -5,33 +5,12 @@
     <title>Websocket demo</title>
     <script src="https://cdn.socket.io/socket.io-1.3.5.js"></script>
     <!--<script src="http://localhost:31203/socket.io/socket.io.js"></script>   &lt;!&ndash;served by the socket.io server by default&ndash;&gt;-->
-    <script src="bower-components/jquery/dist/jquery.js"></script>
 </head>
 <body>
 <input id="message" type="text"/>
 <button id="hellows">Test</button>
 <button id="reload">Reload</button>
 <ul id="messages"></ul>
-<script>
-    var socket = io('http://localhost:31203');
-    $('#hellows').click(function () {
-        socket.emit('chat message', $('#message').val());
-        $('#message').val('');
-        return false;
-    });
-
-    $('#reload').click(function() {
-        socket.emit('reload request');
-    });
-
-    socket.on('chat message', function (msg) {
-        $('#messages').append($('<li>').text(msg));
-    });
-
-    socket.on('reload allowed', function() {
-       window.document.location.href = 'http://localhost:3000';
-    });
-
-</script>
+<script src="scripts/app.js"></script>
 </body>
 </html>

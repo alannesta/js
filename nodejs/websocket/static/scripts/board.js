@@ -1,3 +1,7 @@
+require('../styles/board.css');
+var $ = require('jquery');
+var Chart = require('chart.js');
+
 //var socket = io('http://localhost:31203/board');    // name space the socket connection
 var socket = io(window.location.origin + '/board');
 
