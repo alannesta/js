@@ -12,12 +12,14 @@ var boardSocketConfig = require('./sockets/board');
 console.log('node env...' + process.env.NODE_ENV);
 
 // on Heroku, process.env.NODE_ENV would be set to 'production' by default
-if (process.env.NODE_ENV === 'production') {
-    // fis3 will replace all script with absolute path
-    app.use('/static', express.static(__dirname + '/static'));
-}else {
-    app.use(express.static('static'));
-}
+//if (process.env.NODE_ENV === 'production') {
+//    // fis3 will replace all script with absolute path
+//    app.use('/static', express.static(__dirname + '/static'));
+//}else {
+//    app.use(express.static('static'));
+//}
+
+app.use(express.static('static'));
 
 app.set('view engine', 'jade');
 app.set('views', './static');

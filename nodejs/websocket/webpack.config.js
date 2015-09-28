@@ -8,7 +8,7 @@ module.exports = {
         vendor: ["jquery"]
     },
     output: {
-        path: './dist',
+        path: './static/dist',
         filename: "[name].js"
     },
     module: {
