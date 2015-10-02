@@ -1,0 +1,41 @@
+<!doctype html>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<script src="script/jquery-1.8.3.js"></script>
+	<title>Is in View Port</title>
+</head>
+
+<body>
+	
+
+	<div id = "block" style = "position: absolute; top: 0px;height: 80px; width: 200px; background-color: red">Some random tool tip</div>
+	<div id = "block2" style = "position: absolute; top: 1000px;height: 80px; width: 200px; background-color: red">Some random tool tip</div>
+
+	<script>
+	function isElementInViewport(el) {
+		var rect = el.getBoundingClientRect();
+
+	    return rect.bottom > 0 &&
+	        rect.right > 0 &&
+	        rect.left < (window.innerWidth || document. documentElement.clientWidth) &&
+	        rect.top < (window.innerHeight || document. documentElement.clientHeight);
+	}
+
+	var el = document.getElementById('block');
+	$(window).on('scroll', function(){
+		console.log(isElementInViewport(el))
+	})
+	</script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
