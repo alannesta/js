@@ -14,15 +14,13 @@ module.exports = {
     module: {
         loaders: [
             { test: /\.css$/, loader: "style!css" }
-        ],
-
-        plugins: [
-            new webpack.optimize.CommonsChunkPlugin({
-                name: "vendor",
-                filename: "vendor.js",
-                minChunks: 3,
-                chunks: ["benchmark", "board", "app"]
-            })
         ]
-    }
+    },
+    plugins: [
+        new webpack.optimize.CommonsChunkPlugin({
+            name: "vendor",
+            filename: "vendor.js",
+            minChunks: Infinity
+        })
+    ]
 };
