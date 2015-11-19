@@ -1,0 +1,27 @@
+<!doctype html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<script src="script/jquery-1.8.3.js"></script>
+<title>Proof of concept</title>
+</head>
+ 
+<body>
+	<div id="container"></div>
+<script>
+	// backbone ---> _.template(xxx);
+	var div = document.createElement('div');
+	div.innerHTML = 'kaka';
+
+
+	// backbone ---> _ensureElement(), delegateEvents 区别是backbone都是绑在el上的
+	$(div).on('click', function() {
+		console.log('kaka gets clicked');
+	});
+
+	// backbone ---> this.$el.html(_.template(xxxx)) or this.$el.append(xxxx);
+	$('#container').append($(div));
+
+</script>
+</body>
+</html>
