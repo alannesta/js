@@ -1,5 +1,5 @@
-import {Person} from './features/class';
-import {showName} from './features/function';
+import {Person} from './features/basic-class';
+import showName from './features/basic-function-export';
 
 let app = function () {
     var person = new Person('Alan', 'Cao');
