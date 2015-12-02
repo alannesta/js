@@ -43,14 +43,32 @@ let obj2 = {
 
 //obj2.doStuff();		// Correct
 
+/**
+ * Arrow function should be used as "throwaway" functions rather than "top level" functions.
+ *
+ * It should always be defined with a containing function context(so that "this" is defined)
+ */
 
-let arr = [1,3,4,5];
+// 假设当前运行环境为浏览器，故顶层作上下文为 `window`
+let obj3 = {
+	msg: 'pong',
+
+	ping: () => {
+		console.log(this.msg); // Warning!
+	}
+};
+
+// obj3.ping(); //=> undefined
+
 
 /**
  * Implicit return only when the arrow function body is in one line && without {}
  */
-let func = ()=> arr.splice(1,1);
+//let arr = [1,3,4,5];
 
+//let func = ()=> arr.splice(1,1);
+//
+//
+//console.log(func());	// [3]
+//console.log(arr);
 
-console.log(func());	// [3]
-console.log(arr);
