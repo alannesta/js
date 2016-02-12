@@ -1,11 +1,7 @@
-import {Person} from './features/basic-class';
-import showName from './features/basic-function-export';
+import {Person} from './features/basic-class'
 
-let app = function () {
-    var person = new Person('Alan', 'Cao');
-    return person.fullName;
-};
+let person = new Person('Alan', 'Cao');
 
-document.write(app());
-document.write('</p>');
-document.write(showName(app()));
+let div = document.createElement('div');
+div.innerHTML = person.fullName;
+document.getElementsByTagName('body')[0].appendChild(div);
