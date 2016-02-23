@@ -16,10 +16,9 @@ function request(cReq, cRes) {
 		method     : cReq.method,
 		headers     : cReq.headers
 	};
-	var pReq = https.request(options, function(pRes) {
+	var pReq = http.request(options, function(pRes) {
 		cRes.writeHead(pRes.statusCode, pRes.headers);
 		pRes.pipe(cRes);
-		cRes.write('<h1>Should work!</h1>')
 	}).on('error', function(err) {
 		console.log(err);
 		cRes.end();
@@ -29,6 +28,7 @@ function request(cReq, cRes) {
 }
 
 function connect(cReq, cSock) {
+	console.log('connect');
 	var u = url.parse('http://' + cReq.url);
 
 	var pSock = net.connect(u.port, u.hostname, function() {
@@ -43,14 +43,15 @@ function connect(cReq, cSock) {
 
 var options = {
 	key: fs.readFileSync('./certificate/private.pem'),
-	cert: fs.readFileSync('./certificate/public.crt')
+	cert: fs.readFileSync('./certificate/public.pem')
 };
 
 
 
 var server = https.createServer(options, request);
 //server.on('request', request);
+server.on('connect', connect);
 server.on('connection', function() {
-	console.log('wtf');
+	//console.log('wtf');
 });
 server.listen(8888);
