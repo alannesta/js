@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<script src="https://code.jquery.com/jquery-2.1.4.js"></script>
+	<title>Mobile Error Reporter</title>
+</head>
+<body>
+	<h1>Error Reporter</h1>
+
+</body>
+<script>
+	window.onerror = reportError;
+
+	function reportError(err) {
+		err = window.navigator.userAgent + ' :: ' + err;
+		$.post('http://localhost:5000/report', err);
+	}
+
+
+	var kaka = {
+		test: 'kaka'
+	};
+
+	var lala = Object.assign({}, kaka);
+	console.log(lala);
+
+	fetch('/polling/long');
+
+
+
+</script>
+</html>
