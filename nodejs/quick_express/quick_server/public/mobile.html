@@ -3,6 +3,8 @@
 <head>
 	<meta charset="UTF-8">
 	<script src="https://code.jquery.com/jquery-2.1.4.js"></script>
+	<script src="./bower-components/fetch/fetch.js"></script>
+
 	<title>Mobile Error Reporter</title>
 </head>
 <body>
@@ -14,7 +16,7 @@
 
 	function reportError(err) {
 		err = window.navigator.userAgent + ' :: ' + err;
-		$.post('http://localhost:5000/report', err);
+		$.post('http://65.38.73.115/report', err);
 	}
 
 
@@ -22,12 +24,33 @@
 		test: 'kaka'
 	};
 
-	var lala = Object.assign({}, kaka);
-	console.log(lala);
+	try {
+		var lala = Object.assign({}, kaka);
+	} catch (err) {
+		reportError(err);
+	}
 
-	fetch('/polling/long');
+	try{
+		fetch('/polling/long').then(function(res) {
+			return res.text();
+		}).then(function(result) {
+			console.log(result)
+		});
 
+	}catch(err) {
+		reportError(err);
+	}
 
+	try {
+		new Promise(function(resolve, reject) {
+			setTimeout(function() {
+				console.log('kaka');
+				resolve('done');
+			}, 300);
+		});
+	}catch(err) {
+		reportError(err);
+	}
 
 </script>
 </html>
