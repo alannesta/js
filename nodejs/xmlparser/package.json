@@ -1,0 +1,15 @@
+{
+  "name": "xmlparser",
+  "version": "1.0.0",
+  "description": "91 parser",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Alan",
+  "license": "ISC",
+  "dependencies": {
+    "cheerio": "^0.20.0",
+    "htmlparser2": "^3.9.0"
+  }
+}
