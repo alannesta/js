@@ -10,6 +10,7 @@
   "license": "ISC",
   "dependencies": {
     "cheerio": "^0.20.0",
-    "htmlparser2": "^3.9.0"
+    "htmlparser2": "^3.9.0",
+    "request": "^2.71.0"
   }
 }
