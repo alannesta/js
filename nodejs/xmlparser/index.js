@@ -3,6 +3,8 @@ var fs = require('fs');
 var cheerio = require('cheerio');
 var request = require('request');
 
+var crawlerService = require('./services/crawler-service');
+
 //var htmlStr = fs.readFileSync('./91pp1.html', {
 //	encoding: 'utf8'
 //});
@@ -18,7 +20,8 @@ request({
 }, function (error, response, body) {
 	if (!error && response.statusCode == 200) {
 		//console.log(body); // Show the HTML for the Google homepage.
-		parseHtml(body);
+		var metaPayload = parseHtml(body);
+		//crawlerService.save(metaPayload);
 	}
 });
 
@@ -59,18 +62,14 @@ function parseHtml(str) {
 		}
 	});
 
-	resultSet.forEach(function(entry) {
-		entry.trend = trending(entry['查看'], entry['添加时间']);
-	});
+	//not the time to get the trending yet
+	//resultSet.forEach(function(entry) {
+	//	entry.trend = trending(entry['查看'], entry['添加时间']);
+	//});
+
 	console.log(resultSet);
+	return resultSet;
 }
-
-
-
-//console.log('-----------  Result -----------------------');
-
-
-
 
 function sanitize(str) {
 	return str.trim();
