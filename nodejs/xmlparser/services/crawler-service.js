@@ -12,17 +12,23 @@ var crawlerService = {
 				author: meta['作者'],
 				view_count: meta['查看'],
 				favourite: meta['收藏'],
-				hour_since_created: meta['添加时间'],
-				comment: meta['评论']
+				date_created: meta['添加时间'],
+				comment: meta['留言']
 			};
 
 			var updatePayload = {
 				view_count: meta['查看'],
 				favourite: meta['收藏'],
-				comment: meta['评论']
-			}
+				comment: meta['留言']
+			};
+
+			connection.query(query, [payload, updatePayload], function(err, result) {
+				if(err) {
+					console.log(err);
+				}
+				callback(err, result)
+			})
 		});
-		connection.query(query, {})
 	}
 
 	//saveFeed: function(feed, callback) {
