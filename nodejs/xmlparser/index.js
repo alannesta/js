@@ -12,7 +12,10 @@ var resultSet = [];
 
 //local payload
 var meta = parseHtml(htmlStr);
-crawlerService.save(meta, function() {
+crawlerService.save(meta, function(err, result) {
+	if (!err) {
+		process.exit();
+	}
 });
 
 //var j = request.jar();

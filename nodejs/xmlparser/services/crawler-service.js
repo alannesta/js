@@ -3,32 +3,53 @@ var connection = require('../utils/mysql-connector');
 var crawlerService = {
 
 	save: function(metas, callback) {
-		var query = 'INSERT INTO videos SET ? ON DUPLICATE KEY UPDATE ?';
-		metas.forEach(function(meta) {
-			var payload = {
-				title: meta['片名'],
-				url: meta['url'],
-				length: meta['时长'],
-				author: meta['作者'],
-				view_count: meta['查看'],
-				favourite: meta['收藏'],
-				date_created: meta['添加时间'],
-				comment: meta['留言']
-			};
 
-			var updatePayload = {
-				view_count: meta['查看'],
-				favourite: meta['收藏'],
-				comment: meta['留言']
-			};
+		var values = generateInsertValues(metas, ['片名', 'url', '时长', '作者', '查看', '收藏', '添加时间', '留言']);
+		var values2 = generateInsertValues(metas, ['查看', '收藏', '留言']);
 
-			connection.query(query, [payload, updatePayload], function(err, result) {
+		var query2 = `INSERT INTO videos (title, url, length, author, view_count, favourite, date_created, comment)
+						VALUES ? ON DUPLICATE KEY
+						UPDATE view_count=VALUES(view_count), favourite=VALUES(favourite), comment=VALUES(comment)`;
+
+			connection.query(query2, [values], function(err, result) {
 				if(err) {
 					console.log(err);
 				}
-				callback(err, result)
-			})
-		});
+				console.log(result);
+				if (typeof callback !== 'undefined') {
+					callback(err, result);
+				}
+			});
+
+		//var query = 'INSERT INTO videos SET ? ON DUPLICATE KEY UPDATE ?';
+		//
+		//metas.forEach(function(meta) {
+		//	var payload = {
+		//		title: meta['片名'],
+		//		url: meta['url'],
+		//		length: meta['时长'],
+		//		author: meta['作者'],
+		//		view_count: meta['查看'],
+		//		favourite: meta['收藏'],
+		//		date_created: meta['添加时间'],
+		//		comment: meta['留言']
+		//	};
+		//
+		//	var updatePayload = {
+		//		view_count: meta['查看'],
+		//		favourite: meta['收藏'],
+		//		comment: meta['留言']
+		//	};
+		//
+		//	connection.query(query, [payload, updatePayload], function(err, result) {
+		//		if(err) {
+		//			console.log(err);
+		//		}
+		//		if (typeof callback !== 'undefined') {
+		//			callback(err, result);
+		//		}
+		//	})
+		//});
 	}
 
 	//saveFeed: function(feed, callback) {
@@ -63,5 +84,17 @@ var crawlerService = {
 	//	});
 	//}
 };
+
+function generateInsertValues(objects, keys) {
+	var items = [];
+	objects.forEach(function(object) {
+		var entry = [];
+		keys.forEach(function(key) {
+			entry.push(object[key]);
+		});
+		items.push(entry);
+	});
+	return items;
+}
 
 module.exports = crawlerService;
