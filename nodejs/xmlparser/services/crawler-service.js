@@ -1,100 +1,132 @@
-var connection = require('../utils/mysql-connector');
+var fs = require('fs');
+var cheerio = require('cheerio');
+var request = require('request');
 
-var crawlerService = {
-
-	save: function(metas, callback) {
-
-		var values = generateInsertValues(metas, ['片名', 'url', '时长', '作者', '查看', '收藏', '添加时间', '留言']);
-		var values2 = generateInsertValues(metas, ['查看', '收藏', '留言']);
-
-		var query2 = `INSERT INTO videos (title, url, length, author, view_count, favourite, date_created, comment)
-						VALUES ? ON DUPLICATE KEY
-						UPDATE view_count=VALUES(view_count), favourite=VALUES(favourite), comment=VALUES(comment)`;
-
-			connection.query(query2, [values], function(err, result) {
-				if(err) {
-					console.log(err);
-				}
-				console.log(result);
-				if (typeof callback !== 'undefined') {
-					callback(err, result);
-				}
-			});
-
-		//var query = 'INSERT INTO videos SET ? ON DUPLICATE KEY UPDATE ?';
-		//
-		//metas.forEach(function(meta) {
-		//	var payload = {
-		//		title: meta['片名'],
-		//		url: meta['url'],
-		//		length: meta['时长'],
-		//		author: meta['作者'],
-		//		view_count: meta['查看'],
-		//		favourite: meta['收藏'],
-		//		date_created: meta['添加时间'],
-		//		comment: meta['留言']
-		//	};
-		//
-		//	var updatePayload = {
-		//		view_count: meta['查看'],
-		//		favourite: meta['收藏'],
-		//		comment: meta['留言']
-		//	};
-		//
-		//	connection.query(query, [payload, updatePayload], function(err, result) {
-		//		if(err) {
-		//			console.log(err);
-		//		}
-		//		if (typeof callback !== 'undefined') {
-		//			callback(err, result);
-		//		}
-		//	})
+var CrawlerService = {
+	crawl: function(callback) {
+		//local payload
+		//var htmlStr = fs.readFileSync('../91pp1.html', {
+		//	encoding: 'utf8'
 		//});
-	}
 
-	//saveFeed: function(feed, callback) {
-	//	var service = this;
-	//	var insertQuery = "INSERT IGNORE INTO feed SET ?";
-	//	logger.info('FeedService.saveFeed: ', feed);
-	//	connection.query(insertQuery, {
-	//		feed_name: feed.feedName,
-	//		feed_url: feed.feedUrl
-	//	}, function (err, result) {
-	//		if (result.affectedRows == 0) {
-	//			// which means there could be a duplicate, and not inserted successfully
-	//			callback("Insertion Failed, Duplicate!");
-	//		}else {
-	//			service.getFeedByUrl(feed.feedUrl, callback);
-	//		}
-	//	});
-	//
-	//},
-	//
-	//getFeedByUrl: function(feedUrl, callback) {
-	//	var query = "SELECT * from feed WHERE feed_url ='" + feedUrl + "'";
-	//	connection.query(query, function(err, result) {
-	//		if (err) {
-	//			logger.error("SQL_ERROR::getFeedByID: ", err);
-	//			callback(err);
-	//		}else{
-	//			console.log('getfeedbyid', result[0]);
-	//			callback(err, result[0]);
-	//		}
-	//
-	//	});
-	//}
+		//var meta = parseHtml(htmlStr);
+		//crawlerService.save(meta, function(err, result) {
+		//	if (!err) {
+		//		process.exit(0);
+		//	}
+		//});
+		var j = request.jar();
+		var cookie = request.cookie('language=cn_CN');
+		//var url = 'http://www.91porn.com/v.php?category=top&viewtype=basic';
+		//var url = 'http://www.91porn.com/v.php?category=top&m=-1&viewtype=basic';	//上月最热
+		var url = 'http://www.91porn.com/v.php?category=top&viewtype=basic&page=1';	//本月最热
+		//var url = 'http://www.91porn.com/v.php?category=hot&viewtype=basic&page=1';	//当前最热
+		j.setCookie(cookie, url);
+
+		request({
+			url: url,
+			jar: j
+		}, function (error, response, body) {
+			if (!error && response.statusCode == 200) {
+				callback(parseHtml(body));
+			}
+		});
+	}
 };
 
-function generateInsertValues(objects, keys) {
-	var items = [];
-	objects.forEach(function(object) {
-		var entry = [];
-		keys.forEach(function(key) {
-			entry.push(object[key]);
-		});
-		items.push(entry);
+function parseHtml(str) {
+	var resultSet = [];
+	var $ = cheerio.load(str);
+	var tiles = $('.listchannel');
+
+	Object.keys(tiles).forEach(function(key) {
+		try {
+			parseInt(key, 10);	// check key
+			var entry = {};
+			tiles[key].children.forEach(function(node) {
+				if (node.type == 'tag' && node.name == 'span') {
+					if (node.children[0].data == '作者:') {
+						entry[node.children[0].data.replace(':', '')] = sanitize(node.next.next.children[0].data);
+					} else if (node.children[0].data == '添加时间:') {
+						entry[node.children[0].data.replace(':', '')] = processAddedDate(sanitize(node.next.data));
+					} else if (node.children[0].data == '时长:') {
+						entry[node.children[0].data.replace(':', '')] = processLength(sanitize(node.next.data));
+					} else {
+						entry[node.children[0].data.replace(':', '')] = sanitize(node.next.data);
+					}
+				}
+
+				if (node.type == 'tag' && node.name == 'a' && node.attribs.title != undefined) {
+					entry['片名'] = node.attribs.title;
+					entry['url'] = node.attribs.href;
+				}
+			});
+			// another level of data check
+			if (entry['url'] && entry['url']) {
+				resultSet.push(entry);
+			}
+		} catch (err) {
+			console.log(err);
+		}
 	});
-	return items;
+	console.log(resultSet);
+	return resultSet;
 }
 
-module.exports = crawlerService;
+
+function sanitize(str) {
+	return str.trim();
+}
+
+/**
+ Process the time when the video is added
+ */
+function processAddedDate(timeStr) {
+	var now = Date.now();	// unix timestamp in millisecond
+	var HOUR = '小时';
+	var DAY = '天';
+	var YEAR = '年';
+	var regx = /^(\d{1,2}).*/;
+	var HOURTOMILLISECONDS = 3600000;
+
+	var result = regx.exec(timeStr);
+	//console.log('now: ' + now);
+	//console.log('parsed digit: ' + result[1]);
+	//console.log(timeStr.indexOf(HOUR));
+	if (typeof result[1] !== 'undefined') {
+		if (timeStr.indexOf(HOUR) > -1) {
+			return new Date(now - HOURTOMILLISECONDS * parseInt(result[1], 10));
+		}
+		if (timeStr.indexOf(DAY) > -1) {
+			return new Date(now - 24 * HOURTOMILLISECONDS * parseInt(result[1], 10));
+		}
+		if (timeStr.indexOf(YEAR) > -1) {
+			return new Date(now - 365 * 24 * HOURTOMILLISECONDS * parseInt(result[1], 10));
+		}
+	}else {
+		throw new Error('added date not processed correctly: ' + timeStr);
+	}
+}
+
+/**
+ Process the length of the video
+ */
+
+function processLength(length) {
+	//var regx = /^(\d{2}):(\d{2})$/;
+	var regx2 = /(\d{1,2}):(\d{2}):*(\d{2})*/;
+	var result = length.match(regx2);
+	console.log(result);
+	if (typeof result[1] !== 'undefined' && typeof result[2] !== 'undefined') {
+		if (typeof result[3] !== 'undefined') {
+			return parseInt(result[1], 10) * 60 + parseInt(result[2], 10) + parseFloat((parseInt(result[3], 10) / 60).toFixed(2));
+		} else {
+			console.log(parseInt(result[1], 10));
+			return parseInt(result[1], 10) + parseFloat((parseInt(result[2], 10) / 60).toFixed(2));
+		}
+	} else {
+		throw new Error('video length format wrong: ' + length);
+	}
+}
+
+module.exports = CrawlerService;
