@@ -13,7 +13,7 @@ var dbService = {
 			if (err) {
 				console.log(err);
 			}
-			console.log(result);
+			//console.log(result);
 			if (typeof callback !== 'undefined') {
 				callback(err, result);
 			}

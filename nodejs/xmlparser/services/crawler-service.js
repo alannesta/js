@@ -1,39 +1,70 @@
 var fs = require('fs');
 var cheerio = require('cheerio');
 var request = require('request');
+var q = require('q');
 
 var CrawlerService = {
-	crawl: function(callback) {
-		//local payload
-		//var htmlStr = fs.readFileSync('../91pp1.html', {
-		//	encoding: 'utf8'
-		//});
-
-		//var meta = parseHtml(htmlStr);
-		//crawlerService.save(meta, function(err, result) {
-		//	if (!err) {
-		//		process.exit(0);
-		//	}
-		//});
+	crawl: function(url) {
+		var deferred = q.defer();
 		var j = request.jar();
 		var cookie = request.cookie('language=cn_CN');
-		//var url = 'http://www.91porn.com/v.php?category=top&viewtype=basic';
-		//var url = 'http://www.91porn.com/v.php?category=top&m=-1&viewtype=basic';	//上月最热
-		var url = 'http://www.91porn.com/v.php?category=top&viewtype=basic&page=1';	//本月最热
-		//var url = 'http://www.91porn.com/v.php?category=hot&viewtype=basic&page=1';	//当前最热
 		j.setCookie(cookie, url);
 
 		request({
 			url: url,
 			jar: j
 		}, function (error, response, body) {
+			if (error) {
+				deferred.reject();
+			}
 			if (!error && response.statusCode == 200) {
-				callback(parseHtml(body));
+				deferred.resolve(parseHtml(body));
 			}
 		});
+
+		return deferred.promise;
 	}
 };
 
+
+function requestPage(url, callback) {
+	//local payload
+	//var htmlStr = fs.readFileSync('../91pp1.html', {
+	//	encoding: 'utf8'
+	//});
+
+	//var meta = parseHtml(htmlStr);
+	//crawlerService.save(meta, function(err, result) {
+	//	if (!err) {
+	//		process.exit(0);
+	//	}
+	//});
+
+	//var url = 'http://www.91porn.com/v.php?category=top&viewtype=basic';
+	//var url = 'http://www.91porn.com/v.php?category=top&m=-1&viewtype=basic';	//上月最热
+	//var url = 'http://www.91porn.com/v.php?category=top&viewtype=basic&page=1';	//本月最热
+	//var url = 'http://www.91porn.com/v.php?category=hot&viewtype=basic&page=1';	//当前最热
+
+	var j = request.jar();
+	var cookie = request.cookie('language=cn_CN');
+	j.setCookie(cookie, url);
+
+	request({
+		url: url,
+		jar: j
+	}, function (error, response, body) {
+		if (!error && response.statusCode == 200) {
+			callback(parseHtml(body));
+		}
+	});
+}
+
+
+/**
+ * Parser for the html fetched
+ * @param str
+ * @returns {Array}
+ */
 function parseHtml(str) {
 	var resultSet = [];
 	var $ = cheerio.load(str);
@@ -69,7 +100,7 @@ function parseHtml(str) {
 			console.log(err);
 		}
 	});
-	console.log(resultSet);
+	//console.log(resultSet);
 	return resultSet;
 }
 
@@ -90,9 +121,6 @@ function processAddedDate(timeStr) {
 	var HOURTOMILLISECONDS = 3600000;
 
 	var result = regx.exec(timeStr);
-	//console.log('now: ' + now);
-	//console.log('parsed digit: ' + result[1]);
-	//console.log(timeStr.indexOf(HOUR));
 	if (typeof result[1] !== 'undefined') {
 		if (timeStr.indexOf(HOUR) > -1) {
 			return new Date(now - HOURTOMILLISECONDS * parseInt(result[1], 10));
@@ -113,15 +141,12 @@ function processAddedDate(timeStr) {
  */
 
 function processLength(length) {
-	//var regx = /^(\d{2}):(\d{2})$/;
 	var regx2 = /(\d{1,2}):(\d{2}):*(\d{2})*/;
 	var result = length.match(regx2);
-	console.log(result);
 	if (typeof result[1] !== 'undefined' && typeof result[2] !== 'undefined') {
 		if (typeof result[3] !== 'undefined') {
 			return parseInt(result[1], 10) * 60 + parseInt(result[2], 10) + parseFloat((parseInt(result[3], 10) / 60).toFixed(2));
 		} else {
-			console.log(parseInt(result[1], 10));
 			return parseInt(result[1], 10) + parseFloat((parseInt(result[2], 10) / 60).toFixed(2));
 		}
 	} else {
