@@ -93,11 +93,11 @@ function parseHtml(str) {
 				}
 			});
 			// another level of data check
-			if (entry['url'] && entry['url']) {
+			if (entry['url'] && entry['时长'] > 2) {
 				resultSet.push(entry);
 			}
 		} catch (err) {
-			console.log(err);
+			console.log('Catched Error: ' + err);
 		}
 	});
 	//console.log(resultSet);
@@ -143,12 +143,19 @@ function processAddedDate(timeStr) {
 function processLength(length) {
 	var regx2 = /(\d{1,2}):(\d{2}):*(\d{2})*/;
 	var result = length.match(regx2);
+	var timeinminute = 0;
 	if (typeof result[1] !== 'undefined' && typeof result[2] !== 'undefined') {
 		if (typeof result[3] !== 'undefined') {
-			return parseInt(result[1], 10) * 60 + parseInt(result[2], 10) + parseFloat((parseInt(result[3], 10) / 60).toFixed(2));
+			timeinminute = parseInt(result[1], 10) * 60 + parseInt(result[2], 10) + parseFloat((parseInt(result[3], 10) / 60).toFixed(2));
 		} else {
-			return parseInt(result[1], 10) + parseFloat((parseInt(result[2], 10) / 60).toFixed(2));
+			timeinminute = parseInt(result[1], 10) + parseFloat((parseInt(result[2], 10) / 60).toFixed(2));
 		}
+		//if (timeinminute > 2) {
+		//	return timeinminute;
+		//}else {
+		//	throw new Error('video length too short, ignore');
+		//}
+		return timeinminute;
 	} else {
 		throw new Error('video length format wrong: ' + length);
 	}
