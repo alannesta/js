@@ -9,7 +9,7 @@ var DataMiner = {
 						VALUES ? ON DUPLICATE KEY
 						UPDATE view_count=VALUES(view_count), favourite=VALUES(favourite), comment=VALUES(comment)`;
 
-		//var query3= `UPDATE hot SET last_process=? WHERE video_id in (SELECT * FROM videos)`;
+		var query3= `UPDATE videos SET last_process=? WHERE (last_update > last_process OR last_process IS NULL)`;
 
 		connection.query(query, function(err, results) {
 			if (err) {
@@ -27,15 +27,15 @@ var DataMiner = {
 						console.log('update Trend Err: ' + err);
 					} else {
 						console.log(results);
-						//connection.query(query3, [new Date()], function(err, result) {
-						//	if (err) {
-						//		console.log('Update last_process timestamp err: ' + err);
-						//	}else{
-						//		console.log(result);
-						//	}
-						//})
+						connection.query(query3, [new Date()], function(err, result) {
+							if (err) {
+								console.log('Update last_process timestamp err: ' + err);
+							}else{
+								console.log(result);
+							}
+						})
 					}
-				})
+				});
 			}
 		});
 	}
