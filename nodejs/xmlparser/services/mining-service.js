@@ -3,7 +3,7 @@ var connection = require('../utils/mysql-connector');
 var DataMiner = {
 	updateTrending: function(callback) {
 		var query = `SELECT title, url, length, view_count, favourite, date_created, last_update, comment, id
-						FROM videos  WHERE last_update>last_process`;
+						FROM videos  WHERE (last_update>last_process OR last_process is NULL)`;
 
 		var query2 = `INSERT INTO hot (title, url, length, trend, view_count, favourite, comment, video_id)
 						VALUES ? ON DUPLICATE KEY
