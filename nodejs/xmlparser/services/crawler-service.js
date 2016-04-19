@@ -28,22 +28,6 @@ var CrawlerService = {
 
 
 function requestPage(url, callback) {
-	//local payload
-	//var htmlStr = fs.readFileSync('../91pp1.html', {
-	//	encoding: 'utf8'
-	//});
-
-	//var meta = parseHtml(htmlStr);
-	//crawlerService.save(meta, function(err, result) {
-	//	if (!err) {
-	//		process.exit(0);
-	//	}
-	//});
-
-	//var url = 'http://www.91porn.com/v.php?category=top&viewtype=basic';
-	//var url = 'http://www.91porn.com/v.php?category=top&m=-1&viewtype=basic';	//上月最热
-	//var url = 'http://www.91porn.com/v.php?category=top&viewtype=basic&page=1';	//本月最热
-	//var url = 'http://www.91porn.com/v.php?category=hot&viewtype=basic&page=1';	//当前最热
 
 	var j = request.jar();
 	var cookie = request.cookie('language=cn_CN');
@@ -97,7 +81,7 @@ function parseHtml(str) {
 				resultSet.push(entry);
 			}
 		} catch (err) {
-			console.log('Catched Error: ' + err);
+			//console.log('Catched Error: ' + err);
 		}
 	});
 	//console.log(resultSet);

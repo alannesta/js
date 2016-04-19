@@ -10,26 +10,32 @@ var miner = require('./services/mining-service');
 var urlPool = [
 	'http://www.91porn.com/v.php?category=hot&viewtype=basic&page=1',
 	'http://www.91porn.com/v.php?category=hot&viewtype=basic&page=2',
-	'http://www.91porn.com/v.php?category=hot&viewtype=basic&page=3',
-	'http://www.91porn.com/v.php?category=hot&viewtype=basic&page=4'
+	'http://www.91porn.com/v.php?category=hot&viewtype=basic&page=3'
 ];
 
-//async.eachSeries(urlPool, fetchVideo, function(err) {
-//	if (err) {
-//		console.log(err);
-//		process.exit(err);
-//	}
-//	console.log('all done!');
-//	process.exit(0);
-//});
+async.eachSeries(urlPool, fetchVideo, function(err) {
+	if (err) {
+		console.log(err);
+		process.exit(err);
+	}
+	console.log('fetch done, start data mining in 1s...');
+	setTimeout(function() {
+		miner.updateTrending(function(err) {
+			if (err) {
+				console.log(err);
+			}
+			console.log('all done... exit')
+			process.exit(0);
+		});
+	}, 1000);
+});
 
-miner.updateTrending();
 
 function fetchVideo(url, callback) {
 	crawlerService.crawl(url).then(function(videos){
 		dbService.save(videos, function(err) {
 			if (!err) {
-				console.log('task done: ' + url);
+				console.log('fetching done for: ' + url);
 				callback(null);
 			}else {
 				callback(err);

@@ -14,7 +14,7 @@ var dbService = {
 				console.log(err);
 				callback(err);
 			}
-			//console.log(result);
+			console.log(result);	// TODO: log crawl status
 			if (typeof callback !== 'undefined') {
 				callback(err, result);
 			}
