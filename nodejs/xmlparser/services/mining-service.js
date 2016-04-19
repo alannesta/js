@@ -2,7 +2,7 @@ var connection = require('../utils/mysql-connector');
 
 var DataMiner = {
 	updateTrending: function(callback) {
-		var query = `SELECT title, url, length, view_count, favourite, date_created, comment, id
+		var query = `SELECT title, url, length, view_count, favourite, date_created, last_update, comment, id
 						FROM videos  WHERE last_update>last_process`;
 
 		var query2 = `INSERT INTO hot (title, url, length, trend, view_count, favourite, comment, video_id)
@@ -25,7 +25,7 @@ var DataMiner = {
 						var payload = [];
 						results.forEach(function(result) {
 							payload.push([result.title, result.url, result.length,
-								trending(result.view_count, result.date_created),
+								trending(result.view_count, result.date_created, result.last_update),
 								result.view_count, result.favourite, result.comment, result.id]);
 
 						});
@@ -66,12 +66,11 @@ var DataMiner = {
 	}
 };
 
-function trending(viewCount, dateCreated) {
+function trending(viewCount, dateCreated, dateUpdated) {
 
-	var now = Date.now();		//TODO: use time_updated rather than now
+	var updated = new Date(dateUpdated).getTime();
 	var created = new Date(dateCreated).getTime();
-	var time = (now - created) / 3600000;		//convert to hour
-
+	var time = Math.round((updated - created) / 3600000);		//convert to hour
 	try {
 		return Math.floor(parseInt(viewCount, 10) / time);
 	} catch (err) {
