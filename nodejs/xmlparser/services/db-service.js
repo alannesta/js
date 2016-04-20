@@ -1,4 +1,5 @@
 var connection = require('../utils/mysql-connector');
+var logger = require('../utils/logger');
 
 var dbService = {
 	save: function(metas, callback) {
@@ -11,12 +12,16 @@ var dbService = {
 
 		connection.query(query2, [values], function(err, result) {
 			if (err) {
-				console.log(err);
+				logger.error('SQL ERROR, deService::save: save to videos table ->', err);
 				callback(err);
 			}
-			console.log(result);	// TODO: log crawl status
+			var parsed = parseQueryResult(result.message);
+			var statistics = {
+				added: parseInt(parsed[1], 10) - parseInt(parsed[2], 10),
+				updated: parseInt(parsed[2], 10)
+			};
 			if (typeof callback !== 'undefined') {
-				callback(err, result);
+				callback(err, statistics);
 			}
 		});
 	}
@@ -39,6 +44,11 @@ function generateInsertValues(objects, keys, extra) {
 		items.push(result);
 	});
 	return items;
+}
+
+function parseQueryResult(message) {
+	var regx = /Records:\s*(\d+)\s*Duplicates:\s*(\d+)/;
+	return regx.exec(message);
 }
 
 

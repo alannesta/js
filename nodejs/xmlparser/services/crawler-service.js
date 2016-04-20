@@ -2,6 +2,7 @@ var fs = require('fs');
 var cheerio = require('cheerio');
 var request = require('request');
 var q = require('q');
+var logger = require('../utils/logger');
 
 var CrawlerService = {
 	crawl: function(url) {
@@ -81,7 +82,7 @@ function parseHtml(str) {
 				resultSet.push(entry);
 			}
 		} catch (err) {
-			//console.log('Catched Error: ' + err);
+			logger.debug('CrawlerService::parseHtml: try-catch Error -> ' + err);
 		}
 	});
 	//console.log(resultSet);

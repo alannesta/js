@@ -1,4 +1,5 @@
 var connection = require('../utils/mysql-connector');
+var logger = require('../utils/logger');
 
 var DataMiner = {
 	updateTrending: function(callback) {
@@ -16,10 +17,11 @@ var DataMiner = {
 				callback(err);
 			} else {
 				if (results.length > 0) {
-					console.log('updating trending for ' + results.length + ' videos');
+					logger.debug('updating trending for ' + results.length + ' videos');
 					// transaction callback hell...
 					connection.beginTransaction(function(err) {
 						if (err) {
+							logger.error('DataMiner::updateTrending: start transaction error ->', err);
 							callback(err);
 						}
 						var payload = [];
@@ -31,15 +33,15 @@ var DataMiner = {
 						});
 						connection.query(query2, [payload], function(err, results) {
 							if (err) {
-								console.log('update Trend Err: ' + err);
+								logger.error('DataMiner::updateTrending: step2 calculate trend -> ' + err);
 								return connection.rollback(function() {
 									callback(err);
 								});
 							} else {
-								console.log('update hot table success, updating timestamp');
+								logger.debug('update hot table success, updating timestamp');
 								connection.query(query3, [new Date()], function(err, result) {
 									if (err) {
-										console.log('Update last_process timestamp err: ' + err);
+										logger.error('DataMiner::updateTrending: step3 last_process timestamp -> ' + err);
 										return connection.rollback(function() {
 											callback(err);
 										});
@@ -50,7 +52,7 @@ var DataMiner = {
 													callback(err);
 												});
 											}
-											console.log('update trending transaction success!');
+											logger.debug('update trending transaction success!');
 											callback();
 										});
 									}
@@ -59,7 +61,7 @@ var DataMiner = {
 						});
 					});
 				} else {
-					console.log('no trending needs to be updated');
+					logger.debug('no trending needs to be updated');
 				}
 			}
 		});
@@ -74,7 +76,7 @@ function trending(viewCount, dateCreated, dateUpdated) {
 	try {
 		return Math.floor(parseInt(viewCount, 10) / time);
 	} catch (err) {
-		console.log(err);
+		logger.error('DataMiner::trending: calculate trend function -> ', err);
 	}
 }
 
