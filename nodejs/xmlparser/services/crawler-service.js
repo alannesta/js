@@ -85,7 +85,6 @@ function parseHtml(str) {
 			logger.debug('CrawlerService::parseHtml: try-catch Error -> ' + err);
 		}
 	});
-	//console.log(resultSet);
 	return resultSet;
 }
 
@@ -135,11 +134,6 @@ function processLength(length) {
 		} else {
 			timeinminute = parseInt(result[1], 10) + parseFloat((parseInt(result[2], 10) / 60).toFixed(2));
 		}
-		//if (timeinminute > 2) {
-		//	return timeinminute;
-		//}else {
-		//	throw new Error('video length too short, ignore');
-		//}
 		return timeinminute;
 	} else {
 		throw new Error('video length format wrong: ' + length);
