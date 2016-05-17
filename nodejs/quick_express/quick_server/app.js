@@ -62,5 +62,8 @@ app.use(function(err, req, res, next) {
     });
 });
 
+app.listen(3005, function() {
+    console.log('app listening @3005');
+});
 
 module.exports = app;
