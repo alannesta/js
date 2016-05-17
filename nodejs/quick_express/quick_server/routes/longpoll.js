@@ -16,10 +16,14 @@ router.get('/long', function(req, res) {
 });
 
 router.get('/stream', function(req, res) {
-  fs.createReadStream('../public/bower-components/jquery/dist/jquery.js', {
+  fs.createReadStream(path.join(__dirname, '../public/bower-components/jquery/dist/jquery.js'), {
       encoding: 'utf8',
       autoClose: true
   }).pipe(res);     // response header would be: Transfer-Encoding: chunked
+});
+
+router.get('/manual-stream', function(req, res) {
+
 });
 
 module.exports = router;
