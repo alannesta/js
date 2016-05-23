@@ -39,26 +39,20 @@
 	}
 
 	function consumeTime(){
-		if (count<10){
+		while (count++ < 10){
 			for (var i = 0; i < 9000; i++){
-				var fragment = $('<div>kaka</div>');
+				var fragment = $('<div style="display: none;">kaka</div>');
 				div.append(fragment);
-			};
-			count ++;
-		}else{
-		
+			}
 		}
 	}
 
 	// standard way, arguments.callee is deprecated in strict mode
+	// a demostration of how setInterval were skipped
 	function infinite(){
-		// console.log(callcount++);
-		// console.log(new Date().getTime() - timestamp);
-		// timestamp = new Date().getTime();
-		// consumeTime();
 		// timeout = setTimeout(infinite, 300);
 		interval = setInterval(function(){
-			console.log('call count: '+callcount++);
+			console.log('call count: '+ callcount++);
 			console.log(new Date().getTime() - timestamp);
 			timestamp = new Date().getTime();
 			consumeTime();
@@ -81,13 +75,28 @@
 	// 	},1000);
 	// }
 
+
+//	function testTimeout() {
+//		var label = 'test timeout';
+//		console.time(label);
+//		var now = new Date().getTime();
+//		setTimeout(function() {
+//			console.timeEnd(label);
+//		}, 1000);
+//
+//		// precisely block the main thread
+//		while(new Date().getTime() - now < 2000) {
+//
+//		}
+//	}
+
 	$('button').click(function(){
 		clearTimeout(timeout);
 		clearInterval(interval);
 	});
 	
-	infinite();
-
+//	infinite();
+	testTimeout();
 
 </script>
 </html>
