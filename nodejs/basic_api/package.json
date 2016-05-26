@@ -9,6 +9,7 @@
   "author": "Alan Cao <alannesta@sina.com>",
   "license": "ISC",
   "dependencies": {
-    "glob": "^5.0.14"
+    "glob": "^5.0.14",
+    "morse": "^0.1.0"
   }
 }
