@@ -52,3 +52,12 @@ gulp.task('inject', ['build'], function(){
 		.pipe(inject(gulp.src('./dist/bundle.js'), {relative: true}))	// set relative to true!
 		.pipe(gulp.dest('./dist'));
 });
+
+gulp.task('xmd', function() {
+	return browserify('./xmd/index_browserify.js')
+		.bundle()
+		//Pass desired output filename to vinyl-source-stream
+		.pipe(source('browserify-bundle.js'))
+		// Start piping stream to tasks!
+		.pipe(gulp.dest('./dist/'));
+});
