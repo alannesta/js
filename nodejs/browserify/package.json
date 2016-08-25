@@ -1,8 +1,13 @@
 {
-  "name": "browserify_demo",
+  "name": "JSBundling",
   "version": "1.0.0",
-  "description": "",
+  "description": "Comprehensive examples about state of the art tools used for javascript packaing",
+  "scripts": {
+    "build-es6": "babel './xmd/**/*_es6.js' -d dist/es6"
+  },
   "devDependencies": {
+    "babel-cli": "^6.11.4",
+    "babel-preset-es2015": "^6.13.2",
     "browserify": "^8.0.2",
     "connect-livereload": "^0.5.3",
     "express": "^4.13.0",
