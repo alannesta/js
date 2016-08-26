@@ -6,6 +6,12 @@ var stream = require('stream');
 var util = require('util');
 var asyncError = require('../lib/asyncError');
 
+// node require
+var kaka = require('../lib/kakaGenerator')();
+var getKaka = require('../lib/kakaGenerator');
+
+console.log('module define');
+
 function StringifyStream() {
 	stream.Transform.call(this);
 
@@ -23,6 +29,12 @@ StringifyStream.prototype._transform = function(obj, encoding, cb) {
 router.get('/', function(req, res) {
 	res.render('polling');
 
+});
+
+router.get('/testrequire', function(req, res) {
+	console.log('kaka by value: ' + kaka);
+	console.log('kaka by function call:' + getKaka());
+	res.send('ok');
 });
 
 router.get('/long', function(req, res, next) {
