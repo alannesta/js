@@ -8,6 +8,7 @@ var bodyParser = require('body-parser');
 var routes = require('./routes/index');
 var polling = require('./routes/longpoll');
 var scriptLoading = require('./routes/script-loading');
+var moduleLoading = require('./routes/module-loading');
 
 var app = express();
 
@@ -26,6 +27,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', routes);
 app.use('/polling', polling);
 app.use('/script-loading', scriptLoading);
+app.use('/module-loading', moduleLoading);
 
 
 // catch 404 and forward to error handler

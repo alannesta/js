@@ -1,6 +1,6 @@
-var kaka = 1;
+console.log('module code execution');
 
-console.log('module kaka required');
+var kaka = 1;
 
 setInterval(function() {
 	kaka += 1;
