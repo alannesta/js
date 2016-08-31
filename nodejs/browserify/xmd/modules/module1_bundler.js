@@ -1,5 +1,9 @@
+console.log('module1 code execution');
 var module2 = require('./module2_bundler');
-module.exports = function() {
+
+function module1() {
 	module2();
-	console.log('module1 execute');
+	console.log('module1 function call');
 };
+
+export default module1;
