@@ -23,10 +23,16 @@
 	background-color: blue;
 }
 
+.textContainer {
+	padding: 10px;
+	box-sizing: border-box;
+}
+
 </style>
 
 </head>
 <body>
+	<h1>Capture vs Bubble</h1>
 	<div id="parent">
 		parent
 		<div id="child">
@@ -35,13 +41,34 @@
 				grandchild
 			</div>
 		</div>
-
 	</div>
+	<h1>preventDefault vs stopPropagation</h1>
+	<a class="textContainer" href="https://www.google.com" target="_blank">
+		<div id="childText">
+			Some text to trigger a link?
+		</div>
+	</a>
 
 <script>
 	var parent = document.getElementById('parent');
 	var child = document.getElementById('child');
 	var grandchild = document.getElementById('grandchild');
+
+	var childText = document.getElementById('childText');
+
+	parent.addEventListener('click', function(e){
+		console.log('parent capture');
+		// e.stopPropagation();
+	}, true);
+
+	child.addEventListener('click', function(e){
+		console.log('child capture');
+		// e.stopPropagation();
+	}, true);
+
+	grandchild.addEventListener('click', function(e){
+		console.log('grandchild capture');
+	}, true);
 
 	child.addEventListener('click', function(e){
 		console.log('child bubble');
@@ -56,26 +83,11 @@
 		// e.stopPropagation();
 	}, false);
 
-	parent.addEventListener('click', function(e){
-		console.log('parent capture');
-		e.stopPropagation();
-	}, true);
-
-	child.addEventListener('click', function(e){
-		console.log('child capture');
-		// e.stopPropagation();
-	}, true);
-
-	grandchild.addEventListener('click', function(e){
-		console.log('grandchild capture');
-	}, true);
-
-	
-
-
-
-	
-
+	childText.addEventListener('click', function(e) {
+		console.log('text clicked, do not trigger anchor behaviour');
+		// e.stopPropagation();		// won't work
+		e.preventDefault();				// can prevent the link from triggering;
+	}, false)
 
 </script>
 
