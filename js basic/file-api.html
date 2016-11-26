@@ -1,0 +1,71 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Fetch</title>
+</head>
+
+<body>
+<button id="read">Read</button>
+<script>
+
+document.getElementById("read").addEventListener('click', function(){
+	xhrReadBlob();
+});
+
+var url = "http://192.240.120.2:443/dl/fdcd749417f167fd2c27951980bb6be9/5839f5ae//91porn/mp43/187721.mp4"
+
+// var url = "http://192.240.120.2:443/dl/c71cc6342d6bda4f0c0f050c2fa78a1c/5839fec0//91porn/mp43/187643.mp4";
+
+function xhrReadBlob() {
+	var oReq = new XMLHttpRequest();
+	oReq.open("GET", url, true);
+	oReq.responseType = "blob";
+
+	oReq.onload = function(oEvent) {
+		console.log(oReq.response);
+		xhrUpload(oReq.response);
+	};
+
+	oReq.addEventListener("progress", updateProgress);
+
+	oReq.send();
+}
+
+function updateProgress(oEvent) {
+	if (oEvent.lengthComputable) {
+    var percentComplete = oEvent.loaded / oEvent.total;
+    console.log(percentComplete);
+  } else {
+  	console.log('cannot show progress');
+  }
+}
+
+// upload to dropbox using blob
+function xhrUpload(blob) {
+	var access_token = 'XMoE6qP_C28AAAAAAAABr8Zn33ySn2ND5EYLkBMC16R_lqX_nJ5nlYoMfs80yjsc';
+
+	var url = "https://content.dropboxapi.com/1/files_put/auto/content.mp4"
+
+	var oReq = new XMLHttpRequest();
+	oReq.open("POST", url, true);
+
+	oReq.setRequestHeader('Authorization', 'Bearer ' + access_token)
+	// oReq.setRequestHeader('Content-Type', 'application/octet-stream')
+	// oReq.setRequestHeader('Content-Length', blob.size);
+
+
+	oReq.addEventListener("progress", updateProgress);
+
+	oReq.onload = function (oEvent) {
+  		// Uploaded.
+  		console.log('upload done');
+	};
+
+	oReq.send(blob);
+
+}
+	
+</script>
+</body>
+</html>
