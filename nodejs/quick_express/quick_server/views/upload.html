@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>File upload</title>
+</head>
+<body>
+<div>Please select the file to upload</div>
+<input id="fileChooser" type="file">
+
+<script>
+	document.getElementById('fileChooser').addEventListener("change", sendFile, false);
+
+	function sendFile() {
+		var file = document.getElementById('fileChooser').files[0];
+		var reader = new FileReader();
+		var xhr = new XMLHttpRequest();
+		this.xhr = xhr;
+
+		var self = this;
+		this.xhr.upload.addEventListener("progress", function(e) {
+			if (e.lengthComputable) {
+				var percentage = Math.round((e.loaded * 100) / e.total);
+				console.log(percentage);
+			}
+		}, false);
+
+		xhr.open("POST", "/file-upload/upload?name=" + encodeURIComponent(file.name));
+//		xhr.setRequestHeader('Content-Type', 'application/octet-stream');	// not necessary in my use case
+//		xhr.overrideMimeType('text/plain; charset=x-user-defined-binary');
+
+		// #1 send ArrayBuffer
+		reader.onload = function(evt) {
+			xhr.send(evt.target.result);
+			console.log(evt.target.result);
+		};
+
+		reader.readAsArrayBuffer(file);	// key here, convert file back to ArrayBuffer
+
+		// #2 send the file directly without converting to ArrayBuffer
+//		xhr.send(file);	// this also works...
+	}
+</script>
+</body>
+</html>

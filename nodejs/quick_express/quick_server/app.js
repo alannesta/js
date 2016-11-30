@@ -9,6 +9,7 @@ var routes = require('./routes/index');
 var polling = require('./routes/longpoll');
 var scriptLoading = require('./routes/script-loading');
 var moduleLoading = require('./routes/module-loading');
+var upload = require('./routes/file-upload');
 
 var app = express();
 
@@ -20,6 +21,7 @@ app.set('view engine', 'jade');
 //app.use(favicon(__dirname + '/public/favicon.ico'));
 app.use(logger('dev'));
 app.use(bodyParser.json());
+//app.use(bodyParser.raw());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
@@ -28,6 +30,7 @@ app.use('/', routes);
 app.use('/polling', polling);
 app.use('/script-loading', scriptLoading);
 app.use('/module-loading', moduleLoading);
+app.use('/file-upload', upload);
 
 
 // catch 404 and forward to error handler
