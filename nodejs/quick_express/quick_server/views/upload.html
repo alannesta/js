@@ -14,20 +14,19 @@
 	function sendFile() {
 		var file = document.getElementById('fileChooser').files[0];
 		var reader = new FileReader();
+		var fd = new FormData();
 		var xhr = new XMLHttpRequest();
-		this.xhr = xhr;
 
-		var self = this;
-		this.xhr.upload.addEventListener("progress", function(e) {
+		xhr.upload.addEventListener("progress", function(e) {
 			if (e.lengthComputable) {
 				var percentage = Math.round((e.loaded * 100) / e.total);
 				console.log(percentage);
 			}
 		}, false);
 
-		xhr.open("POST", "/file-upload/upload?name=" + encodeURIComponent(file.name));
+//		xhr.open("POST", "/file-upload/upload?name=" + encodeURIComponent(file.name));
+		xhr.open("POST", "/file-upload/form-upload", true);
 //		xhr.setRequestHeader('Content-Type', 'application/octet-stream');	// not necessary in my use case
-//		xhr.overrideMimeType('text/plain; charset=x-user-defined-binary');
 
 		// #1 send ArrayBuffer
 		reader.onload = function(evt) {
@@ -35,10 +34,14 @@
 			console.log(evt.target.result);
 		};
 
-		reader.readAsArrayBuffer(file);	// key here, convert file back to ArrayBuffer
+//		reader.readAsArrayBuffer(file);	// key here, convert file back to ArrayBuffer
 
 		// #2 send the file directly without converting to ArrayBuffer
 //		xhr.send(file);	// this also works...
+
+		// #3 send via formData
+		fd.append('file', file);
+		xhr.send(fd);
 	}
 </script>
 </body>
