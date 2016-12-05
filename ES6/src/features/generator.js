@@ -6,6 +6,15 @@ function* idMaker(){
 		yield index++;
 }
 
+function* generatorDemo() {
+	let a = function() {
+		return 10;
+	};
+
+	let c = yield a;
+	console.log('value received from caller: ', c);
+}
+
 // test in node
 //let iterator = idMaker();
 //console.log(iterator.next().value);
@@ -13,4 +22,11 @@ function* idMaker(){
 //console.log(iterator.next().value);
 //console.log(iterator.next().value);
 
-export default idMaker;
+// in and out
+let iterator = generatorDemo();
+let fn = iterator.next().value;
+console.log('value received from generator: ', typeof fn);
+console.log('resume execution');
+iterator.next(fn.call());	// resume execution, pass in value
+
+module.exports = idMaker;
