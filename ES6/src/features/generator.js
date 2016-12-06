@@ -1,5 +1,7 @@
 'use strict';
 
+var fs = require('fs');	// only for node
+
 function* idMaker(){
 	let index = 0;
 	while(index < 10)
@@ -7,15 +9,6 @@ function* idMaker(){
 }
 
 function* generatorDemo() {
-	// let a = function() {
-	// 	return 10;
-	// };
-	//
-	// let b = new Promise((resolve, reject) => {
-	// 	setTimeout(() => {
-	// 		resolve('promise resovled');
-	// 	}, 1500);
-	// });
 	console.log('2. [GEN] generator yield');
 	// let c = yield a;
 	// directly yield an expression
@@ -34,33 +27,35 @@ function* generatorDemo() {
 }
 
 function* errorHandling() {
-	let errFn = function() {
-		return JSON.parse('2');
-		//return JSON.parse({name: "kaka"});
-	};
 
 	let asyncThunk = function() {
-		return function(callback) {
-			setTimeout(function() {
-				try {
-					callback(null, JSON.parse({name: "kaka"}));
-				} catch (err) {
-					callback(err);
-				}
 
-			},1500);
+		// for web project, plz use this one
+		// return function(callback) {
+		// 	setTimeout(function() {
+		// 		try {
+		// 			callback(null, JSON.parse({name: "kaka"}));
+		// 		} catch (err) {
+		// 			callback(err);
+		// 		}
+		// 	},1500);
+		// }
+
+		// return a thunk function (for node test)
+		return (callback) => {
+			fs.readFile('./non-exist.js', callback);
 		}
 	};
 
+	// catch errors in own expressions or errors thrown back by the caller
 	try {
 		yield 5;
-		yield errFn();
-		yield asyncThunk;
-		yield 'back to normal';
+		// yield JSON.parse({name: "kaka"});	// error will be caught directly in the generator
+		yield asyncThunk();
+		yield 'continue execution';
 	}catch(err) {
-		console.log('handle error: ', err);
+		console.log('iterator handle error: ', err);
 	}
-
 }
 
 // gasic generator
@@ -90,22 +85,24 @@ function* errorHandling() {
 let iterator = errorHandling();
 console.log(iterator.next());
 console.log(iterator.next());
-let asyncThunk = iterator.next().value;
-console.log(asyncThunk);
-new Promise((resolve, reject) => {
-	asyncThunk().call(null, (err, result) => {
-		if(err) {
-			reject(err);
+let asyncThunk = iterator.next().value;		// here we get the thunk function
+if (asyncThunk instanceof Function) {
+	asyncThunk.call(null, (err, result) => {
+		if (err) {
+
+			// need to use try...catch... here, otherwise, if err is not handled in the generator, execution will be
+			// terminated.
+			try {
+				console.log(iterator.throw(err));
+			}catch(e) {
+				// if the err is not handled by the generator, will be able to do some cleanup here
+				console.log('generator not handling the error: ', e);
+				// do some clean up job...
+			}
+		} else {
+			iterator.next(result);
 		}
-		resolve(result);
 	});
-}).then((result) => {
-	console.log(iterator.next(result));
-}).catch((err) => {
-	console.log('error handled, throw back?: ', err);
-	//iterator.throw(err);	// iterator will continue execution if err is not throw back
-	console.log(iterator.next());
-	console.log(iterator.next());
-});
+}
 
 module.exports = idMaker;
