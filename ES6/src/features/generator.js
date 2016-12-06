@@ -52,10 +52,12 @@ function* errorHandling() {
 		yield 5;
 		// yield JSON.parse({name: "kaka"});	// error will be caught directly in the generator
 		yield asyncThunk();
-		yield 'continue execution';
 	}catch(err) {
 		console.log('iterator handle error: ', err);
 	}
+
+	yield 'continue execution';
+
 }
 
 // gasic generator
@@ -84,7 +86,7 @@ function* errorHandling() {
 // error handling
 let iterator = errorHandling();
 console.log(iterator.next());
-console.log(iterator.next());
+// console.log(iterator.next());
 let asyncThunk = iterator.next().value;		// here we get the thunk function
 if (asyncThunk instanceof Function) {
 	asyncThunk.call(null, (err, result) => {
@@ -93,6 +95,8 @@ if (asyncThunk instanceof Function) {
 			// need to use try...catch... here, otherwise, if err is not handled in the generator, execution will be
 			// terminated.
 			try {
+				console.log('error in caller, throw back to generator');
+				// if error is properly handled in the generator, will return next value in the sequence
 				console.log(iterator.throw(err));
 			}catch(e) {
 				// if the err is not handled by the generator, will be able to do some cleanup here
