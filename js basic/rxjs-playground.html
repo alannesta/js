@@ -1,0 +1,53 @@
+<!doctype html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <script src="script/rx.all.js"></script>
+    <script src="script/rx.dom.js"></script>
+    <title>Rxjs</title>
+</head>
+
+<body>
+    <h4>Autocomplete</h4>
+    <input type="text" name="search" id="search" />
+    <h4>Result:</h4>
+    <div id="result"></div>
+    <script>
+        var result = document.getElementById('result');
+        var input = document.getElementById('search');
+
+        var requestObservable = Rx.DOM.ajax({
+            url: 'http://localhost:4302/movies',
+            responseType: 'text'
+        });
+
+        var keyup = Rx.Observable.fromEvent(input, 'keyup')
+            .map(function(e) {
+                return e.target.value; // Project the text from the input
+            })
+            .filter(function(text) {
+                return text.length > 2; // Only if the text is longer than 2 characters
+            })
+            .debounce(750 /* Pause for 750ms */ )
+            .subscribe(function(data) {
+                return requestObservable.subscribe(function(data) {
+                    console.log(data.status);
+                    console.log(data.response);
+                }, function(err) {
+                    console.log(err);
+                })
+            }, function(err) {
+                console.log(error)
+            })
+            //.distinctUntilChanged(); // Only if the value has changed
+
+        // var query = function() {
+        //     var url = 'http://localhost:3000/movieUrl?q=';
+        //     var xhr = new XMLHttpRequest();
+        //     xhr.open();
+        // }
+
+    </script>
+</body>
+
+</html>
