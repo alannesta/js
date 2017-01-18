@@ -14,7 +14,7 @@
 	<h4>Result:</h4>
 	<div id="result"></div>
 	<h4>Canvas:</h4>
-	<canvas id="canvas" style="width: 400px; height: 400px; border: 1px solid black"></canvas>
+	<canvas id="canvas" width=400 height=400 style="border: 1px solid black"></canvas>
 	<script>
 		var result = document.getElementById('result');
 		var input = document.getElementById('search');
@@ -106,9 +106,7 @@
 			return drawing ? mouseDiff$ : Rx.Observable.never()
 		});
 
-		draw$.subscribe(function(coordinates) {
-			draw(coordinates);
-		});
+		draw$.subscribe(draw);
 
 		function getOffset(event) {
 			return {
