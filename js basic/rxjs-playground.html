@@ -13,11 +13,20 @@
 	<input type="text" name="search" id="search" />
 	<h4>Result:</h4>
 	<div id="result"></div>
+	<h4>Canvas:</h4>
+	<canvas id="canvas" style="width: 400px; height: 400px; border: 1px solid black"></canvas>
 	<script>
 		var result = document.getElementById('result');
 		var input = document.getElementById('search');
+		var canvas = document.getElementById('canvas');
+		// init canvas
+		var ctx = canvas.getContext('2d');
+		ctx.beginPath();
 
-		var keyup = Rx.Observable.fromEvent(input, 'keyup')
+		/*
+			Autocomplete
+		*/
+		var keyup$ = Rx.Observable.fromEvent(input, 'keyup')
 			.map(function(e) {
 				return e.target.value; // Project the text from the input
 			})
@@ -34,24 +43,85 @@
 			}).subscribe(function(data) {
 				if (data.response && data.response.movies.length > 0) {
 					var htmlArr = data.response.movies.map(function(movie) {
-						return '<div>'+movie.title +'</div>'
+						return '<div>' + movie.title + '</div>'
 					});
 					result.innerHTML = htmlArr.join('');
 				} else {
 					result.innerHTML = '';
 				}
 			});
-		// .subscribe(function(data) {
-		//     return requestObservable.subscribe(function(data) {
-		//         console.log(data.status);
-		//         console.log(data.response);
-		//     }, function(err) {
-		//         console.log(err);
-		//     })
-		// }, function(err) {
-		//     console.log(error)
-		// })
-		//.distinctUntilChanged(); // Only if the value has changed
+
+		/*
+			Canvas painting
+		*/
+
+		// var canvas = document.querySelector('canvas')
+		// var ctx = canvas.getContext('2d')
+		// ctx.beginPath()
+		//
+		// var down$ = Rx.Observable.fromEvent(canvas, 'mousedown')
+		// 	.map(true)
+		// var up$ = Rx.Observable.fromEvent(canvas, 'mouseup')
+		// 	.map(false)
+		//
+		// var upAndDown$ = up$.merge(down$)
+		//
+		// var move$ = Rx.Observable.fromEvent(canvas, 'mousemove')
+		// 	.map(function(e) {
+		// 		return {
+		// 			x: e.offsetX,
+		// 			y: e.offsetY
+		// 		}
+		// 	})
+		// 	.bufferCount(2, 1);
+		//
+		// upAndDown$
+		// 	.switchMap(function(action) {
+		// 		return action ? move$ : Rx.Observable.empty()
+		// 	})
+		// 	.subscribe(draw);
+		//
+		// function draw(points) {
+		// 	ctx.moveTo(points[0].x, points[0].y);
+		// 	ctx.lineTo(points[1].x, points[1].y);
+		// 	ctx.stroke();
+		// }
+
+		var mouseup$ = Rx.Observable.fromEvent(canvas, 'mouseup');
+		var mousedown$ = Rx.Observable.fromEvent(canvas, 'mousedown');
+		var mousemove$ = Rx.Observable.fromEvent(canvas, 'mousemove');
+
+		var mouseDiff$ = Rx.Observable.zip(mousemove$.skip(1), mousemove$, function selector(previous, current) {
+			return {
+				previous: getOffset(previous),
+				current: getOffset(current)
+			}
+		})
+
+		var draw$ = mousedown$.map(function() {
+			return true;
+		}).merge(mouseup$.map(function() {
+			return false;
+		})).flatMapLatest(function(drawing) {
+			return drawing ? mouseDiff$ : Rx.Observable.never()
+		});
+
+		draw$.subscribe(function(coordinates) {
+			draw(coordinates);
+		});
+
+		function getOffset(event) {
+			return {
+				offsetX: event.offsetX,
+				offsetY: event.offsetY
+			};
+		}
+
+		function draw(x) {
+			ctx.moveTo(x.previous.offsetX, x.previous.offsetY);
+			ctx.lineTo(x.current.offsetX, x.current.offsetY);
+			ctx.stroke();
+		}
 	</script>
 </body>
 
