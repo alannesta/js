@@ -15,10 +15,14 @@
 	<div id="result"></div>
 	<h4>Canvas:</h4>
 	<canvas id="canvas" width=400 height=400 style="border: 1px solid black"></canvas>
+	<h4>Drag and Drop</h4>
+	<div id="draggable" style="position: absolute; border: 1px solid red">Drag Me</div>
 	<script>
 		var result = document.getElementById('result');
 		var input = document.getElementById('search');
 		var canvas = document.getElementById('canvas');
+		var draggable = document.getElementById('draggable');
+
 		// init canvas
 		var ctx = canvas.getContext('2d');
 		ctx.beginPath();
@@ -96,7 +100,7 @@
 				previous: getOffset(previous),
 				current: getOffset(current)
 			}
-		})
+		});
 
 		var draw$ = mousedown$.map(function() {
 			return true;
@@ -120,6 +124,21 @@
 			ctx.lineTo(x.current.offsetX, x.current.offsetY);
 			ctx.stroke();
 		}
+
+		/*
+			Drag and Drop
+		*/
+
+		var mousedown = Rx.Observable.fromEvent(draggable, 'mousedown');
+		var mouseup = Rx.Observable.fromEvent(draggable, 'mouseup');
+		var mousemove = Rx.Observable.fromEvent(document, 'mousemove');
+
+		mousedown.flatMap(function() {
+			return mousemove.takeUntil(mouseup);
+		}).subscribe(function() {
+			console.log('finished move');
+		});
+
 	</script>
 </body>
 
