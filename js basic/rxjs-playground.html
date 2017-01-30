@@ -16,7 +16,7 @@
 	<h4>Canvas:</h4>
 	<canvas id="canvas" width=400 height=400 style="border: 1px solid black"></canvas>
 	<h4>Drag and Drop</h4>
-	<div id="draggable" style="position: absolute; border: 1px solid red">Drag Me</div>
+	<div id="draggable" style="position: absolute; border: 1px solid red; width: 120px; height: 120px">Drag Me</div>
 	<script>
 		var result = document.getElementById('result');
 		var input = document.getElementById('search');
@@ -133,10 +133,22 @@
 		var mouseup = Rx.Observable.fromEvent(draggable, 'mouseup');
 		var mousemove = Rx.Observable.fromEvent(document, 'mousemove');
 
-		mousedown.flatMap(function() {
-			return mousemove.takeUntil(mouseup);
-		}).subscribe(function() {
-			console.log('finished move');
+		mousedown.flatMap(function(md) {
+			console.log('mousedown')
+			var startX = md.offsetX, startY = md.offsetY;
+
+			return mousemove.map(function(mm) {
+				mm.preventDefault();
+				return {
+					left: mm.clientX - startX,
+					top: mm.clientY - startY
+				};
+			}).takeUntil(mouseup);		// notice the takeUtil is after the mousemove stream ( not mouseup )
+		})
+		.subscribe(function(pos) {
+			console.log('move');
+			draggable.style.top = pos.top + 'px';
+			draggable.style.left = pos.left + 'px';
 		});
 
 	</script>
