@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>History</title>
+</head>
+<body>
+	<button id="login">Login</button>
+	<button id="location">Change hash1</button>
+	<button id="location2">Change hash2</button>
+	<a href="#hashbang">test</a>
+	<script>
+		document.getElementById('login').addEventListener('click', function() {
+			window.history.pushState({
+				route: '/login'
+			}, 'Login Page', '/history_api.html/login');
+		});
+
+//		document.getElementById('location').addEventListener('click', function() {
+//			window.location = '/logout';	// this cause a "full" page refresh, window.onpopstate will never be executed
+//		});
+
+		document.getElementById('location').addEventListener('click', function() {
+			window.location = '/history_api.html#logout';	// window.onpopstate will be called
+		});
+		document.getElementById('location2').addEventListener('click', function() {
+			window.location = '/history_api.html';
+		});
+
+		window.onpopstate = function(event) {
+			console.log(event);
+			alert("popstate: location: " + document.location + ", state: " + JSON.stringify(event.state));
+		};
+
+		window.onhashchange = function(event) {
+			console.log('hashchange: old url: ---> ' + event.oldURL);
+			console.log('hashchange: new url: ---> ' + event.newURL);
+		}
+	</script>
+</body>
+</html>
