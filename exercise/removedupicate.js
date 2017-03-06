@@ -83,23 +83,47 @@ function removeDupSet(collection) {
 }
 
 // 4. reverse traversal
-// when the remove element operation becomes too frequent, it becomes very slow
-// function removeDupLoop(collection) {
-// 	var timeStamp = new Date().getTime();
-//
-// 	for (let i = collection.length - 1; i > 0; i--) {
-// 		for (let j = i - 1; j >=0 ; j--) {
-// 			if (collection[i] === collection[j]) {
-// 				collection.splice(j, 1);
-// 			}
-// 		}
-// 	}
-// 	console.log('loop time used: ', new Date().getTime() - timeStamp);
-//
-// 	return collection;
-// }
+// Compare three different ways:
+// method 1 time used:  3438
+// medhod 2 time used:  1319
+// method 3 time used:  10
 
+// when the remove element operation becomes too frequent, it becomes very slow
 function removeDupLoop(collection) {
+	var timeStamp = new Date().getTime();
+
+	for (let i = collection.length - 1; i > 0; i--) {
+		for (let j = i - 1; j >=0 ; j--) {
+			if (collection[i] === collection[j]) {
+				collection.splice(j, 1);
+			}
+		}
+	}
+	console.log('loop time used: ', new Date().getTime() - timeStamp);
+
+	return collection;
+}
+
+// This one is actually faster than the previous implementation, give us the conclusion:
+// splice an element from an array implies reindex which is ususally heavy
+function removeDupLoop2(collection) {
+	var timeStamp = new Date().getTime();
+	for (let i = collection.length - 1; i > 0; i--) {
+		for (let j = i - 1; j >=0 ; j--) {
+			if (collection[i] === collection[j]) {
+				collection[j] = -1;
+			}
+		}
+	}
+	console.log('loop time used: ', new Date().getTime() - timeStamp);
+
+	return collection.filter((item) => {
+		return item > -1;
+	});
+}
+
+
+function removeDupLoop3(collection) {
 	var timeStamp = new Date().getTime();
 	var map = {};
 	// pay attention to index condition when looping reversely
@@ -116,7 +140,9 @@ function removeDupLoop(collection) {
 }
 
 
-console.log(removeDupArr(testArr).length);
+// console.log(removeDupArr(testArr).length);
 // console.log(removeDupMap(testArr).length);
 console.log(removeDupLoop(testArr).length);
+console.log(removeDupLoop2(testArr).length);
+console.log(removeDupLoop3(testArr).length);
 // console.log(removeDupSet(testArr).length);
