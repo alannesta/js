@@ -2,9 +2,9 @@ var str1 = "abcdefghe";
 
 //standard way
 String.prototype.reverse = function(){
-	var temp = ""
+	var temp = "";
 	for (var i = this.length-1; i >= 0; i--){
-		console.log(this[i])
+		console.log(this[i]);
 		temp = temp + this[i];
 	}
 	return temp

@@ -119,16 +119,3 @@ var kitchen = makeKitchen();
 kitchen.getTrashBag(); // returns trash bag C
 kitchen.getTrashBag(); // returns trash bag B
 kitchen.getTrashBag(); // returns trash bag A
-
-
-
-
-
-
-
-
-
-
-
-
-
