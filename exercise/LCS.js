@@ -1,9 +1,29 @@
 /*
-	Get longest common substring
+ Get longest common substring
  */
+var fs = require('fs');
 
-var str1 = 'b1122d33cac22';
-var str2 = 'bcv1122d33cca22cb';
+var content = fs.readFileSync('/Users/alancao/git/mining/data/raw', 'utf-8');
+
+var kaka = content.split('\n').splice(0, 1000);
+console.log(kaka.length);
+console.log(dedupe(kaka).length);
+
+function dedupe(collection) {
+	console.time('dedupe');
+	for (var i = 0; i < collection.length; i++) {
+		for (var j = i + 1; j < collection.length; j++) {
+			let {maxLen} = DPLCS(collection[i], collection[j]);
+			if (maxLen > 7) {
+				collection[j] = '';
+			}
+		}
+	}
+	console.timeEnd('dedupe');
+	return collection.filter((item) => {
+		return item.length > 0;
+	})
+}
 
 /**
  * brute force
@@ -31,8 +51,8 @@ var str2 = 'bcv1122d33cca22cb';
 
 /**
  * Dynamic programming
- * @param a
- * @param b
+ * @param {array} a
+ * @param {array} b
  * @returns {object} {maxLength, endIndex of the common string(string1)}
  */
 function DPLCS(a, b) {
@@ -83,5 +103,5 @@ function max(arr) {
 	return cmax;
 }
 
-var {maxLen, endIndexA} = DPLCS(str1.split(''), str2.split(''));
-console.log('longest common string: ', str1.substring(endIndexA - maxLen + 1, endIndexA + 1));
+//var {maxLen, endIndexA} = DPLCS(str1.split(''), str2.split(''));
+//console.log('longest common string: ', str1.substring(endIndexA - maxLen + 1, endIndexA + 1));
