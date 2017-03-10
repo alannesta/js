@@ -10,81 +10,70 @@ var collection = [{value: 4, weight: 2}, {value: 7, weight: 3}, {value: 4, weigh
 	weight: 6
 }];
 // var collection = [{value: 4, weight: 2}, {value: 7, weight: 3}, {value: 4, weight: 4}];
-var maxWeight = 15;
+var maxWeight = 10;
 
-console.log(knapsack(collection, maxWeight));
+console.log(knapsack(collection, maxWeight).valueMatrix);
+// console.log(knapsack(collection, maxWeight).compMatrix);
+console.log(knapsack2(collection, maxWeight));
 
-// function knapsack(collection, maxWeight) {
-// 	var valueMatrix = createMatrix(collection.length, maxWeight);
-// 	// the weight starts from 0, so need maxWeight + 1
-// 	for (var j = 0; j < maxWeight + 1; j++) {
-// 		for (var i = 0; i < collection.length; i++) {
-// 			if (j === 0) {
-// 				valueMatrix[i][j] = {value: 0, combo: []};
-// 			} else if (j >= collection[i].weight) {
-// 				// valueMatrix[i][j] = max(j - collection[i].weight, i, valueMatrix) + collection[i].value;
-// 				var temp = max(j - collection[i].weight, i, valueMatrix, collection[i].value);
-// 				if (temp.value > valueMatrix[i][j - 1].value) {
-// 					valueMatrix[i][j] = Object.assign({}, temp);
-// 				} else {
-// 					valueMatrix[i][j] = Object.assign({}, valueMatrix[i][j - 1]);
-// 				}
-// 			}
-// 		}
-// 	}
-//
-// 	return valueMatrix;
-//
-// }
-//
-// function createMatrix(m, n) {
-// 	var matrix = new Array(m);
-// 	for (var i = 0; i < m; i++) {
-// 		matrix[i] = new Array(n);
-// 		for (var j = 0; j < matrix[i].length; j++) {
-// 			matrix[i][j] = {value: 0, combo: []};
-// 		}
-// 	}
-// 	return matrix;
-// }
-//
-// // return the max value from a column
-// function max(columnIndex, currentItemIndex, matrix, value) {
-// 	var cMax = {value: 0, combo: []};
-// 	for (var i = 0; i < matrix.length; i++) {
-// 		console.log(matrix[i][columnIndex]);
-// 		if (matrix[i][columnIndex].combo.indexOf(currentItemIndex) < 0 && matrix[i][columnIndex].value + value> cMax.value) {
-// 			cMax = {value: matrix[i][columnIndex].value + value, combo: matrix[i][columnIndex].combo.concat(currentItemIndex)};
-// 		}
-// 	}
-//
-// 	return cMax;
-// }
-
-// official version:
 function knapsack(collection, maxWeight) {
-	var valueMatrix = createMatrix(collection.length, maxWeight);
+	var valueMatrix = createMatrix(collection.length, maxWeight + 1, 0);
+	var compMatrix = createMatrix(collection.length, maxWeight + 1, []);
 	// the weight starts from 0, so need maxWeight + 1
-	for (var j = 0; j < maxWeight; j++) {
+	for (var j = 0; j < maxWeight + 1; j++) {
 		for (var i = 0; i < collection.length; i++) {
-			if (j === 0 ) {
-				valueMatrix[i][j] = 0
-			} else if (j >= collection[i].weight){
-				if (i === 0) {
-					valueMatrix[i][j] = maxVal(collection, j);
+			if (j === 0) {
+				valueMatrix[i][j] = 0;
+				compMatrix[i][j] = [];
+			} else if (j >= collection[i].weight) {
+				var temp = max(j, i, collection[i].weight, collection[i].value);
+				if (temp > valueMatrix[i][j - 1]) {
+					valueMatrix[i][j] = temp;
 				} else {
-					if (valueMatrix[i-1][j] < valueMatrix[i-1][j-collection[i].weight] + collection[i].value) {
-						valueMatrix[i][j] = valueMatrix[i-1][j-collection[i].weight] + collection[i].value
-					} else {
-						valueMatrix[i][j] = valueMatrix[i-1][j];
-					}
+					valueMatrix[i][j] = valueMatrix[i][j - 1];
+					compMatrix[i][j] = [].concat(compMatrix[i][j-1]);
 				}
 			} else {
-				if (i === 0) {
-					valueMatrix[i][j] = 0;
+				valueMatrix[i][j] = valueMatrix[i][j - 1];
+				compMatrix[i][j] = [].concat(compMatrix[i][j-1]);
+			}
+		}
+	}
+
+	// return the max value from a column
+	function max(columnIndex, currentItemIndex, weight, value) {
+		var cMax = 0;
+		for (var i = 0; i < valueMatrix.length; i++) {
+			if (compMatrix[i][columnIndex-weight].indexOf(currentItemIndex) < 0 && valueMatrix[i][columnIndex-weight] + value> cMax) {
+				cMax = valueMatrix[i][columnIndex-weight] + value;
+				compMatrix[currentItemIndex][columnIndex] = compMatrix[i][columnIndex-weight].concat(currentItemIndex);
+			}
+		}
+		return cMax;
+	}
+
+	return {
+		valueMatrix,
+		compMatrix
+	};
+}
+
+// official version:
+function knapsack2(collection, maxWeight) {
+	var valueMatrix = createMatrix(collection.length + 1, maxWeight + 1, 0);
+	// the weight starts from 0, so need maxWeight + 1 to generate 1 more row
+	for (var j = 0; j < maxWeight + 1; j++) {
+		for (var i = 0; i < collection.length + 1; i++) {
+			if (j === 0 || i === 0) {
+				valueMatrix[i][j] = 0
+			} else if (j >= collection[i-1].weight){
+				if (valueMatrix[i-1][j] < valueMatrix[i-1][j-collection[i-1].weight] + collection[i-1].value) {
+					valueMatrix[i][j] = valueMatrix[i-1][j-collection[i-1].weight] + collection[i-1].value
 				} else {
 					valueMatrix[i][j] = valueMatrix[i-1][j];
 				}
+			} else {
+				valueMatrix[i][j] = valueMatrix[i-1][j];
 			}
 		}
 	}
@@ -101,14 +90,13 @@ function maxVal(collection, j) {
 	return max;
 }
 
-function createMatrix(m, n) {
+function createMatrix(m, n, initialVal) {
 	var matrix = new Array(m);
 	for (var i = 0; i < m; i++) {
 		matrix[i] = new Array(n);
 		for (var j = 0; j < matrix[i].length; j++) {
-			matrix[i][j] = 0;
+			matrix[i][j] = initialVal;
 		}
 	}
 	return matrix;
 }
-
