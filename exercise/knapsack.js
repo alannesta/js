@@ -10,7 +10,7 @@ var collection = [{value: 4, weight: 2}, {value: 7, weight: 3}, {value: 4, weigh
 	weight: 6
 }];
 // var collection = [{value: 4, weight: 2}, {value: 7, weight: 3}, {value: 4, weight: 4}];
-var maxWeight = 10;
+var maxWeight = 15;
 
 console.log(knapsack(collection, maxWeight).valueMatrix);
 // console.log(knapsack(collection, maxWeight).compMatrix);
@@ -100,3 +100,33 @@ function createMatrix(m, n, initialVal) {
 	}
 	return matrix;
 }
+
+// backtracking
+
+var maxVal = 0;
+var currentVal = 0;
+var solutions = [];
+
+function bt(collection, currentIndex, remainQuota) {
+	if (currentIndex === collection.length - 1) {
+		if (currentVal > maxVal) {
+			maxVal = currentVal;
+		}
+	} else{
+		// TODO: could be optimized with a bound() function
+		// not picking item[currentIndex]
+		bt(collection, currentIndex + 1, remainQuota);
+
+		// picking item[currentIndex]
+		if (collection[currentIndex].weight <= remainQuota) {
+			remainQuota -= collection[currentIndex].weight;
+			currentVal += collection[currentIndex].value;
+			bt(collection, currentIndex + 1, remainQuota);
+			//remainQuota += collection[currentIndex].weight;	// not needed
+			currentVal -= collection[currentIndex].value;	// global value needs to be restored for backtracking
+		}
+	}
+}
+
+bt(collection, 0, maxWeight);
+console.log(maxVal);
