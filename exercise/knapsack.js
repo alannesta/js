@@ -5,10 +5,7 @@
  The problem is to maximize the sum of the values of the items in the knapsack so that the sum of the weights is less than or equal to the knapsack's capacity.
  */
 
-var collection = [{value: 4, weight: 2}, {value: 7, weight: 3}, {value: 4, weight: 4}, {value: 9, weight: 5}, {
-	value: 7,
-	weight: 6
-}];
+var collection = [{value: 4, weight: 2}, {value: 4, weight: 4}, {value: 9, weight: 5}, {value: 7, weight: 6},  {value: 7, weight: 3}];
 // var collection = [{value: 4, weight: 2}, {value: 7, weight: 3}, {value: 4, weight: 4}];
 var maxWeight = 15;
 
@@ -101,32 +98,40 @@ function createMatrix(m, n, initialVal) {
 	return matrix;
 }
 
-// backtracking
+// backtracking using DFS
 
 var maxVal = 0;
 var currentVal = 0;
-var solutions = [];
+var solutions = [0, 0, 0, 0, 0];	// temp storage for solutions, selected item will be marked as 1
+var finalComp = [];		// best solution comp
 
-function bt(collection, currentIndex, remainQuota) {
-	if (currentIndex === collection.length - 1) {
+function bt(collection, currentIndex, remainQuota, depth, flag) {
+	if (currentIndex > collection.length - 1) {
 		if (currentVal > maxVal) {
 			maxVal = currentVal;
+			finalComp = [...solutions];
 		}
 	} else{
-		// TODO: could be optimized with a bound() function
-		// not picking item[currentIndex]
-		bt(collection, currentIndex + 1, remainQuota);
+		console.log(depth + flag);	// illustrate the search path, flag 1 means include the item
+		depth = depth + '-';
 
-		// picking item[currentIndex]
+		// picking item[currentIndex], updating/restoring currentVal
 		if (collection[currentIndex].weight <= remainQuota) {
 			remainQuota -= collection[currentIndex].weight;
 			currentVal += collection[currentIndex].value;
-			bt(collection, currentIndex + 1, remainQuota);
+			solutions[currentIndex] = 1;
+			bt(collection, currentIndex + 1, remainQuota, depth, 1);
 			//remainQuota += collection[currentIndex].weight;	// not needed
 			currentVal -= collection[currentIndex].value;	// global value needs to be restored for backtracking
+			solutions[currentIndex] = 0;
 		}
+
+		// TODO: could be optimized with a bound() function
+		// not picking item[currentIndex], currentVal remains unchanged
+		bt(collection, currentIndex + 1, remainQuota, depth, 0);
 	}
 }
 
-bt(collection, 0, maxWeight);
+bt(collection, 0, maxWeight, '-');
 console.log(maxVal);
+console.log(finalComp);
