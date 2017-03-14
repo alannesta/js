@@ -13,6 +13,14 @@ console.log(knapsack(collection, maxWeight).valueMatrix);
 // console.log(knapsack(collection, maxWeight).compMatrix);
 console.log(knapsack2(collection, maxWeight));
 
+
+/*
+ My solutions:
+ valueMatrix[i] represents best values when item i is included. This is more complicated than
+ the "official" version.
+ In DP problems, generate a good sub-problem could reduce a lot of complexity
+ */
+
 function knapsack(collection, maxWeight) {
 	var valueMatrix = createMatrix(collection.length, maxWeight + 1, 0);
 	var compMatrix = createMatrix(collection.length, maxWeight + 1, []);
@@ -55,7 +63,13 @@ function knapsack(collection, maxWeight) {
 	};
 }
 
-// official version:
+
+/*
+ official version:
+ valueMatrix[i] represents best values when only consider the first i items.
+ Please refer to the max consecutive sub-sequence sum problem to see another example of sub-problem
+ */
+
 function knapsack2(collection, maxWeight) {
 	var valueMatrix = createMatrix(collection.length + 1, maxWeight + 1, 0);
 	// the weight starts from 0, so need maxWeight + 1 to generate 1 more row
