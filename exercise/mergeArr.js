@@ -1,5 +1,6 @@
 /*
-	Try while loop when for loop is hard to solve the problem
+	Try while loop when for loop is hard to solve the problem (because for loop re-initiate the index everytime)
+	For this problem, the index should be maintained as we merge
 */
 var arr2 = [2, 4, 6, 6, 18, 20];
 var arr1 = [1, 2, 3, 4, 5, 7, 19];
