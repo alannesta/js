@@ -116,7 +116,7 @@ function createMatrix(m, n, initialVal) {
 
 var maxVal = 0;
 var currentVal = 0;
-var solutions = [0, 0, 0, 0, 0];	// temp storage for solutions, selected item will be marked as 1
+var solutions = [];	// temp storage for solutions, selected item will be marked as 1
 var finalComp = [];		// best solution comp
 
 function bt(collection, currentIndex, remainQuota, depth, flag) {
@@ -131,17 +131,18 @@ function bt(collection, currentIndex, remainQuota, depth, flag) {
 
 		// picking item[currentIndex], updating/restoring currentVal
 		if (collection[currentIndex].weight <= remainQuota) {
+			solutions[currentIndex] = 1;	// flag solution vector
+
 			remainQuota -= collection[currentIndex].weight;
-			currentVal += collection[currentIndex].value;
-			solutions[currentIndex] = 1;
+			currentVal += collection[currentIndex].value;	// move
 			bt(collection, currentIndex + 1, remainQuota, depth, 1);
-			//remainQuota += collection[currentIndex].weight;	// not needed
+			remainQuota += collection[currentIndex].weight;	// unmove
 			currentVal -= collection[currentIndex].value;	// global value needs to be restored for backtracking
-			solutions[currentIndex] = 0;
 		}
 
 		// TODO: could be optimized with a bound() function
 		// not picking item[currentIndex], currentVal remains unchanged
+		solutions[currentIndex] = 0;
 		bt(collection, currentIndex + 1, remainQuota, depth, 0);
 	}
 }
