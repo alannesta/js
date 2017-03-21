@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Video Controls</title>
+</head>
+<body>
+<video src="http://clips.vorwaerts-gmbh.de/VfE_html5.mp4" controls preload="metadata"></video>
+
+<script>
+	var video = document.getElementsByTagName('video')[0];
+
+	video.addEventListener('loadedmetadata', function() {
+		console.log('meta loaded');
+		video.currentTime = window.localStorage.getItem('currentTime') || 0;	// seek to time in seconds
+//		video.play();	// start play
+	});
+
+	window.onbeforeunload = function() {
+		window.localStorage.setItem('currentTime', video.currentTime);
+	};
+</script>
+</body>
+</html>

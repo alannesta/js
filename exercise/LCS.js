@@ -3,51 +3,76 @@
  */
 var fs = require('fs');
 
-var content = fs.readFileSync('/Users/alancao/git/mining/data/raw', 'utf-8');
+var content = fs.readFileSync('/Users/sijin.cao/git/mining/data/raw', 'utf-8');
 
-var kaka = content.split('\n').splice(0, 1000);
-console.log(kaka.length);
-console.log(dedupe(kaka).length);
+// var raw = content.split('\n').splice(0, 4000);
+console.log(dedupe(content.split('\n').splice(0, 4000), generateFilterWords(content.split('\n').splice(0, 4000))).length);
+// console.log(dedupe(content.split('\n').splice(0, 1000), []).length);
 
-function dedupe(collection) {
-	console.time('dedupe');
+function generateFilterWords(collection) {
+	console.time('filter_words');
+	let dupeMap = {};
 	for (var i = 0; i < collection.length; i++) {
 		for (var j = i + 1; j < collection.length; j++) {
-			let {maxLen} = DPLCS(collection[i], collection[j]);
+			let {maxLen, endIndexA} = DPLCS(collection[i], collection[j]);
 			if (maxLen > 7) {
+				let dupeStr = collection[i].substring(endIndexA - maxLen + 1, endIndexA + 1);
+				if (typeof dupeMap[dupeStr] === 'number') {
+					dupeMap[dupeStr]++;
+				}else {
+					dupeMap[dupeStr] = 1;
+				}
 				collection[j] = '';
 			}
 		}
 	}
-	console.timeEnd('dedupe');
-	return collection.filter((item) => {
-		return item.length > 0;
-	})
+	let frequent = highFreq(dupeMap);
+	// let map = JSON.stringify(dupeMap, null, 4);
+	// fs.writeFileSync('/Users/sijin.cao/Desktop/dupes', str);
+	// fs.appendFileSync('/Users/sijin.cao/Desktop/dupes', map);
+	console.timeEnd('filter_words');
+	return frequent;
 }
 
-/**
- * brute force
- * @param a
- * @param b
- * @returns {string} the longest common substring
- */
-//function LCS(a, b) {
-//	var common = {};
-//	var flag = 0;
-//	for (let i = 0; i < a.length; i++) {
-//		for (let j = i; j < a.length; j++) {
-//			//console.log(a.substring(i, j));
-//			if (b.indexOf(a.substring(i, j)) > -1) {
-//				common[i] = a.substring(i, j);
-//			} else {
-//				break;
-//			}
-//		}
-//	}
-//	return common;
-//}
+function dedupe(collection, filterWords) {
+	console.time('dedupe');
+	let result = [];
+	for (var i = 0; i < collection.length; i++) {
+		if (collection[i].length === 0) {
+			continue;
+		}
+		for (var j = i + 1; j < collection.length; j++) {
+			let {maxLen} = DPLCS(filterJunkWord(collection[i], filterWords), collection[j]);
+			if (maxLen > 7) {
+				collection[j] = '';
+			}
+			if (j === collection.length -1){
+				result.push(collection[i]);
+			}
+		}
+	}
+	console.timeEnd('dedupe');
+	let str = result.join('\n');
+	fs.writeFileSync('/Users/sijin.cao/Desktop/dupes', str);
 
-//console.log(LCS(str1, str2));
+	return result;
+}
+
+// extract high frequency terms from a map to an array
+function highFreq(map) {
+	return Object.keys(map).filter((key) => {
+		return map[key] > 5;
+	});
+}
+
+function filterJunkWord(str, filters) {
+	for (let i = 0; i < filters.length; i++) {
+		if(str.indexOf(filters[i]) > -1) {
+			return str.replace(filters[i], '');
+		}
+	}
+	return str;
+}
 
 /**
  * Dynamic programming
