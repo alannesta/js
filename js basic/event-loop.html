@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Event Loop</title>
+</head>
+<body>
+	<h1>Event Loop Demo</h1>
+	<button id="kaka">Kaka</button>
+	<script>
+		var btn = document.getElementById('kaka');
+		btn.addEventListener('click', function() {
+			console.log('click event');
+		});
+		var event = new Event('click');
+
+		// block execution for 3 seconds using while loop
+		function blocking() {
+			var count = 0;
+			var timestamp = new Date().getTime();
+			while (new Date().getTime() - timestamp < 3000) {
+				count++;
+				if (count === 20000) {
+					btn.dispatchEvent(event);
+				}
+			}
+			console.log('while loop done');
+		}
+
+
+		setTimeout(function() {
+			console.log('set timeout');
+		}, 1000);
+
+		blocking();
+
+	</script>
+</body>
+</html>

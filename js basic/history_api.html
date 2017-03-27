@@ -24,7 +24,7 @@
 			window.location = '/history_api.html#logout';	// window.onpopstate will be called
 		});
 		document.getElementById('location2').addEventListener('click', function() {
-			window.location = '/history_api.html';
+			window.location.hash = 'login';
 		});
 
 		window.onpopstate = function(event) {
