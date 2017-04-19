@@ -10,6 +10,7 @@ var polling = require('./routes/longpoll');
 var scriptLoading = require('./routes/script-loading');
 var moduleLoading = require('./routes/module-loading');
 var upload = require('./routes/file-upload');
+var serverPush = require('./routes/server-push');
 
 var app = express();
 
@@ -31,7 +32,7 @@ app.use('/polling', polling);
 app.use('/script-loading', scriptLoading);
 app.use('/module-loading', moduleLoading);
 app.use('/file-upload', upload);
-
+app.use('/server-push', serverPush);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
