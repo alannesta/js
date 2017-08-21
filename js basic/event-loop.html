@@ -8,31 +8,62 @@
 	<h1>Event Loop Demo</h1>
 	<button id="kaka">Kaka</button>
 	<script>
+		/*
+		question:
+		
+		run this code and click the button in the browser, what would be the console output
+
+		result:
+		
+		--- before blocking code runs ----
+
+		click event
+
+		---- 3s later, blocking code starts ----
+		
+		---- 5s later, blocking code ends ----
+		while loop done
+		
+		microtask
+
+		click event
+		click event
+
+		setTimeout
+
+		*/
+
 		var btn = document.getElementById('kaka');
 		btn.addEventListener('click', function() {
 			console.log('click event');
 		});
+
 		var event = new Event('click');
 
-		// block execution for 3 seconds using while loop
+		// block execution for 5 seconds using while loop
 		function blocking() {
 			var count = 0;
+			// lower priority
+			setTimeout(function() {
+				console.log('setTimeout');
+			}, 0);
+
+			// higher priority
+			Promise.resolve().then(function() {
+				console.log('microtask');
+			});
 			var timestamp = new Date().getTime();
-			while (new Date().getTime() - timestamp < 3000) {
+			while (new Date().getTime() - timestamp < 5000) {
 				count++;
 				if (count === 20000) {
-					btn.dispatchEvent(event);
+					// btn.dispatchEvent(event);
 				}
 			}
 			console.log('while loop done');
 		}
 
-
-		setTimeout(function() {
-			console.log('set timeout');
-		}, 1000);
-
-		blocking();
+		setTimeout(blocking, 3000);
+		// blocking();
 
 	</script>
 </body>

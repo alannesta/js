@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Event Loop set2</title>
+</head>
+<body>
+	<h1>Event Loop Demo</h1>
+	<button id="kaka">Kaka</button>
+	<script>
+
+		function kaka() {
+			console.log('requestAnimationFrame done');
+			Promise.resolve().then(() => {console.log('add microtask')})
+			setTimeout(() => {
+				console.log('add macrotask');
+			}, 0);
+		}
+
+		window.requestAnimationFrame(kaka);
+
+		setTimeout(() => {
+			console.log('setTimeout');
+		}, 0);
+
+		
+		Promise.resolve().then(() => {
+			console.log('promise resolve');
+		});
+
+	</script>
+</body>
+</html>
