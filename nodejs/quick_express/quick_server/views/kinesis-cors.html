@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Cors Test</title>
+	<script
+			src="https://code.jquery.com/jquery-1.12.4.js"
+			integrity="sha256-Qw82+bXyGq6MydymqBxNPYTaUXXq7c8v3CwiYwLLNXU="
+			crossorigin="anonymous"></script>
+</head>
+<body>
+<h1>Kinesis cors</h1>
+<button id="btn">Send Request</button>
+<script>
+	document.getElementById('btn').addEventListener('click', function() {
+		sendRequest();
+	});
+
+	function sendRequest(record = {}) {
+		var baseUrl = 'https://1n2kntwp99.execute-api.us-east-1.amazonaws.com/dev/';
+		var json = JSON.stringify(record);
+
+//		var xhr = new XMLHttpRequest();
+//		xhr.open("PUT", baseUrl + 'v1/put-record', true);
+//		xhr.setRequestHeader('Content-type', 'application/json; charset=utf-8');
+//		xhr.withCredentials = true;
+//		xhr.onload = function() {
+//			if (xhr.readyState == 4 && xhr.status == "200") {
+//				console.log('put record success');
+//			} else {
+//				console.error('put record error');
+//			}
+//		};
+//		xhr.send(json);
+		 $.ajax({
+		 	url: baseUrl + 'v2/put-record',
+		 	type: 'PUT',
+		 	contentType: 'application/json',
+		 	xhrFields: {
+		 		withCredentials: true
+		 	},
+		 	data: JSON.stringify(record)
+		 }).done(function() {
+		 	console.log('put record success')
+		 }).fail(function(err) {
+		 	console.log('put record error: ', err)
+		 });
+	}
+
+</script>
+</body>
+</html>
