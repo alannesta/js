@@ -1,0 +1,57 @@
+<!doctype html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>jquery</title>
+</head>
+ 
+<body>
+	
+<script>
+	async function test() {
+		let kaka = await new Promise((resolve, reject) => {
+			setTimeout(() => {
+				console.log('resolve promise');	// observe the callstack here
+				resolve();
+			}, 1000)
+		});
+
+		console.log('test1 resolve: blocked');	// observe the callstack here
+	}
+
+	async function test2() {
+		let lala = await test()
+		console.log('test2 resolve: blocked');
+	}
+
+	function a() {
+		b()
+	}
+	function b() {
+		c()
+	}
+	async function c() {
+		await test()
+	}
+
+	function blocking() {
+		var now = new Date().getTime();
+		while(true) {
+			if (new Date().getTime() - now > 2000) {
+				break;
+			}
+		}
+	}
+
+	setTimeout(() => {
+		console.log('main timeout');
+	}, 500);
+
+	a();
+
+	blocking();
+
+	console.log('after block')
+</script>
+</body>
+</html>
