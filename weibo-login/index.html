@@ -4,7 +4,7 @@
 <head>
 	<meta charset=UTF-8>
 	<meta http-equiv=X-UA-Compatible content="IE=edge">
-	<title>有道云笔记｜5000万用户的选择</title>
+	<title>云笔记</title>
 	<meta name=keywords content="有道云笔记 - 记录，成为更好的自己, 有道, office, 办公软件, 有道云笔记, 印象笔记, 笔记, tower, 云笔记, 有道笔记, 团队协作, 协作, etc.">
 	<meta name=description content=有道云笔记是网易出品，获得5000万用户青睐的笔记软件。提供了PC端、移动端、网页端等多端应用，用户可以随时随地对线上资料进行编辑、分享以及协同。>
 	<link rel=icon href="http://note.youdao.com/favicon.ico?v=2">
@@ -27,7 +27,7 @@
 			window.location.href = 'WAP/intro' + location.search;
 		}
 	</script>
-	<script src="http://tjs.sjs.sinajs.cn/open/api/js/wb.js?appkey=359168945"></script>
+	<!--<script src="http://tjs.sjs.sinajs.cn/open/api/js/wb.js?appkey=359168945"></script>-->
 
 	<script src=https://note.youdao.com/scripts/ab0ec0f0.indexPage.js></script>
 	<script type="text/javascript">
@@ -61,7 +61,8 @@
 				<!--<div id="wb_connect_btn">-->
 
 				<!--</div>-->
-				<a href="https://api.weibo.com/oauth2/authorize?client_id=359168945&response_type=code&redirect_uri=http%3A%2F%2Flocal.dev.com%3A4302%2Foauth%2Fcallback">Weibo</a>
+				<a id='weibo-login' style="display: inline" href="https://api.weibo.com/oauth2/authorize?client_id=359168945&response_type=code&redirect_uri=http%3A%2F%2Flocal.dev.com%3A4302%2Foauth%2Fcallback"><img
+						src="./weibo.jpg" alt="" style="width:80px; height:60px"></a>
 				<div id=header-right> <a id=register href=http://reg.163.com/reg/reg.jsp target=_blank>注册</a>
 					<div id=user-info> <a id=dropdown-button href=/web>登录网页版</a> <span id=dropdown><i></i></span>
 						<ul id=dropdown-list>
@@ -214,13 +215,14 @@
 				<li><a href=http://www.itrust.org.cn/home/index/itrust_certifi/wm/PJ2017012001 target=_blank>网易网站相关资质证明</a></li>
 			</ul>
 		</div>
-		<script src=https://qiyukf.com/script/2dac580226b83fb71d8e31c5b40041cf.js defer async></script>
 		<script>
-			var _hmt = _hmt || [];
-			(function() {
-				var hm = document.createElement("script");
-				hm.src = "//hm.baidu.com/hm.js?30b679eb2c90c60ff8679ce4ca562fcc";
-				var s = document.getElementsByTagName("script")[0];
-				s.parentNode.insertBefore(hm, s);
-			})();
+			var button = document.getElementById('weibo-login');
+			var parent = document.getElementById('header-warp');
+			var authenticated = window.location.search;
+			if (authenticated) {
+				parent.removeChild(button);
+			}
 		</script>
+		</div>
+</body>
+</html>
