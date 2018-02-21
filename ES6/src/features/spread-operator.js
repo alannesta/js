@@ -9,6 +9,10 @@ let pick = function(obj, ...keys) {
 
 	let temp = {};
 
+	// "keys" is an array
+	console.log(keys);	// [ 'name', 'title' ]
+	console.log(keys instanceof Array);	// true
+
 	keys.forEach(function(key) {
 		if (key in obj) {
 			temp[key] = obj[key];
@@ -16,6 +20,15 @@ let pick = function(obj, ...keys) {
 	});
 	return temp;
 };
+
+const obj = {
+	name: 'kaka',
+	title: 'dev',
+	lang: 'eng'
+};
+
+
+console.log(pick(obj, 'name', 'title'));	// { name: 'kaka', title: 'dev' }
 
 /*
  Equivalent ES5 (underscore implementation)
@@ -31,13 +44,23 @@ let pick = function(obj, ...keys) {
 //};
 
 
-const obj = {
-	name: 'kaka',
-	title: 'dev',
-	lang: 'eng'
-};
+/*
+	Usage with call()/apply()
+*/
 
-console.log(pick(obj, 'name'));
+function someLibFunc(a, b, ...c) {
+	return c.reduce((agg, cur) => {
+		return agg + cur;
+	}, a + b);
+}
+
+function wrapper(customArg, ...others) {
+	console.log(...others);	// 1 2 3 !! this is not an array
+	console.log(someLibFunc.call(null, ...others));	// ...others will expand the arguments one by one
+	console.log(someLibFunc.apply(null, others));
+}
+
+wrapper('test', 1, 2, 3, 4, 5);
 
 
 // In this case, ... is the spread operator(when you call a function rather than define one)
