@@ -4,6 +4,7 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
+var cors = require('cors');
 
 var routes = require('./routes/index');
 var polling = require('./routes/longpoll');
@@ -12,6 +13,7 @@ var moduleLoading = require('./routes/module-loading');
 // var upload = require('./routes/file-upload');
 var serverPush = require('./routes/server-push');
 var analytics = require('./routes/kinesis');
+var corsTest = require('./routes/cors');
 
 var app = express();
 
@@ -26,6 +28,10 @@ app.use(bodyParser.json());
 //app.use(bodyParser.raw());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
+app.use(cors({
+	origin: 'http://local.dev.com:8080',
+	credentials: true
+}));
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', routes);
@@ -35,6 +41,8 @@ app.use('/module-loading', moduleLoading);
 // app.use('/file-upload', upload);
 app.use('/server-push', serverPush);
 app.use('/kinesis', analytics);
+app.use('/cors', corsTest);
+
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
