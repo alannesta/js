@@ -14,6 +14,7 @@ var moduleLoading = require('./routes/module-loading');
 var serverPush = require('./routes/server-push');
 var analytics = require('./routes/kinesis');
 var corsTest = require('./routes/cors');
+var errorHandling = require('./routes/error-handling');
 
 var app = express();
 
@@ -42,6 +43,7 @@ app.use('/module-loading', moduleLoading);
 app.use('/server-push', serverPush);
 app.use('/kinesis', analytics);
 app.use('/cors', corsTest);
+app.use('/error-handling', errorHandling);
 
 
 // catch 404 and forward to error handler
@@ -51,31 +53,12 @@ app.use(function(req, res, next) {
     next(err);
 });
 
-//console.log('app.get env: ' + app.get('env'));
-//console.log(process.env.NODE_ENV);
+process.on('uncaughtException', (err) => {
+	console.log('get Uncaught exception: ', err);
+});
 
-// error handlers
-
-// development error handler
-// will print stacktrace
-if (app.get('env') === 'development') {
-    app.use(function(err, req, res, next) {
-        res.status(err.status || 500);
-        res.render('error', {
-            message: err.message,
-            error: err
-        });
-    });
-}
-
-// production error handler
-// no stacktraces leaked to user
-app.use(function(err, req, res, next) {
-    res.status(err.status || 500);
-    res.render('error', {
-        message: err.message,
-        error: {}
-    });
+process.on('unhandledRejection', (reason, p) => {
+	console.log('get Unhandled Rejection at:', p, 'reason:', reason);
 });
 
 app.listen(3005, function() {
