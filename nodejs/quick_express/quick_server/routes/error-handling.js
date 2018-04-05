@@ -49,5 +49,40 @@ router.get('/express', function(req, res) {
 	JSON.parse("1:1");
 });
 
+router.get('/await', function(req, res) {
+	const result = add1(10).catch(err => {
+		// catch synchronous errors and promise rejection
+		console.log('catch exception/rejection: ', err);
+	});
+
+	res.status(200).send(result)
+});
+
+function resolveAfter2Seconds(x) {
+	return new Promise((resolve, reject) => {
+		setTimeout(() => {
+			//resolve(x);
+			reject('something went wrong');
+			//throw new Error('something went wrong')
+		}, 2000);
+
+	});
+}
+
+async function add1(x) {
+	let a = 0;
+	let b = 0;
+	try {
+		a = await resolveAfter2Seconds(20);
+		b = await resolveAfter2Seconds(30);
+	} catch(err) {
+		// will catch promise rejection, but not async exception in setTimeout
+		console.log(err);
+	}
+	
+	throw new Error('add function error');
+
+	return x + a + b;
+}
 
 module.exports = router;
