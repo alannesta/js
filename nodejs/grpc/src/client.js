@@ -10,9 +10,14 @@ var rpc = grpc.load(PROTO_PATH).rpc;
 function main() {
 	var client = new rpc.AnalyticsRPCService('localhost:9527', grpc.credentials.createInsecure());
 
+	// client.getUserFavoriteReportV2({dateSpan: 30}, function(err, response) {
+	// 	console.log('response:', response);
+	// });
+
 	client.getUserFavoriteReport({}, function(err, response) {
-		console.log('response:', response.message);
+		console.log('response:', response);
 	});
+
 }
 
 main();
