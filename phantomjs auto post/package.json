@@ -8,7 +8,7 @@
   },
   "dependencies": {
     "phantom":"0.6.5",
-    "request":"2.33.0",
+    "request":"2.88.0",
     "cheerio":"0.13.1",
     "async":"0.2.10"
   }
