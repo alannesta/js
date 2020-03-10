@@ -1,6 +1,7 @@
 const createLogger = require('./logger');
 
 const logger = createLogger('TestLogger');
+const winston = require('winston');
 
 kaka = {
     key: "stuff"
@@ -8,10 +9,8 @@ kaka = {
 
 setInterval(() => {
     logger.info('What the heck, test object : %O', kaka);
-    try {
-        JSON.parse(kaka);
-    } catch (e) {
-        logger.error("Failed: %s", e);
-    }
+    JSON.parse(kaka);
     logger.debug('debug stuff: ', kaka)
 }, 2000);
+
+// console.log(logger.transports);
