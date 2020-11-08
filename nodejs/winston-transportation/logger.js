@@ -35,6 +35,7 @@ function createLoggerWithLabel(loggerLabel) {
         transports: [
             new winston.transports.Console({
                 level: 'debug',
+                handleExceptions: true, // handle unCaughtExceptions
                 format: combine(
                     splat(),    // object interpolation
                     colorize({all: true}),
@@ -73,23 +74,24 @@ function createLoggerWithLabel(loggerLabel) {
                     logFormat
                 )
             }),
-            new WinstonCloudWatch({
-                name: '91lister-fetcher',
-                level: 'debug',
-                awsRegion: 'us-east-1',
-                logGroupName: '91lister-fetcher',
-                logStreamName: 'test-stream',
-                handleExceptions: true, // handle unCaughtExceptions
-                // exitOnError: false,
-                // retentionInDays: 1,  // will set this in the UI
-                uploadRate: 60000,  // every minute
-                format: combine(
-                    splat(),    // object interpolation
-                    timestamp(),
-                    label({label: loggerLabel}),
-                    logFormat
-                )
-            })
+            // new WinstonCloudWatch({
+            //     name: '91lister-fetcher',
+            //     level: 'debug',
+            //     awsRegion: 'us-east-1',
+            //     logGroupName: '91lister-fetcher',
+            //     logStreamName: 'test-stream',
+            //
+            //     handleExceptions: true, // handle unCaughtExceptions
+            //     // exitOnError: false,
+            //     // retentionInDays: 1,  // will set this in the UI
+            //     uploadRate: 60000,  // every minute
+            //     format: combine(
+            //         splat(),    // object interpolation
+            //         timestamp(),
+            //         label({label: loggerLabel}),
+            //         logFormat
+            //     )
+            // })
         ]
     });
 
