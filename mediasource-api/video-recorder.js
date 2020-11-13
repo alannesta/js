@@ -6,13 +6,22 @@ class VideoRecorder {
     }
 
     // avgle
+    // getStreamSource() {
+    //     const playbackElement = document.getElementById("video-player_html5_api");
+    //     const videoJsPlayer = videojs('video-player_html5_api');
+    //
+    //     const captureStream = playbackElement.captureStream();
+    //
+    //     return new StreamSource(captureStream, videoJsPlayer);
+    // }
+
+    // chaochaolive
     getStreamSource() {
-        const playbackElement = document.getElementById("video-player_html5_api");
-        const videoJsPlayer = videojs('video-player_html5_api');
+        const playbackElement = document.getElementById("playervtag");
 
         const captureStream = playbackElement.captureStream();
 
-        return new StreamSource(captureStream, videoJsPlayer);
+        return new StreamSource(captureStream, playbackElement);
     }
 
     // test demo
