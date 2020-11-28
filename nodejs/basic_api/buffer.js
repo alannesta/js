@@ -4,7 +4,10 @@ var buf = new Buffer('Hello World!', 'utf8');       // 12 byte buffer <Buffer 48
 
 console.log(buf);
 
-var bufstring = buf.toString('utf8', 2, 12);
-console.log(bufstring);
-console.log(Buffer.byteLength(bufstring, 'utf8') + ' bytes/octets');
+// var bufstring = buf.toString('utf8', 2, 12);
+// console.log(bufstring);
+// console.log(Buffer.byteLength(bufstring, 'utf8') + ' bytes/octets');
 
+var arr = new Uint8Array(buf);
+
+console.log(arr);
