@@ -22,7 +22,7 @@ class ThrottleStream extends Transform {
         let tokens = await this.tokenBucket.acquire();
         if (tokens === 0) {
             await this._sleep(1);
-            await this._processChunks(chunk, encoding, callback, startPos)
+            return await this._processChunks(chunk, encoding, callback, startPos)
         } else {
             // console.log('tokens acquired: ', tokens);
 
@@ -39,8 +39,12 @@ class ThrottleStream extends Transform {
             this.push(data);
 
             if (done) {
-                console.log('all done');
+                console.log('all done, push null byte, callback');
+                // this.push(null);
                 callback(null);
+                console.log('clear token bucket');
+                // clear the token bucket timer, otherwise node process will not exit
+                this.tokenBucket.clearBucket();
             } else {
                 await this._processChunks(chunk, encoding, callback, endPos + 1)
             }
@@ -60,6 +64,15 @@ class ThrottleStream extends Transform {
 
 let throttle = new ThrottleStream(500);
 
+throttle.on('finish', () => {
+    console.log('writable stream(input) finish');
+});
+
+throttle.on('end', () => {
+    console.log('readable stream(output) end')
+});
+
 fs.createReadStream('./mock/1.log').pipe(throttle).pipe(process.stdout);
+// fs.createReadStream('./mock/1.log').pipe(process.stdout);
 
 
