@@ -29,7 +29,3 @@ class Scheduler {
 }
 
 new Scheduler();
-
-setInterval(function() {
-	console.log('hang');
-}, 10000);

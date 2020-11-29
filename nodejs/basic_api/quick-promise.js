@@ -16,19 +16,25 @@
 // }
 
 // node v6.9.4
+// function main() {
+//     let kaka = new Promise((resolve, reject) => {
+//         console.log('promise that will not be unresolved without a timer');
+//
+//         // adding a timer
+//         setTimeout(() => {
+//             resolve('keep the node process ALIVE!!!');
+//         }, 2000);
+//     }).then(() => {
+//         // this will not be called without a settimeout
+//         console.log('promise resolve!!');
+//     })
+// }
+
+// node v6.9.4 unhandled rejection warning
+// node v12.13.0 better warning message...
 function main() {
-    let kaka = new Promise((resolve, reject) => {
-        console.log('promise that will not be unresolved without a timer');
-
-        // adding a timer
-        setTimeout(() => {
-            resolve('keep the node process ALIVE!!!');
-        }, 2000);
-    }).then(() => {
-        // this will not be called without a settimeout
-        console.log('promise resolve!!');
-    })
+    Promise.reject(new Error('woops'));
+    console.log('yeehaaaaaa');
 }
-
 main();
 
