@@ -1,4 +1,4 @@
-var fs = require('fs');
+const fs = require('fs');
 const EventEmitter = require('events');
 
 class MyEmitter extends EventEmitter {}
@@ -17,26 +17,34 @@ function blocking() {
 	while (new Date().getTime() - timestamp < 3000) {
 		count++;
 		if (count === 20000) {
-			myEmitter.emit('event');	// polling phase
-
+			process.nextTick(() => {
+				console.log('process next tick execute registered later');
+			});
+			myEmitter.emit('event');	// execute synchronously on current callstack
 		}
 	}
 	console.log('while loop done');
 }
 
 fs.readFile('./glob.js', function() {
-	console.log('read file done');	// I/O callbacks phase
+	console.log('read file done');	// polling phase
 });
 
 setTimeout(function() {
 	console.log('set timeout');		// timer phase
 }, 1000);
 
+process.nextTick(() => {
+	console.log('process next tick execute');
+});
+
 blocking();
 
 // results:
 // while loop start
-// an event occurred!  (类似于browser端的dom events)
+// an event occurred!
 // while loop done
-// set timeout    (timers)
-// read file done   (I/O callbacks)
+// process next tick execute
+// process next tick execute registered later
+// set timeout
+// read file done
