@@ -39,12 +39,11 @@ class ThrottleStream extends Transform {
             this.push(data);
 
             if (done) {
-                console.log('all done, push null byte, callback');
-                // this.push(null);
+                console.log('all done, callback');
                 callback(null);
-                console.log('clear token bucket');
+                // console.log('clear token bucket');
                 // clear the token bucket timer, otherwise node process will not exit
-                this.tokenBucket.clearBucket();
+                // this.tokenBucket.clearBucket();
             } else {
                 await this._processChunks(chunk, encoding, callback, endPos + 1)
             }
@@ -72,7 +71,15 @@ throttle.on('end', () => {
     console.log('readable stream(output) end')
 });
 
-fs.createReadStream('./mock/1.log').pipe(throttle).pipe(process.stdout);
-// fs.createReadStream('./mock/1.log').pipe(process.stdout);
+const srcPath = '/Users/alancao/Documents/video/camping2.MOV';
+const destPath = '/Users/alancao/Desktop/copy.MOV';
+
+// fs.createReadStream(srcPath, {highWaterMark: 10 * 1024}).pipe(fs.createWriteStream(destPath, {highWaterMark: 10 * 1024}));
+fs.createReadStream(srcPath).pipe(throttle).pipe(fs.createWriteStream(destPath));
+
+
+// fs.createReadStream('./mock/test.csv').pipe(throttle).pipe(process.stdout);
+// fs.createReadStream('./mock/test.csv', {highWaterMark: 100}).pipe(fs.createWriteStream('./mock/dest', {highWaterMark: 100}));
+// fs.createReadStream('./mock/test.csv', {highWaterMark: 1024}).pipe(throttle).pipe(process.stdout);
 
 
